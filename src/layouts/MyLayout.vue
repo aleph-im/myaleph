@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr fff">
-    <q-header elevated class="bg-white text-grey-8" height-hint="64">
+    <q-header class="bg-white text-grey-8 shadow-top" height-hint="64">
       <q-toolbar class="GPL__toolbar" style="height: 64px">
         <q-btn
           flat
@@ -14,7 +14,7 @@
 
         <q-toolbar-title v-if="$q.screen.gt.sm" shrink class="row items-center no-wrap">
           <img src="https://aleph.im/assets/img/logo.c052fb15.svg">
-          <span class="q-ml-sm">my</span>
+          <span class="q-ml-sm text-mono text-bold">my</span>
         </q-toolbar-title>
 
         <q-space />
@@ -185,6 +185,9 @@ export default {
 </script>
 
 <style lang="scss">
+.shadow-top {
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 8px 16px 0px;
+}
 .GPL {
 
   &__toolbar {
