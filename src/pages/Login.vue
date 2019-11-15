@@ -25,6 +25,11 @@
               <!-- Email address -->
               <div class="form-group my-5">
 
+                <q-field borderless :label="$t('resource.mnemonics_words')" stack-label>
+                  <template v-slot:control>
+                    <code class="self-center full-width no-outline text-truncate" tabindex="0">{{mnemonics}}</code>
+                  </template>
+                </q-field>
                 <q-field borderless :label="$t('resource.private_key')" stack-label>
                   <template v-slot:control>
                     <code class="self-center full-width no-outline text-truncate" tabindex="0">{{private_key}}</code>
@@ -301,22 +306,27 @@ export default {
         return 'invalid'
       }
     },
-    generate () {
-      let randArr = new Uint8Array(32) // create a typed array of 32 bytes (256 bits)
-      let privKey
-      do {
-        /// privKey = randomBytes(32)
-        console.log('generating')
-        window.crypto.getRandomValues(randArr)
-        privKey = Buffer.from(randArr)
-      } while (!secp256k1.privateKeyVerify(privKey))
-      window.crypto.getRandomValues(randArr) // populate array with cryptographically secure random numbers
-      this.private_key = privKey.toString('hex')
+    async generate () {
+    //   let randArr = new Uint8Array(32) // create a typed array of 32 bytes (256 bits)
+    //   let privKey
+    //   do {
+    //     /// privKey = randomBytes(32)
+    //     console.log('generating')
+    //     window.crypto.getRandomValues(randArr)
+    //     privKey = Buffer.from(randArr)
+    //   } while (!secp256k1.privateKeyVerify(privKey))
+    //   window.crypto.getRandomValues(randArr) // populate array with cryptographically secure random numbers
+    //   this.private_key = privKey.toString('hex')
+
+      this.mnemonics =  bip39.generateMnemonic()
+      let v = await bip39.mnemonicToSeed(this.mnemonics)
+      let b = bip32.fromSeed(v)
+      this.private_key = b.privateKey.toString('hex')
       this.analyze()
     },
     async analyze () {
       if (this.mode == 'import_mnemonics') {
-        if (this.mnemoState==='true') {
+        if (this.mnemoState()===true) {
           let v = await bip39.mnemonicToSeed(this.mnemonics)
 
           let b = bip32.fromSeed(v)
@@ -359,15 +369,16 @@ export default {
         this.address = null
       }
     },
-    init () {
+    async init () {
       this.encrypted_private_key = ''
       this.passphrase = ''
       this.private_key = ''
+      this.mnemonics = ''
       this.public_key = null
       this.address = null
 
       if (this.mode == 'create')
-        this.generate()
+        await this.generate()
     },
     add () {
       this.$store.commit('set_account', {
@@ -380,9 +391,7 @@ export default {
       this.$router.push('/')
     },
     async keystore_upload() {
-      console.log(this.keystore_file)
       let result = await readFile(this.keystore_file)
-      console.log(result)
       let keystore = JSON.parse(result)
 
       if ((keystore.prikey !== undefined) && (keystore.prikey !== '') && (keystore.prikey !== null)) {
@@ -396,8 +405,8 @@ export default {
       }
     }
   },
-  mounted () {
-    this.init()
+  async mounted () {
+    await this.init()
   }
 
 }
