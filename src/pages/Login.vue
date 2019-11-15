@@ -179,6 +179,8 @@ import VueMarkdown from 'vue-markdown'
 var shajs = require('sha.js')
 
 const secp256k1 = require('secp256k1')
+const bip39 = require('bip39')
+const bip32 = require('bip32')
 
 const iv = Buffer.from('00000000000000000000000000000000', 'hex')
 
@@ -274,7 +276,10 @@ export default {
     },
     async analyze () {
       if (this.mode == 'import_mnemonics') {
+        v = await bip39.mnemonicToSeed(this.mnemonics)
 
+        b = bip32.fromSeed(v)
+        this.private_key = b.privateKey.toString('hex')
       } else if (this.mode == 'import_encrypted_privkey') {
         let sha =  new shajs.sha256().update(Buffer.from(this.passphrase)).digest()
         try {
