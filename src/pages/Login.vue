@@ -25,64 +25,99 @@
               <!-- Email address -->
               <div class="form-group my-5">
 
-                <!-- Label -->
-                <label>{{$t('resource.private_key')}}</label>
-                <code class="d-block text-truncate my-2">{{private_key}}</code>
-
-                <label>{{$t('resource.public_key')}}</label>
-                <code class="d-block text-truncate my-2">{{public_key}}</code>
-
-                <label>{{$t('resource.address')}}</label>
-                <code class="d-block text-truncate my-2">{{address}}</code>
-
+                <q-field borderless :label="$t('resource.private_key')" stack-label>
+                  <template v-slot:control>
+                    <code class="self-center full-width no-outline text-truncate" tabindex="0">{{private_key}}</code>
+                  </template>
+                </q-field>
+                <q-field borderless :label="$t('resource.public_key')" stack-label>
+                  <template v-slot:control>
+                    <code class="self-center full-width no-outline text-truncate" tabindex="0">{{public_key}}</code>
+                  </template>
+                </q-field>
+                <q-field borderless :label="$t('resource.address')" stack-label>
+                  <template v-slot:control>
+                    <code class="self-center full-width no-outline text-truncate" tabindex="0">{{address}}</code>
+                  </template>
+                </q-field>
               </div>
 
               <!-- Submit -->
-              <button class="btn btn-lg btn-block btn-primary mb-3" v-on:click="generate">
+              <q-btn class="btn btn-lg btn-block q-mx-sm q-my-md" push color="secondary" v-on:click="generate">
                 {{$t('actions.regenerate')}}
-              </button>
-              <button class="btn btn-lg btn-block btn-primary mb-3" v-on:click="add">
+              </q-btn>
+              <q-btn class="btn btn-lg btn-block  q-mx-sm q-my-md" push color="primary" v-on:click="add">
                 {{$t('actions.add_it')}}
-              </button>
+              </q-btn>
 
             </q-form>
         </q-tab-panel>
-        <q-tab-panel name="import_privkey">
-          <div class="text-center">
+        <q-tab-panel name="import_mnemonics">
+          <div>
             <vue-markdown :html="false" :source="$t('create.import_text')"></vue-markdown>
           </div>
             <!-- Form -->
           <q-form>
 
             <q-input
-              filled
-              v-model="name"
-              :label="$t('resource.private_key')"
+              v-model="mnemonics"
+              :label="$t('resource.mnemonics_words')"
+              v-on:input="analyze"
               lazy-rules
-              :rules="[ val => val && val.length > 0 || 'Please type something']"
+              :rules="[mnemoState]"
             />
 
-
-              <b-form-group
-                :label="$t('resource.private_key')"
-                label-for="private_key"
-                :state="prvState"
-            >
-                <b-form-textarea id="private_key" :state="prvState"
-                              v-model="private_key"
-                              v-on:input="analyze"
-                              :maxlength="66"
-                              :rows="1"></b-form-textarea>
-              </b-form-group>
-
-              <label>{{$t('resource.public_key')}}</label>
-              <code class="d-block text-truncate">{{public_key||'--'}}</code>
-
-              <label>{{$t('resource.address')}}</label>
-              <code class="d-block text-truncate">{{address||'--'}}</code>
+                <q-field borderless :label="$t('resource.private_key')" stack-label>
+                  <template v-slot:control>
+                    <code class="self-center full-width no-outline text-truncate" tabindex="0">{{private_key||'--'}}</code>
+                  </template>
+                </q-field>
+                <q-field borderless :label="$t('resource.public_key')" stack-label>
+                  <template v-slot:control>
+                    <code class="self-center full-width no-outline text-truncate" tabindex="0">{{public_key||'--'}}</code>
+                  </template>
+                </q-field>
+                <q-field borderless :label="$t('resource.address')" stack-label>
+                  <template v-slot:control>
+                    <code class="self-center full-width no-outline text-truncate" tabindex="0">{{address||'--'}}</code>
+                  </template>
+                </q-field>
 
             <!-- Submit -->
-            <q-btn class="btn btn-lg btn-block btn-primary mb-3" :disabled="!prvState" v-on:click="add">
+            <q-btn class="btn btn-lg btn-block btn-primary mb-3" push :color="prvState()===true ? 'primary' : 'grey'"
+            :disable="prvState()!==true" v-on:click="add">
+              {{$t('actions.add_it')}}
+            </q-btn>
+          </q-form>
+        </q-tab-panel>
+        <q-tab-panel name="import_privkey">
+          <div>
+            <vue-markdown :html="false" :source="$t('create.import_text')"></vue-markdown>
+          </div>
+            <!-- Form -->
+          <q-form>
+
+            <q-input
+              v-model="private_key"
+              :label="$t('resource.private_key')"
+              v-on:input="analyze"
+              lazy-rules
+              :rules="[prvState]"
+            />
+                <q-field borderless :label="$t('resource.public_key')" stack-label>
+                  <template v-slot:control>
+                    <code class="self-center full-width no-outline text-truncate" tabindex="0">{{public_key||'--'}}</code>
+                  </template>
+                </q-field>
+                <q-field borderless :label="$t('resource.address')" stack-label>
+                  <template v-slot:control>
+                    <code class="self-center full-width no-outline text-truncate" tabindex="0">{{address||'--'}}</code>
+                  </template>
+                </q-field>
+
+            <!-- Submit -->
+            <q-btn class="btn btn-lg btn-block btn-primary mb-3" push :color="prvState()===true ? 'primary' : 'grey'"
+            :disable="prvState()!==true" v-on:click="add">
               {{$t('actions.add_it')}}
             </q-btn>
           </q-form>
@@ -95,40 +130,36 @@
             <form>
               <!-- Email address -->
 
-              <div class="form-group my-5">
+              <q-input
+                v-model="encrypted_private_key"
+                :label="$t('resource.encrypted_private_key')"
+                v-on:input="analyze"
+              />
 
-                  <b-form-group
-                    :label="$t('resource.encrypted_private_key')"
-                    label-for="encrypted_private_key"
-                >
-                    <b-form-textarea id="encrypted_private_key"
-                                  v-model="encrypted_private_key"
-                                  v-on:input="analyze"
-                                  :rows="1"></b-form-textarea>
-                  </b-form-group>
+              <q-input
+                v-model="passphrase"
+                :label="$t('resource.passphrase')"
+                v-on:input="analyze" type="password"
+              />
 
-                  <b-form-group
-                    :label="$t('resource.passphrase')"
-                    label-for="passphrase"
-                    :state="prvState"
-                >
-                    <b-form-input id="passphrase"
-                                  v-model="passphrase"
-                                  v-on:input="analyze"
-                                  :state="prvState"
-                                  type="password"></b-form-input>
-                  </b-form-group>
-
-                  <!-- Label -->
-                  <label>{{$t('resource.private_key')}}</label>
-                  <code class="d-block text-truncate">{{private_key||'--'}}</code>
-
-                  <label>{{$t('resource.public_key')}}</label>
-                  <code class="d-block text-truncate">{{public_key||'--'}}</code>
-
-                  <label>{{$t('resource.address')}}</label>
-                  <code class="d-block text-truncate">{{address||'--'}}</code>
-              </div>
+                <q-field borderless :label="$t('resource.private_key')" stack-label>
+                  <template v-slot:control>
+                    <code class="self-center full-width no-outline text-truncate" tabindex="0">{{private_key||'--'}}</code>
+                  </template>
+                </q-field>
+                <q-field borderless :label="$t('resource.public_key')" stack-label>
+                  <template v-slot:control>
+                    <code class="self-center full-width no-outline text-truncate" tabindex="0">{{public_key||'--'}}</code>
+                  </template>
+                </q-field>
+                <q-field borderless :label="$t('resource.address')" stack-label>
+                  <template v-slot:control>
+                    <code class="self-center full-width no-outline text-truncate" tabindex="0">{{address||'--'}}</code>
+                  </template>
+                </q-field>
+                <q-btn class="btn btn-lg btn-block btn-primary mb-3" :disabled="!prvState" v-on:click="add">
+                  {{$t('actions.add_it')}}
+                </q-btn>
             </form>
         </q-tab-panel>
         <q-tab-panel name="import_keystore">
@@ -160,168 +191,6 @@
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
-    <div id="content">
-      <div class="row justify-content-center">
-        <div class="col-10 my-5 p-5">
-
-          <!-- Heading -->
-          <h1 class="display-4 mb-3">
-            {{$t('create.heading')}}
-          </h1>
-
-          <b-form-select v-model="mode" class="my-4" size="lg">
-            <option v-for="mode of modes" :value="mode" :key="mode">
-              {{$t('create.' + mode)}}
-            </option>
-          </b-form-select>
-
-          <div v-if="mode == 'create'">
-            <div class="text-center">
-              <vue-markdown :html="false" :source="$t('create.new_text')"></vue-markdown>
-            </div>
-            <!-- Form -->
-            <form>
-
-              <!-- Email address -->
-              <div class="form-group my-5">
-
-                <!-- Label -->
-                <label>{{$t('resource.private_key')}}</label>
-                <code class="d-block text-truncate my-2">{{private_key}}</code>
-
-                <label>{{$t('resource.public_key')}}</label>
-                <code class="d-block text-truncate my-2">{{public_key}}</code>
-
-                <label>{{$t('resource.address')}}</label>
-                <code class="d-block text-truncate my-2">{{address}}</code>
-
-              </div>
-
-              <!-- Submit -->
-              <button class="btn btn-lg btn-block btn-primary mb-3" v-on:click="generate">
-                {{$t('actions.regenerate')}}
-              </button>
-              <button class="btn btn-lg btn-block btn-primary mb-3" v-on:click="add">
-                {{$t('actions.add_it')}}
-              </button>
-
-            </form>
-          </div>
-
-          <div v-if="mode == 'import_privkey'">
-            <div class="text-center">
-              <vue-markdown :html="false" :source="$t('create.import_text')"></vue-markdown>
-            </div>
-              <!-- Form -->
-            <form>
-              <!-- Email address -->
-              <div class="form-group my-5">
-
-                <b-form-group
-                  :label="$t('resource.private_key')"
-                  label-for="private_key"
-                  :state="prvState"
-              >
-                  <b-form-textarea id="private_key" :state="prvState"
-                                v-model="private_key"
-                                v-on:input="analyze"
-                                :maxlength="66"
-                                :rows="1"></b-form-textarea>
-                </b-form-group>
-
-                <label>{{$t('resource.public_key')}}</label>
-                <code class="d-block text-truncate">{{public_key||'--'}}</code>
-
-                <label>{{$t('resource.address')}}</label>
-                <code class="d-block text-truncate">{{address||'--'}}</code>
-
-              </div>
-
-              <!-- Submit -->
-              <button class="btn btn-lg btn-block btn-primary mb-3" :disabled="!prvState" v-on:click="add">
-                {{$t('actions.add_it')}}
-              </button>
-          </form>
-          </div>
-
-          <div v-if="mode == 'import_encrypted_privkey'">
-            <div class="text-center">
-              <vue-markdown :html="false" :source="$t('create.import_encrypted_text')"></vue-markdown>
-            </div>
-              <!-- Form -->
-            <form>
-              <!-- Email address -->
-
-            <div class="form-group my-5">
-
-                <b-form-group
-                  :label="$t('resource.encrypted_private_key')"
-                  label-for="encrypted_private_key"
-              >
-                  <b-form-textarea id="encrypted_private_key"
-                                v-model="encrypted_private_key"
-                                v-on:input="analyze"
-                                :rows="1"></b-form-textarea>
-                </b-form-group>
-
-                <b-form-group
-                  :label="$t('resource.passphrase')"
-                  label-for="passphrase"
-                  :state="prvState"
-              >
-                  <b-form-input id="passphrase"
-                                v-model="passphrase"
-                                v-on:input="analyze"
-                                :state="prvState"
-                                type="password"></b-form-input>
-                </b-form-group>
-
-                <!-- Label -->
-                <label>{{$t('resource.private_key')}}</label>
-                <code class="d-block text-truncate">{{private_key||'--'}}</code>
-
-                <label>{{$t('resource.public_key')}}</label>
-                <code class="d-block text-truncate">{{public_key||'--'}}</code>
-
-                <label>{{$t('resource.address')}}</label>
-                <code class="d-block text-truncate">{{address||'--'}}</code>
-
-              </div>
-
-              <!-- Submit -->
-              <button class="btn btn-lg btn-block btn-primary mb-3" :disabled="!prvState" v-on:click="add">
-                {{$t('actions.add_it')}}
-              </button>
-          </form>
-          </div>
-          <div v-if="mode == 'import_keystore'">
-            <div class="text-center">
-              <vue-markdown :html="false" :source="$t('create.import_keystore_text')"></vue-markdown>
-            </div>
-              <!-- Form -->
-            <form>
-              <!-- Email address -->
-
-              <div class="form-group my-5">
-
-                <b-form-group
-                  id="name"
-                  :label="$t('resource.keystore_file')"
-                  label-for="keystore_file"
-                  >
-                  <b-input-group>
-                    <b-form-file v-model="keystore_file"
-                    placeholder="Choose a file..." accept="text/json, text/keystore"
-                    plain @input="keystore_upload"></b-form-file>
-                  </b-input-group>
-                </b-form-group>
-
-              </div>
-            </form>
-          </div>
-        </div>
-      </div> <!-- / .row -->
-    </div>
   </div>
 </template>
 
@@ -377,8 +246,10 @@ export default {
       'public_key': null,
       'address': null,
       'keystore_file': null,
+      'mnemonics': null,
       'modes': [
         'create',
+        'import_mnemonics',
         'import_privkey',
         'import_encrypted_privkey',
         'import_keystore'//,
@@ -390,28 +261,12 @@ export default {
     VueMarkdown
   },
   computed: {
-    prvState () {
-      if (!isHex(this.private_key)) { return false }
-      if (!this.private_key) { return false }
-      if ((this.private_key.length === 66) && (this.private_key.substring(0, 2) === '00')) {
-        this.private_key = this.private_key.substring(2, 66)
-        return true
-      }
-      if (this.private_key.length !== 64) { return false }
-      try {
-        let prvbuffer = Buffer.from(this.private_key, 'hex')
-        let pub = private_key_to_public_key(prvbuffer)
-        return true
-      } catch (e) {
-        return false
-      }
-    },
-    ... mapState([
-      // map this.count to store.state.count
-      'account',
-      'network_id',
-      'api_server'
-    ])
+      ... mapState([
+        // map this.count to store.state.count
+        'account',
+        'network_id',
+        'api_server'
+      ])
   },
   watch: {
     mode() {
@@ -419,6 +274,33 @@ export default {
     }
   },
   methods: {
+    prvState () {
+        if (!isHex(this.private_key)) { return 'not hexadecimal' }
+        if (!this.private_key) { return 'empty' }
+        if ((this.private_key.length === 66) && (this.private_key.substring(0, 2) === '00')) {
+          this.private_key = this.private_key.substring(2, 66)
+          return true
+        }
+        if (this.private_key.length !== 64) { return 'bad length' }
+        try {
+          let prvbuffer = Buffer.from(this.private_key, 'hex')
+          let pub = private_key_to_public_key(prvbuffer)
+          return true
+        } catch (e) {
+          return 'invalid'
+        }
+    },
+    mnemoState() {
+      if (this.mnemonics.trim().split(/\s+/g).length < 12) {
+        return 'less than 12 words'
+      }
+      if (bip39.validateMnemonic(this.mnemonics))
+      {
+        return true
+      } else {
+        return 'invalid'
+      }
+    },
     generate () {
       let randArr = new Uint8Array(32) // create a typed array of 32 bytes (256 bits)
       let privKey
@@ -434,10 +316,12 @@ export default {
     },
     async analyze () {
       if (this.mode == 'import_mnemonics') {
-        v = await bip39.mnemonicToSeed(this.mnemonics)
+        if (this.mnemoState==='true') {
+          let v = await bip39.mnemonicToSeed(this.mnemonics)
 
-        b = bip32.fromSeed(v)
-        this.private_key = b.privateKey.toString('hex')
+          let b = bip32.fromSeed(v)
+          this.private_key = b.privateKey.toString('hex')
+        }
       } else if (this.mode == 'import_encrypted_privkey') {
         let sha =  new shajs.sha256().update(Buffer.from(this.passphrase)).digest()
         try {
@@ -458,7 +342,7 @@ export default {
           this.private_key = ''
         }
       }
-      if (this.prvState) {
+      if (this.prvState() === true) {
         let prvbuffer = Buffer.from(this.private_key, 'hex')
         let pub = private_key_to_public_key(prvbuffer)
         let hash = public_key_to_hash(pub, {
