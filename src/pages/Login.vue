@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-blue-001" id="window">
+  <div class="col q-pa-md">
     <div id="content">
       <b-container>
         <div class="row justify-content-center">
@@ -11,7 +11,7 @@
             </h1>
 
             <b-form-select v-model="mode" class="my-4" size="lg">
-              <option v-for="mode of modes" :value="mode">
+              <option v-for="mode of modes" :value="mode" :key="mode">
                 {{$t('create.' + mode)}}
               </option>
             </b-form-select>
@@ -168,11 +168,12 @@
 </template>
 
 <script>
-import {private_key_to_public_key,
+import {
+  private_key_to_public_key,
   address_from_hash,
   hash_from_address,
   public_key_to_hash
-} from 'aleph-js/src/api/nuls'
+} from 'aleph-js/src/api/nuls2'
 import { mapState } from 'vuex'
 import VueMarkdown from 'vue-markdown'
 var shajs = require('sha.js')
@@ -208,6 +209,7 @@ export default {
   data () {
     return {
       // msg: 'Welcome to Your Vue.js App'
+      'step': 1,
       'mode': 'create',
       'encrypted_private_key': '',
       'private_key': '',
@@ -271,7 +273,9 @@ export default {
       this.analyze()
     },
     async analyze () {
-      if (this.mode == 'import_encrypted_privkey') {
+      if (this.mode == 'import_mnemonics') {
+
+      } else if (this.mode == 'import_encrypted_privkey') {
         let sha =  new shajs.sha256().update(Buffer.from(this.passphrase)).digest()
         try {
           let key = await webcrypto.subtle.importKey(
@@ -353,6 +357,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
+<style scoped  lang="scss">
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'node_modules/bootstrap-vue/src/index.scss';
 </style>

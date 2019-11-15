@@ -16,7 +16,7 @@ export default function (/* { ssrContext } */) {
       api_server: 'https://api2.aleph.im',
       site_chain: 'NULS',
       site_address: 'TTatYAULiEfV6e7Tqt9z8YCr7dz2KkbJ',
-      network_id: 261,
+      network_id: 1,
       ipfs_gateway: 'https://ipfs.io/ipfs/',
       account: null,
       profiles: {},
@@ -27,6 +27,9 @@ export default function (/* { ssrContext } */) {
       menu: []
     },
     mutations: {
+      logout(state) {
+        state.account = null
+      },
       set_account(state, account) {
         state.account = account
       },

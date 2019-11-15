@@ -11,8 +11,8 @@
           icon="menu"
           class="q-mx-md"
         />
-
-        <q-toolbar-title v-if="$q.screen.gt.sm" shrink class="row items-center no-wrap">
+        <q-toolbar-title v-if="$q.screen.gt.sm" shrink class="row items-center no-wrap"
+                         @click="$router.push({name:'home'})">
           <img src="https://aleph.im/assets/img/logo.c052fb15.svg">
           <span class="q-ml-sm text-mono text-bold">my</span>
         </q-toolbar-title>
@@ -47,12 +47,28 @@
         <q-space />
 
         <div class="q-gutter-sm row items-center no-wrap">
-          <q-btn v-if="!account" push color="primary" label="Login" />
+          <q-btn v-if="!account"
+                 push color="primary" label="Login"
+                 :to="{name: 'login'}" />
           <q-btn round flat v-else>
             <q-avatar size="26px">
               {{account.address}}
             </q-avatar>
             <q-tooltip>Account</q-tooltip>
+            <q-menu anchor="top right" self="top right">
+              <q-list class="text-grey-8" style="min-width: 100px">
+                <q-item aria-hidden="true">
+                  <q-item-section class="text-uppercase text-grey-7" style="font-size: 0.7rem">{{$t('account.actions')}}</q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup aria-hidden="true"
+                        @click="$store.commit('logout')">
+                  <q-item-section avatar>
+                    <q-icon name="logout" />
+                  </q-item-section>
+                  <q-item-section>{{$t('account.logout')}}</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </q-btn>
         </div>
       </q-toolbar>
@@ -67,8 +83,8 @@
       <q-scroll-area class="fit">
         <q-toolbar class="GPL__toolbar">
           <q-toolbar-title class="row items-center text-grey-8">
-            <img class="q-pl-md" src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24px.svg">
-            <span class="q-ml-sm">Photos</span>
+            <img class="q-pl-md" src="https://aleph.im/assets/img/logo.c052fb15.svg">
+            <span class="q-ml-sm text-mono text-bold">my</span>
           </q-toolbar-title>
         </q-toolbar>
 
