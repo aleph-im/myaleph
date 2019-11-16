@@ -1,6 +1,5 @@
 <template>
-  <div class="col q-pa-md">
-
+  <q-page class="q-pa-md">
     <q-card class="my-card">
       <q-card-section>
         <div class="text-h6">{{$t('create.heading')}}</div>
@@ -196,16 +195,14 @@
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
-  </div>
+  </q-page>
 </template>
 
 <script>
 import {
-  private_key_to_public_key,
-  address_from_hash,
-  hash_from_address,
-  public_key_to_hash
-} from 'aleph-js/src/api/nuls2'
+  nuls2
+} from 'aleph-js'
+console.log(nuls2)
 import { mapState } from 'vuex'
 import VueMarkdown from 'vue-markdown'
 var shajs = require('sha.js')
@@ -239,7 +236,7 @@ function readFile(file){
 }
 
 export default {
-  name: 'add',
+  name: 'PageLogin',
   data () {
     return {
       // msg: 'Welcome to Your Vue.js App'
@@ -287,11 +284,12 @@ export default {
           return true
         }
         if (this.private_key.length !== 64) { return 'bad length' }
-        try {
+        try { 
           let prvbuffer = Buffer.from(this.private_key, 'hex')
-          let pub = private_key_to_public_key(prvbuffer)
+          let pub = nuls2.private_key_to_public_key(prvbuffer)
           return true
         } catch (e) {
+          console.log("error with private key")
           return 'invalid'
         }
     },
@@ -354,11 +352,11 @@ export default {
       }
       if (this.prvState() === true) {
         let prvbuffer = Buffer.from(this.private_key, 'hex')
-        let pub = private_key_to_public_key(prvbuffer)
-        let hash = public_key_to_hash(pub, {
+        let pub = nuls2.private_key_to_public_key(prvbuffer)
+        let hash = nuls2.public_key_to_hash(pub, {
           chain_id: this.network_id
         })
-        let address = address_from_hash(hash)
+        let address = nuls2.address_from_hash(hash)
         // Vue.set(this, 'public_key', pub);
         this.public_key = pub.toString('hex')
         this.address_hash = hash.toString('hex')
@@ -380,14 +378,21 @@ export default {
       if (this.mode == 'create')
         await this.generate()
     },
-    add () {
-      this.$store.commit('set_account', {
-        'name': this.address,
-        'type': 'NULS',
-        'private_key': this.private_key,
-        'public_key': this.public_key,
-        'address': this.address
-      })
+    async add () {
+      this.$store.commit(
+        'set_account',
+        await nuls2.import_account({
+          'private_key': this.private_key,
+          'mnemonics': this.mnemonics
+        })
+      )
+      // this.$store.commit('set_account', {
+      //   'name': this.address,
+      //   'type': 'NULS',
+      //   'private_key': this.private_key,
+      //   'public_key': this.public_key,
+      //   'address': this.address
+      // })
       this.$router.push('/')
     },
     async keystore_upload() {
