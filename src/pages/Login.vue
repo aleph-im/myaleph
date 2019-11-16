@@ -393,6 +393,7 @@ export default {
       //   'public_key': this.public_key,
       //   'address': this.address
       // })
+      await this.$fetch_profile(this.address)
       this.$router.push('/')
     },
     async keystore_upload() {
