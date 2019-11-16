@@ -89,7 +89,7 @@
         </q-toolbar>
 
         <q-list padding>
-          <q-item v-for="link in links1" :key="link.text" clickable class="GPL__drawer-item">
+          <q-item v-for="link in links1" :key="link.text" clickable class="GPL__drawer-item" :to="link.link">
             <q-item-section avatar>
               <q-icon :name="link.icon" />
             </q-item-section>
@@ -141,7 +141,7 @@
       <q-page-sticky v-if="$q.screen.gt.sm" expand position="left">
         <div class="fit q-pt-xl q-px-sm column">
           <q-btn v-for="link in links1" :key="link.text" round flat color="grey-8"
-                 stack no-caps size="26px" class="GPL__side-btn">
+                 stack no-caps size="26px" class="GPL__side-btn"  :to="link.link">
             <q-icon size="22px" :name="link.icon" />
             <div class="GPL__side-btn__label">{{ link.text }}</div>
           </q-btn>
@@ -173,7 +173,7 @@ export default {
       search: '',
       storage: 0.26,
       links1: [
-        { icon: 'assignment_ind', text:'Profile' },
+        { icon: 'assignment_ind', text:'Profile', link: '/' },
         { icon: 'far fa-newspaper', text:'My Feed' },
         { icon: 'photo', text: 'Photos' },
         { icon: 'people', text: 'Contacts' }
