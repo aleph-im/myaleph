@@ -24,7 +24,8 @@ export default function (/* { ssrContext } */) {
       categories: [ // categories are hard-coded for now...
       ],
       pages: {},
-      menu: []
+      menu: [],
+      channel: "MYALEPH"
     },
     mutations: {
       logout(state) {
