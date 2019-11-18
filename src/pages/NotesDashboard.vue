@@ -1,24 +1,6 @@
 <template>
-  <q-page>
-    <div v-if="account" class="flex">
-      <q-splitter
-      v-model="splitterModel"
-      >
-
-      <template v-slot:before>
-        a
-
-      </template>
-
-      <template v-slot:after>
-        b
-      </template>
-
-      </q-splitter>
-    </div>
-    <div v-else>
-      Please log in.
-    </div>
+  <q-page padding>
+    blah
   </q-page>
 </template>
 
@@ -36,6 +18,11 @@ export default {
       'channel'
     ])
   },
+  data() {
+    return {
+      notes: {}
+    }
+  },
   methods: {
     async blah() {
       console.log("blah")
@@ -46,7 +33,26 @@ export default {
         account: this.account,
         channel: this.channel
       })
+    },
+    async refresh() {
+
     }
+  },
+  watch: {
+    async $route(to, from) {
+      // await this.getProfile()
+      // await this.getPosts()
+    },
+    async current_page() {
+      // await this.getPosts()
+    }
+  },
+  async created() {
+    await this.refresh()
+    // bus.$on('broadcasted', () => {
+    //   setTimeout(this.refresh, 5000);
+    //   setTimeout(this.refresh, 10000)
+    // })
   }
 }
 </script>
