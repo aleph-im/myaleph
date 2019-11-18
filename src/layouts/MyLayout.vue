@@ -32,7 +32,7 @@
               <q-item aria-hidden="true">
                 <q-item-section class="text-uppercase text-grey-7" style="font-size: 0.7rem">Create New</q-item-section>
               </q-item>
-              <q-item v-for="menu in createMenu" :key="menu.text" clickable v-close-popup aria-hidden="true">
+              <q-item v-for="menu in createMenu" :key="menu.text" :to="menu.link" clickable v-close-popup aria-hidden="true">
                 <q-item-section avatar>
                   <q-icon :name="menu.icon" />
                 </q-item-section>
@@ -178,7 +178,7 @@ export default {
       storage: 0.26,
       links1: [
         { icon: 'assignment_ind', text:'Profile', link: {'name': 'home'} },
-        { icon: 'far fa-newspaper', text:'Notes', link: {'name': 'notes'} },
+        { icon: 'note', text:'Notes', link: {'name': 'notes'} },
         // { icon: 'far fa-newspaper', text:'My Feed' },
         // { icon: 'photo', text: 'Photos' },
         // { icon: 'people', text: 'Contacts' }
@@ -193,12 +193,13 @@ export default {
         { icon: 'get_app', text: 'App Downloads' }
       ],
       createMenu: [
-        { icon: 'photo_album', text: 'Album' },
-        { icon: 'people', text: 'Shared Album' },
-        { icon: 'movie', text: 'Movie' },
-        { icon: 'library_books', text: 'Animation' },
-        { icon: 'dashboard', text: 'Collage' },
-        { icon: 'book', text: 'Photo book' }
+        { icon: 'note_add', text: 'Note', link: {name: 'new-note'} },
+        // { icon: 'photo_album', text: 'Album' },
+        // { icon: 'people', text: 'Shared Album' },
+        // { icon: 'movie', text: 'Movie' },
+        // { icon: 'library_books', text: 'Animation' },
+        // { icon: 'dashboard', text: 'Collage' },
+        // { icon: 'book', text: 'Photo book' }
       ]
     }
   },
