@@ -15,9 +15,27 @@ const routes = [
         component: () => import('pages/Login.vue')
       },
       {
-        name: 'notes',
-        path: 'notes',
-        component: () => import('pages/Notes.vue')
+        path: 'n',
+        component: () => import('layouts/Notes.vue'),
+        children: [
+          {
+            name: 'notes',
+            path: '',
+            component: () => import('pages/NotesDashboard.vue')
+          },
+          {
+            name: 'edit-note',
+            path: ':hash/edit',
+            component: () => import('pages/EditNote.vue'),
+            props: true
+          },
+          {
+            path: 'new',
+            name: 'new-note',
+            component: () => import('pages/EditNote.vue'),
+            props: true
+          },
+        ]
       }
     ]
   }
