@@ -1,10 +1,7 @@
 <template>
   <q-page>
     <div v-if="account">
-      logged
-      <q-btn color="primary" @click="blah">
-        blah
-      </q-btn>
+      <submit-content></submit-content>
     </div>
     <div v-else>
       not logged
@@ -14,7 +11,8 @@
 
 <script>
 import { mapState } from 'vuex'
-import { aggregates } from 'aleph-js'
+import { aggregates, posts } from 'aleph-js'
+import SubmitContent from '../components/SubmitContent.vue'
 export default {
   name: 'PageIndex',
   computed: {
@@ -29,7 +27,7 @@ export default {
   methods: {
     async blah() {
       console.log("blah")
-      await aggregates.submit(this.account.address, "test", {
+      await posts.submit(this.account.address, "test", {
         'blah': 'bluh'
       }, {
         api_server: this.api_server,
@@ -37,6 +35,7 @@ export default {
         channel: this.channel
       })
     }
-  }
+  },
+  components: {SubmitContent}
 }
 </script>
