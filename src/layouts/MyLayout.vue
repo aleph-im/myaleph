@@ -89,7 +89,7 @@
         </q-toolbar>
 
         <q-list padding>
-          <q-item v-for="link in links1" :key="link.text" clickable class="GPL__drawer-item" :to="link.link">
+          <q-item v-for="link in links1" :key="link.text" clickable class="GPL__drawer-item" :to="link.link" exact>
             <q-item-section avatar>
               <q-icon :name="link.icon" />
             </q-item-section>
@@ -140,12 +140,16 @@
       <router-view />
       <q-page-sticky v-if="$q.screen.gt.sm" expand position="left">
         <div class="fit q-pt-xl q-px-sm column">
-          <q-btn v-for="link in links1" :key="link.text" round flat color="grey-8"
-                 stack no-caps size="26px" class="GPL__side-btn"  :to="link.link">
-            <q-icon size="22px" :name="link.icon" />
-            <div class="GPL__side-btn__label">{{ link.text }}</div>
-          </q-btn>
+          <router-link v-for="link in links1" :key="link.text" :to="link.link">
+            <template v-slot="props">
+              <q-btn round flat stack no-caps size="26px" class="GPL__side-btn"  v-bind="buttonProps(props)">
+                <q-icon size="22px" :name="link.icon" />
+                <div class="GPL__side-btn__label">{{ link.text }}</div>
+              </q-btn>
+            </template>
+          </router-link>
         </div>
+
       </q-page-sticky>
     </q-page-container>
   </q-layout>
@@ -173,10 +177,11 @@ export default {
       search: '',
       storage: 0.26,
       links1: [
-        { icon: 'assignment_ind', text:'Profile', link: '/' },
-        { icon: 'far fa-newspaper', text:'My Feed' },
-        { icon: 'photo', text: 'Photos' },
-        { icon: 'people', text: 'Contacts' }
+        { icon: 'assignment_ind', text:'Profile', link: {'name': 'home'} },
+        { icon: 'far fa-newspaper', text:'Notes', link: {'name': 'notes'} },
+        // { icon: 'far fa-newspaper', text:'My Feed' },
+        // { icon: 'photo', text: 'Photos' },
+        // { icon: 'people', text: 'Contacts' }
       ],
       links2: [
         { icon: 'archive', text: 'Archive' },
@@ -196,6 +201,35 @@ export default {
         { icon: 'book', text: 'Photo book' }
       ]
     }
+  },
+  methods: {
+    buttonProps ({ href, route, isActive, isExactActive }) {
+      const props = {
+        color: 'black',
+        noCaps: true,
+        outline: true,
+        to: route
+      }
+
+      if (isExactActive === true) {
+        props.color = 'primary'
+      }
+      else {
+        props.color = 'grey-8'
+      }
+
+      return props
+    },
+
+    linkClick (e, go) {
+      e.navigate = false // we choose when we navigate
+
+      // console.log('triggering navigation in 3s')
+      setTimeout(() => {
+        // console.log('navigating as promised 3s ago')
+        go()
+      }, 3000)
+    },
   }
 }
 </script>
@@ -222,13 +256,13 @@ export default {
     .q-item__section--avatar {
       padding-left: 12px;
 
-      .q-icon {
-        color: #5f6368;
-      }
+      // .q-icon {
+      //   color: #5f6368;
+      // }
     }
 
     .q-item__label:not(.q-item__label--caption) {
-      color: #3c4043;
+      // color: #3c4043;
       letter-spacing: .01785714em;
       font-size: .875rem;
       font-weight: 500;

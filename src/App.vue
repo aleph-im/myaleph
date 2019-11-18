@@ -12,7 +12,7 @@ export default {
 
 <style lang="scss">
 
-body {
-  background: url('assets/bg.svg') no-repeat center -100px;
-}
+// body {
+//   background: url('assets/bg.svg') no-repeat center -100px;
+// }
 </style>

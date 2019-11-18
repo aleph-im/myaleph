@@ -13,6 +13,11 @@ const routes = [
         name: 'login',
         path: 'login',
         component: () => import('pages/Login.vue')
+      },
+      {
+        name: 'notes',
+        path: 'notes',
+        component: () => import('pages/Notes.vue')
       }
     ]
   }
