@@ -138,7 +138,7 @@
 
     <q-page-container  class="GPL__page-container">
       <router-view />
-      <q-page-sticky v-if="$q.screen.gt.sm" expand position="left">
+      <q-page-sticky v-if="$q.screen.gt.md" expand position="left">
         <div class="fit q-pt-xl q-px-sm column">
           <router-link v-for="link in links1" :key="link.text" :to="link.link">
             <template v-slot="props">
@@ -286,7 +286,7 @@ export default {
     }
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: $breakpoint-lg-min) {
     &__page-container {
       padding-left: 94px;
     }
