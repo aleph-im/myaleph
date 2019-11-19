@@ -14,7 +14,10 @@
         <q-toolbar-title v-if="$q.screen.gt.sm" shrink class="row items-center no-wrap"
                          @click="$router.push({name:'home'})">
           <img src="https://aleph.im/assets/img/logo.c052fb15.svg">
-          <span class="q-ml-sm text-mono text-bold">my</span>
+          <span class="q-ml-sm text-mono text-bold">
+            my
+            <q-badge color="primary" outline transparent align="middle">tech preview</q-badge>
+          </span>
         </q-toolbar-title>
 
         <q-space />
@@ -58,14 +61,14 @@
             <q-menu anchor="top right" self="top right">
               <q-list class="text-grey-8" style="min-width: 100px">
                 <q-item aria-hidden="true">
-                  <q-item-section class="text-uppercase text-grey-7" style="font-size: 0.7rem">{{$t('account.actions')}}</q-item-section>
+                  <q-item-section class="text-uppercase text-grey-7" style="font-size: 0.7rem">{{$t('resource.actions')}}</q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup aria-hidden="true"
                         @click="$store.dispatch('logout')">
                   <q-item-section avatar>
                     <q-icon name="logout" />
                   </q-item-section>
-                  <q-item-section>{{$t('account.logout')}}</q-item-section>
+                  <q-item-section>{{$t('actions.logout')}}</q-item-section>
                 </q-item>
               </q-list>
             </q-menu>
@@ -89,7 +92,7 @@
         </q-toolbar>
 
         <q-list padding>
-          <q-item v-for="link in links1" :key="link.text" clickable class="GPL__drawer-item" :to="link.link" exact>
+          <q-item v-for="link in links1" :key="link.text" clickable class="GPL__drawer-item" :to="link.link" :exact="link.exact">
             <q-item-section avatar>
               <q-icon :name="link.icon" />
             </q-item-section>
@@ -177,8 +180,8 @@ export default {
       search: '',
       storage: 0,
       links1: [
-        { icon: 'assignment_ind', text:'Profile', link: {'name': 'profile'} },
-        { icon: 'note', text:'Notes', link: {'name': 'notes'} },
+        { icon: 'assignment_ind', text:'Profile', link: {'name': 'profile'}, exact: true },
+        { icon: 'note', text:'Notes', link: {'name': 'notes'}, exact: false },
         // { icon: 'far fa-newspaper', text:'My Feed' },
         // { icon: 'photo', text: 'Photos' },
         // { icon: 'people', text: 'Contacts' }
@@ -212,7 +215,7 @@ export default {
         to: route
       }
 
-      if (isExactActive === true) {
+      if (isActive === true) {
         props.color = 'primary'
       }
       else {
@@ -287,7 +290,7 @@ export default {
   }
 
   @media (min-width: $breakpoint-lg-min) {
-    &__page-container {
+    &__page-container>main {
       padding-left: 94px;
     }
   }
