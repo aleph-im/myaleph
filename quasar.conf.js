@@ -9,8 +9,8 @@ module.exports = function (ctx) {
     boot: [
       'i18n',
       'axios',
-      'bootstrap',
-      'profile'
+      // 'bootstrap',
+      'moment',
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css

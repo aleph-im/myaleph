@@ -19,10 +19,11 @@
     "bip39": "^3.0.2",
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.1.0",
-    "quasar": "^1.0.0",
+    "quasar": "^1.4.4",
     "secp256k1": "^3.7.1",
     "vue-i18n": "^8.0.0",
-    "vue-markdown": "^2.2.4"
+    "vue-markdown": "^2.2.4",
+    "vue-moment": "^4.0.0"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0",
