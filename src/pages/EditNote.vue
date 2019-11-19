@@ -20,6 +20,13 @@
         </q-popup-edit>
       </h4>
       <span>
+        {{is_private?'encrypted':'public'}}
+        <q-toggle
+          v-model="is_private"
+          checked-icon="lock"
+          color="green"
+          unchecked-icon="lock_open"
+        />
         <q-btn push color="primary" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
       </span>
     </div>
@@ -59,7 +66,7 @@ export default {
       body: '',
       processing: false,
       tags: [],
-      private: true
+      is_private: true
     }
   },
   props: [
@@ -78,8 +85,8 @@ export default {
     async setState() {
       if (this.hash) {
         this.banner_hash = this.post.content.banner
-        this.private = this.post.content.private
-        if (this.private) {
+        this.is_private = this.post.content.private
+        if (this.is_private) {
           this.title = encryption.decrypt(this.account, this.post.content.title)
           this.body = encryption.decrypt(this.account, this.post.content.body)
         } else {
@@ -107,7 +114,7 @@ export default {
       let msg = null
       let body = this.body
       let title = this.title
-      if (this.private) {
+      if (this.is_private) {
         body = encryption.encrypt_for_self(this.account, body)
         title = encryption.encrypt_for_self(this.account, title)
       }
@@ -117,7 +124,7 @@ export default {
           {
             body: body,
             title: title,
-            private: this.private
+            private: this.is_private
             // tags: this.tags.map(t => t.text)
           },
           {ref: this.hash,
@@ -130,7 +137,7 @@ export default {
           {
             body: body,
             title: title,
-            private: this.private
+            private: this.is_private
             // tags: this.tags.map(t => t.text)
           },
           {channel: this.channel,
@@ -149,9 +156,9 @@ export default {
     }
   },
   watch: {
-    async $route(to, from) {
-      await this.refresh()
-    },
+    // async $route(to, from) {
+    //   await this.refresh()
+    // },
     async hash() {
       await this.refresh()
     }
