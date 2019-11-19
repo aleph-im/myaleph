@@ -54,8 +54,9 @@
                  push color="primary" label="Login"
                  :to="{name: 'login'}" />
           <q-btn round flat v-else>
-            <q-avatar size="26px">
-              {{account.address}}
+            <q-avatar size="26px" color="secondary" text-color="white" class="profile-avatar">
+              <q-icon v-if="!profile | !profile.avatar" name="assignment_ind" />
+              <img v-if="profile.avatar" :src="profile.avatar" />
             </q-avatar>
             <q-tooltip>Account</q-tooltip>
             <q-menu anchor="top right" self="top right">
@@ -170,8 +171,15 @@ export default {
       account: state => state.account,
       api_server: state => state.api_server,
       network_id: state => state.network_id,
-      menu: state => state.menu
-    })
+      menu: state => state.menu,
+      profiles: state => state.profiles
+    }),
+    profile() {
+      if (this.profiles[this.account.address] != undefined){
+        return this.profiles[this.account.address]
+      }
+      return {}
+    }
   },
 
   data () {
