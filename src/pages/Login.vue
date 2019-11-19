@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page class="q-pa-md" style="background-image: linear-gradient(to top, #9795f0 0%, #fbc8d4 100%);">
     <q-card class="my-card">
       <q-card-section>
         <div class="text-h6">{{$t('create.heading')}}</div>
