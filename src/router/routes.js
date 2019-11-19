@@ -10,6 +10,17 @@ const routes = [
         component: () => import('pages/Index.vue') 
       },
       {
+        name: 'profile',
+        path: '/p/mine',
+        component: () => import('pages/Profile.vue') 
+      },
+      {
+        name: 'profile',
+        path: '/p/:address',
+        component: () => import('pages/Profile.vue'),
+        props: true
+      },
+      {
         name: 'login',
         path: 'login',
         component: () => import('pages/Login.vue')

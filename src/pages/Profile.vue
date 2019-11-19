@@ -16,6 +16,11 @@ import SubmitContent from '../components/SubmitContent.vue'
 export default {
   name: 'PageIndex',
   computed: {
+      profile() {
+          let address = this.address
+          if (!address)
+            address = this.account.address
+      },
       ... mapState([
         // map this.count to store.state.count
         'account',
@@ -24,6 +29,7 @@ export default {
         'channel'
       ])
   },
+  props: ['address'],
   methods: {
     async blah() {
       console.log("blah")
@@ -37,10 +43,9 @@ export default {
     }
   },
   mounted() {
-    if (this.account) {
-      this.$router.push({'name': 'profile'})
-    } else
-      this.$router.push({'name': 'login'})
+      if ((!this.address)&&(!this.account)) {
+        this.$router.push({'name': 'login'})
+      }
   },
   components: {SubmitContent}
 }
