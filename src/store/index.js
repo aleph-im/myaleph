@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { LocalStorage, SessionStorage } from 'quasar'
+import { posts, aggregates, encryption } from 'aleph-js'
 
 // import example from './module-example'
 
@@ -26,6 +27,7 @@ export default function (/* { ssrContext } */) {
       ],
       pages: {},
       menu: [],
+      notes: [],
       channel: "MYALEPH"
     },
     mutations: {
@@ -34,6 +36,19 @@ export default function (/* { ssrContext } */) {
       },
       set_pages(state, pages) { // TODO: handle per-page mutation
         state.pages = pages
+      },
+      set_notes(state, notes) { // TODO: handle per-page mutation
+        state.notes = notes
+      },
+      update_note(state, new_note) {
+        for (let note of state.notes) {
+          if (note.hash === new_note.hash) {
+            Object.assign(note, new_note)
+          }
+        }
+      },
+      add_note(state, new_note) {
+        state.notes.unshift(new_note)
       },
       set_menu(state, menu_items) { // TODO: handle per-page mutation
         state.menu = menu_items
@@ -49,7 +64,8 @@ export default function (/* { ssrContext } */) {
         state.address_alias = {}
         state.alias_address = {}
         state.last_broadcast = null
-      }
+      },
+
     },
     actions: {
       async store_account({ state, commit }, account) {
@@ -67,6 +83,28 @@ export default function (/* { ssrContext } */) {
           console.warn("Can't store account")
         }
         await commit('set_account', null)
+      },
+      async update_notes({ state, commit }) {
+        let result = await posts.get_posts('note', {
+          pagination: 1000,
+          addresses: [state.account.address],
+          api_server: state.api_server
+        })
+        let post_list = []
+        for (let post of result.posts) {
+          try {
+            if (post.content.private) {
+              post.content.encrypted_title = post.content.title
+              post.content.title = encryption.decrypt(state.account, post.content.title)
+              post.content.encrypted_body = post.content.body
+              post.content.body = encryption.decrypt(state.account, post.content.body)
+            }
+          } catch (e) {
+            console.error("Can't decrypt...", e)
+          }
+          post_list.push(post)
+        }
+        commit('set_notes', post_list)
       }
       // async update_pages({ state, commit }) {
       //   let pages = await fetch_one(

@@ -77,7 +77,10 @@ export default {
   },
   methods: {
     async getPost() {
-      let response = await posts.get_posts(['note'], {hashes: [this.hash]})
+      let response = await posts.get_posts(['note'], {
+        hashes: [this.hash],
+        api_server: this.api_server
+      })
 
       // let response = await axios.get(`${this.api_server}/api/v0/posts.json?hashes=${this.hash}`)
       this.post = response.posts[0]
@@ -118,28 +121,22 @@ export default {
         body = encryption.encrypt_for_self(this.account, body)
         title = encryption.encrypt_for_self(this.account, title)
       }
+      let post_content = {
+        body: body,
+        title: title,
+        private: this.is_private
+        // tags: this.tags.map(t => t.text)
+      }
       if (this.hash)
         msg = await posts.submit(
-          this.account.address, 'amend',
-          {
-            body: body,
-            title: title,
-            private: this.is_private
-            // tags: this.tags.map(t => t.text)
-          },
+          this.account.address, 'amend', post_content,
           {ref: this.hash,
            channel: this.channel,
            api_server: this.api_server,
            account: this.account})
       else
         msg = await posts.submit(
-          this.account.address, 'note',
-          {
-            body: body,
-            title: title,
-            private: this.is_private
-            // tags: this.tags.map(t => t.text)
-          },
+          this.account.address, 'note', post_content,
           {channel: this.channel,
            api_server: this.api_server,
            account: this.account})
@@ -151,8 +148,21 @@ export default {
       await sleep(100)
       this.processing = false
 
-      if (!this.hash)
+      msg.content = {
+        body: this.body,
+        title: this.title,
+        private: this.is_private
+      }
+
+      if (this.hash) {
+        msg.hash = this.hash
+        this.$store.commit('update_note', msg)
+      }
+      else {
+        msg.hash = msg.item_hash
+        this.$store.commit('add_note', msg)
         this.$router.push({ name: "edit-note", params: {hash: msg.item_hash} })
+      }
     }
   },
   watch: {

@@ -8,7 +8,7 @@
           <q-scroll-area style="height: calc(100vh - 4.5rem)">
             <q-list padding>
               <q-item-label header>Notes</q-item-label>
-              <template v-for="item in posts">
+              <template v-for="item in notes">
                 <q-item :to="{'name': 'edit-note', params:{'hash': item.hash}}" :key="item.hash+'it'" clickable>
                   <q-item-section>
                     <q-item-label>{{item.content.title}}</q-item-label>
@@ -27,13 +27,6 @@
 
                 <q-separator spaced inset :key="item.hash+'sep'" />
               </template>
-              <q-item-label header>Actions</q-item-label>
-              <q-item clickable v-ripple :to="{'name': 'new-note'}">
-                <q-item-section avatar>
-                  <q-icon color="primary" name="note_add" />
-                </q-item-section>
-                <q-item-section>Create new Note</q-item-section>
-              </q-item>
 
             </q-list>
           </q-scroll-area>
@@ -67,7 +60,8 @@ export default {
       'account',
       'network_id',
       'api_server',
-      'channel'
+      'channel',
+      'notes'
     ])
   },
   data() {
@@ -78,18 +72,7 @@ export default {
   },
   methods: {
     async getNotes() {
-      let result = await posts.get_posts('note', {addresses: [this.account.address]})
-      let post_list = []
-      for (let post of result.posts) {
-        if (post.content.private) {
-          post.content.encrypted_title = post.content.title
-          post.content.title = encryption.decrypt(this.account, post.content.title)
-          post.content.encrypted_body = post.content.body
-          post.content.body = encryption.decrypt(this.account, post.content.body)
-        }
-        post_list.push(post)
-      }
-      this.posts = post_list
+      await this.$store.dispatch('update_notes')
     },
     async refresh() {
       await this.getNotes()
