@@ -24,10 +24,13 @@ const en = {
   resource: {
     keystore_file: "Keystore File",
     encrypted_private_key: "Encrypted Private Key",
+    mnemonics_words: "Mnemonic words",
     private_key: "Private Key",
     public_key: "Public Key",
     address: "Address",
     passphrase: "Passphrase",
+
+    actions: "Actions",
 
     amount: "Amount",
     validation_min_amount: "Please enter an amount above {min}.",
@@ -104,6 +107,7 @@ const en = {
     `,
     heading: "Add new account",
     create: "Create new account",
+    import_mnemonics: "Import mnemonics",
     import_privkey: "Import private key",
     import_encrypted_privkey: "Import encrypted key",
     import_keystore: "Import keystore",
