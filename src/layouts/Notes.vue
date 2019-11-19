@@ -1,38 +1,54 @@
 <template>
-  <q-page padding>
+  <q-page>
     <div v-if="account">
-      <div class="fit row">
-        <div class="col-shrink">
-          <q-list padding>
-            <q-item-label header>Notes</q-item-label>
-            <template v-for="item in notes">
-              <q-item to="{'name': 'edit-note', 'hash': item.hash}" :key="item.hash+'it'" clickable>
-                <q-item-section>
-                  <q-item-label>{{item.content.title}}</q-item-label>
-                  <q-item-label caption lines="2">{{item.content.body}}</q-item-label>
-                </q-item-section>
+      <q-splitter v-model="splitter">
+      <!-- <div class="fit row"> -->
+        <!-- <div class="col-2 gt-sm"> -->
+        <template v-slot:before>
+          <q-scroll-area style="height: calc(100vh - 4.5rem)">
+            <q-list padding>
+              <q-item-label header>Notes</q-item-label>
+              <template v-for="item in posts">
+                <q-item :to="{'name': 'edit-note', params:{'hash': item.hash}}" :key="item.hash+'it'" clickable>
+                  <q-item-section>
+                    <q-item-label>{{item.content.title}}</q-item-label>
+                    <q-item-label overline>
+                      {{item.time * 1000 | moment("from")}}
+                      <q-tooltip>{{item.time * 1000 | moment("LLL")}}</q-tooltip>
+                    </q-item-label>
+                    <q-item-label caption lines="3">{{item.content.body}}</q-item-label>
+                  </q-item-section>
 
-                <q-item-section side top>
-                  <q-item-label caption>{{item.time}}</q-item-label>
+                  <q-item-section side top>
+                    <q-icon v-if="item.content.private" name="lock" size="xs" color="positive" />
+                    <q-icon v-else name="lock_open" size="xs" />
+                  </q-item-section>
+                </q-item>
+
+                <q-separator spaced inset :key="item.hash+'sep'" />
+              </template>
+              <q-item-label header>Actions</q-item-label>
+              <q-item clickable v-ripple :to="{'name': 'new-note'}">
+                <q-item-section avatar>
+                  <q-icon color="primary" name="note_add" />
                 </q-item-section>
+                <q-item-section>Create new Note</q-item-section>
               </q-item>
 
-              <q-separator spaced inset :key="item.hash+'sep'" />
-            </template>
-            <q-item-label header>Actions</q-item-label>
-            <q-item clickable v-ripple>
-              <q-item-section avatar>
-                <q-icon color="primary" name="note_add" />
-              </q-item-section>
-              <q-item-section>Create new Note</q-item-section>
-            </q-item>
-
-          </q-list>
-        </div>
-        <div class="col-grow">
+            </q-list>
+          </q-scroll-area>
+          <q-btn round push size="md" color="primary" class="fixed" icon="note_add"
+          :style="'margin-top:-4rem; margin-left: calc('+splitter+'vw - ' + ($q.screen.gt.md ? 6 : 4) + 'rem)'"
+          :to="{'name': 'new-note'}"/>
+        <!-- </div> -->
+        </template>
+        <template v-slot:after>
+        <!-- <div class="col-grow"> -->
           <router-view />
-        </div>
-      </div>
+        <!-- </div> -->
+        </template>
+      <!-- </div> -->
+      </q-splitter>
     </div>
     <div v-else>
       Please log in.
@@ -42,7 +58,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { aggregates, posts } from 'aleph-js'
+import { aggregates, posts, encryption } from 'aleph-js'
 export default {
   name: 'NotesLayout',
   computed: {
@@ -56,22 +72,27 @@ export default {
   },
   data() {
     return {
-      notes: {}
+      posts: [],
+      splitter: 20
     }
   },
   methods: {
-    async blah() {
-      console.log("blah")
-      await posts.submit(this.account.address, "test", {
-        'blah': 'bluh'
-      }, {
-        api_server: this.api_server,
-        account: this.account,
-        channel: this.channel
-      })
+    async getNotes() {
+      let result = await posts.get_posts('note', {addresses: [this.account.address]})
+      let post_list = []
+      for (let post of result.posts) {
+        if (post.content.private) {
+          post.content.encrypted_title = post.content.title
+          post.content.title = encryption.decrypt(this.account, post.content.title)
+          post.content.encrypted_body = post.content.body
+          post.content.body = encryption.decrypt(this.account, post.content.body)
+        }
+        post_list.push(post)
+      }
+      this.posts = post_list
     },
     async refresh() {
-
+      await this.getNotes()
     }
   },
   watch: {
