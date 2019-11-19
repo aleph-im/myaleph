@@ -31,7 +31,7 @@
       </span>
     </div>
     <div class="col-grow">
-      <editor v-model="body" height="100%" mode="wysiwyg" />
+      <editor v-model="body" height="calc(100vh - 13.5rem)" mode="wysiwyg" />
     </div>
     <div class="col-auto row justify-end q-my-sm">
       <q-btn push color="primary" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
