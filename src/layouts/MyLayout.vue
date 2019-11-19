@@ -61,7 +61,7 @@
                   <q-item-section class="text-uppercase text-grey-7" style="font-size: 0.7rem">{{$t('account.actions')}}</q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup aria-hidden="true"
-                        @click="$store.commit('logout')">
+                        @click="$store.dispatch('logout')">
                   <q-item-section avatar>
                     <q-icon name="logout" />
                   </q-item-section>

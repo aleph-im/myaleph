@@ -379,8 +379,8 @@ export default {
         await this.generate()
     },
     async add () {
-      this.$store.commit(
-        'set_account',
+      this.$store.dispatch(
+        'store_account',
         await nuls2.import_account({
           'private_key': this.private_key,
           'mnemonics': this.mnemonics

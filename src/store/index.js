@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { LocalStorage, SessionStorage } from 'quasar'
 
 // import example from './module-example'
 
@@ -28,9 +29,6 @@ export default function (/* { ssrContext } */) {
       channel: "MYALEPH"
     },
     mutations: {
-      logout(state) {
-        state.account = null
-      },
       set_account(state, account) {
         state.account = account
       },
@@ -54,6 +52,22 @@ export default function (/* { ssrContext } */) {
       }
     },
     actions: {
+      async store_account({ state, commit }, account) {
+        try {
+          LocalStorage.set('account', account)
+        } catch (e) {
+          console.warn("Can't store account")
+        }
+        await commit('set_account', account)
+      },
+      async logout({ state, commit }) {
+        try {
+          LocalStorage.set('account', null)
+        } catch (e) {
+          console.warn("Can't store account")
+        }
+        await commit('set_account', null)
+      }
       // async update_pages({ state, commit }) {
       //   let pages = await fetch_one(
       //     state.site_address, 'pages', {
