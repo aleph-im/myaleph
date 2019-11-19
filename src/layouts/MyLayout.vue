@@ -42,7 +42,7 @@
           </q-menu>
         </q-btn>
 
-        <q-btn v-if="$q.screen.gt.xs && account" flat dense no-wrap color="primary" icon="cloud_upload" no-caps label="Upload" class="q-ml-sm q-px-md" />
+        <q-btn v-if="$q.screen.gt.xs && account" flat dense no-wrap color="grey" disabled icon="cloud_upload" no-caps label="Upload" class="q-ml-sm q-px-md" />
 
         <q-space />
 
@@ -98,7 +98,7 @@
             </q-item-section>
           </q-item>
 
-          <q-separator class="q-my-md" />
+          <q-separator class="q-my-md" v-if="links2.length" />
 
           <q-item v-for="link in links2" :key="link.text" clickable class="GPL__drawer-item">
             <q-item-section avatar>
@@ -109,7 +109,7 @@
             </q-item-section>
           </q-item>
 
-          <q-separator class="q-my-md" />
+          <q-separator class="q-my-md" v-if="links3.length" />
 
           <q-item v-for="link in links3" :key="link.text" clickable class="GPL__drawer-item">
             <q-item-section avatar>
@@ -129,7 +129,7 @@
             <q-item-section top>
               <q-item-label>Storage</q-item-label>
               <q-linear-progress :value="storage" class="q-my-sm" />
-              <q-item-label caption>2.6 GB of 15 GB</q-item-label>
+              <q-item-label caption>? GB of ? GB</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -175,22 +175,22 @@ export default {
     return {
       leftDrawerOpen: false,
       search: '',
-      storage: 0.26,
+      storage: 0,
       links1: [
-        { icon: 'assignment_ind', text:'Profile', link: {'name': 'home'} },
+        { icon: 'assignment_ind', text:'Profile', link: {'name': 'profile'} },
         { icon: 'note', text:'Notes', link: {'name': 'notes'} },
         // { icon: 'far fa-newspaper', text:'My Feed' },
         // { icon: 'photo', text: 'Photos' },
         // { icon: 'people', text: 'Contacts' }
       ],
       links2: [
-        { icon: 'archive', text: 'Archive' },
-        { icon: 'delete', text: 'Trash' }
+        // { icon: 'archive', text: 'Archive' },
+        // { icon: 'delete', text: 'Trash' }
       ],
       links3: [
-        { icon: 'settings', text: 'Settings' },
-        { icon: 'help', text: 'Help & Feedback' },
-        { icon: 'get_app', text: 'App Downloads' }
+        // { icon: 'settings', text: 'Settings' },
+        // { icon: 'help', text: 'Help & Feedback' },
+        // { icon: 'get_app', text: 'App Downloads' }
       ],
       createMenu: [
         { icon: 'note_add', text: 'Note', link: {name: 'new-note'} },
