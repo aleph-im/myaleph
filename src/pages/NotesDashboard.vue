@@ -1,6 +1,11 @@
 <template>
   <q-page padding>
-    blah
+    <p v-if="notes.length">
+      You have written {{notes.length}} notes so far, good job!
+    </p>
+    <p v-else>
+      No note here yet... Why not <router-link :to="{'name': 'new-note'}">write one</router-link>?
+    </p>
   </q-page>
 </template>
 
@@ -15,25 +20,15 @@ export default {
       'account',
       'network_id',
       'api_server',
-      'channel'
+      'channel',
+      'notes'
     ])
   },
   data() {
     return {
-      notes: {}
     }
   },
   methods: {
-    async blah() {
-      console.log("blah")
-      await posts.submit(this.account.address, "test", {
-        'blah': 'bluh'
-      }, {
-        api_server: this.api_server,
-        account: this.account,
-        channel: this.channel
-      })
-    },
     async refresh() {
 
     }

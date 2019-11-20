@@ -23,6 +23,9 @@
       <div v-else>
         <div v-if="is_home">
           <notes-list :notes="notes" />
+          <p v-if="!notes.length" class="q-px-md">
+            No note here yet... Why not <router-link :to="{'name': 'new-note'}">write one</router-link>?
+          </p>
           <q-btn round push size="md" color="primary" class="fixed-bottom-right q-ma-md" icon="note_add"
           :to="{'name': 'new-note'}"/>
         </div>
