@@ -63,10 +63,10 @@
     </q-card>
     <div v-if="tab=='stats'">
       <div class="row">
-        <div class="col-grow col-md-8">
-      Nothing to see here, yet.
+        <div class="col-12 col-sm-6 col-md-8">
+        Nothing to see here, yet.
         </div>
-        <div class="col col-md-4">
+        <div class="col-12 col-sm-6 col-md-4">
           <q-card>
             <q-list>
               <q-item-label header>Address</q-item-label>
