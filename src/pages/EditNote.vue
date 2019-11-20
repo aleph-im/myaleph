@@ -27,14 +27,14 @@
           color="green"
           unchecked-icon="lock_open"
         />
-        <q-btn push color="primary" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
+        <q-btn push color="primary" :loading="saving" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
       </span>
     </div>
     <div class="col-grow">
       <editor v-model="body" height="calc(100vh - 13.5rem)" mode="wysiwyg" />
     </div>
     <div class="col-auto row justify-end q-my-sm">
-      <q-btn push color="primary" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
+      <q-btn push color="primary" :loading="saving" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
     </div>
   </q-page>
 </template>
@@ -66,7 +66,8 @@ export default {
       body: '',
       processing: false,
       tags: [],
-      is_private: true
+      is_private: true,
+      saving: false
     }
   },
   props: [
@@ -114,6 +115,7 @@ export default {
       await this.setState()
     },
     async submit() {
+      this.saving = true
       let msg = null
       let body = this.body
       let title = this.title
@@ -154,6 +156,11 @@ export default {
         private: this.is_private
       }
 
+      this.saving = false
+      this.$q.notify({
+        message: 'Note saved',
+        color: "positive"
+      })
       if (this.hash) {
         msg.hash = this.hash
         this.$store.commit('update_note', msg)

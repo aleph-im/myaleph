@@ -163,6 +163,11 @@ export default {
           channel: this.channel
         })
         await this.refresh()
+        if (this.name == value)
+          this.$q.notify({
+            message: 'Name saved',
+            color: "positive"
+          })
       }
     },
     async save_bio(value, initial_value) {
@@ -176,6 +181,11 @@ export default {
           channel: this.channel
         })
         await this.refresh()
+        if (this.bio == value)
+          this.$q.notify({
+            message: 'Bio saved',
+            color: "positive"
+          })
       }
     },
     async refresh() {
