@@ -1,5 +1,5 @@
 <template>
-  <q-page padding style="background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+  <q-page padding class="profile-page">
     <q-card class="profile-card q-ma-xl q-ml-1">
       <q-card-section class="bg-primary text-white profile-title">
         <q-avatar size="8rem" color="secondary" text-color="white" class="profile-avatar shadow-6">
@@ -39,7 +39,7 @@
             >
               <q-input
                 v-model="bio"
-                hint="Your profile name"
+                hint="Your bio"
                 dense
                 autofocus
               />
@@ -60,12 +60,12 @@
         </q-tabs>
 
         <q-separator />
-        <q-tab-panels v-model="tab" animated>
-          <q-tab-panel name="stats">
-            Nothing to see here, yet.
-          </q-tab-panel>
-        </q-tab-panels>
     </q-card>
+    <q-tab-panels v-model="tab" animated>
+      <q-tab-panel name="stats">
+        Nothing to see here, yet.
+      </q-tab-panel>
+    </q-tab-panels>
   </q-page>
 </template>
 
@@ -138,7 +138,7 @@ export default {
       await this.$fetch_profile(this.profile_address)
 
       let profile = this.profiles[this.profile_address]
-      if (profile === undefined)
+      if ((profile === undefined)||(profile===null))
         profile = {}
       this.profile = profile
 
@@ -168,20 +168,36 @@ export default {
 </script>
 
 <style lang="scss">
-.q-card.profile-card {
-  max-width: 70rem;
-  margin: 4rem auto 4rem auto;
+.profile-page {
+  background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  &>* {
+    max-width: 70rem;
+    margin-left: auto;
+    margin-right: auto;
 
-  .profile-title {
-    padding-left: 6rem;
-  }
-  .profile-avatar {
-    position: absolute;
-    margin: -4rem 5rem 5rem -10rem;
-  }
+    @media (min-width: 1024px) and (max-width: 1300px) {
+      margin-left: 6rem;
+    }
 
-  @media (max-width: 1300px) {
-    margin-left: 6rem;
+    @media (max-width: 1024px) {
+      margin-left: auto;
+    }
+  }
+  
+  .q-card.profile-card {
+    margin: 4rem auto 2rem auto;
+
+    .profile-title {
+      padding-left: 6rem;
+    }
+    .profile-avatar {
+      position: absolute;
+      margin: -4rem 5rem 5rem -10rem;
+    }
+
+    @media (max-width: 1300px) {
+      margin-left: 6rem;
+    }
   }
 }
 </style>
