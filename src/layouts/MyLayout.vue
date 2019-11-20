@@ -1,5 +1,32 @@
 <template>
   <q-layout view="lHh Lpr fff">
+    <q-dialog v-model="show_backup">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Backup</div>
+        </q-card-section>
+        <q-card-section>
+          <q-field :label="$t('resource.address')" stack-label>
+            <template v-slot:control>
+              <div class="self-center full-width no-outline" tabindex="0">{{account.address}}</div>
+            </template>
+          </q-field>
+          <q-field :label="$t('resource.mnemonics_words')" stack-label v-if="account.mnemonics">
+            <template v-slot:control>
+              <div class="self-center full-width no-outline" tabindex="0">{{account.mnemonics}}</div>
+            </template>
+          </q-field>
+          <q-field :label="$t('resource.private_key')" stack-label>
+            <template v-slot:control>
+              <div class="self-center full-width no-outline" tabindex="0">{{account.private_key}}</div>
+            </template>
+          </q-field>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-header class="bg-white text-grey-8 shadow-top" height-hint="64">
       <q-toolbar class="GPL__toolbar" style="height: 64px">
         <q-btn
@@ -63,6 +90,13 @@
               <q-list class="text-grey-8" style="min-width: 100px">
                 <q-item aria-hidden="true">
                   <q-item-section class="text-uppercase text-grey-7" style="font-size: 0.7rem">{{$t('resource.actions')}}</q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup aria-hidden="true"
+                        @click="show_backup = true">
+                  <q-item-section avatar>
+                    <q-icon name="visibility" />
+                  </q-item-section>
+                  <q-item-section>{{$t('actions.backup')}}</q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup aria-hidden="true"
                         @click="$store.dispatch('logout')">
@@ -193,6 +227,7 @@ export default {
       leftDrawerOpen: false,
       search: '',
       storage: 0,
+      show_backup: false,
       links1: [
         { icon: 'assignment_ind', text:'Profile', link: {'name': 'profile'}, exact: true },
         { icon: 'note', text:'Notes', link: {'name': 'notes'}, exact: false },
