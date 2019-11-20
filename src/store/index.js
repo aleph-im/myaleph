@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { LocalStorage, SessionStorage } from 'quasar'
 import { posts, aggregates, encryption } from 'aleph-js'
+import {
+  get_nuls_balance_info, get_ethereum_balance_info } from '../services/balances'
 
 // import example from './module-example'
 
@@ -28,6 +30,8 @@ export default function (/* { ssrContext } */) {
       pages: {},
       menu: [],
       notes: [],
+      mb_per_aleph: 0.25,
+      balance_info: null,
       channel: "MYALEPH"
     },
     mutations: {
@@ -65,7 +69,9 @@ export default function (/* { ssrContext } */) {
         state.alias_address = {}
         state.last_broadcast = null
       },
-
+      set_balance_info(state, balance_info) {
+        state.balance_info = balance_info
+      }
     },
     actions: {
       async store_account({ state, commit }, account) {
@@ -105,6 +111,19 @@ export default function (/* { ssrContext } */) {
           post_list.push(post)
         }
         commit('set_notes', post_list)
+      },
+      async update_balance({ state, commit }) {
+        if (state.account !== null) {
+          if (state.account.type === 'NULS2') {
+            commit('set_balance_info', await get_nuls_balance_info(
+              state.account.address, 'https://nuls.world'
+            ))
+          } else if (state.account.type === 'ETH') {
+            commit('set_balance_info', await get_ethereum_balance_info(
+              state.account.address, 'https://api.ethplorer.io'
+            ))
+          }
+        }
       }
       // async update_pages({ state, commit }) {
       //   let pages = await fetch_one(
