@@ -69,6 +69,13 @@
         <div class="col col-md-4">
           <q-card>
             <q-list>
+              <q-item-label header>Address</q-item-label>
+              <q-item>
+                <q-item-section top>
+                  <q-item-label>{{account.address}}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-separator />
               <q-item-label header>Balances</q-item-label>
               <q-item v-for="holding of Object.entries(balance_info)" :key="holding[0]">
                 <q-item-section top>
