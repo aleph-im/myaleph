@@ -61,11 +61,40 @@
 
         <q-separator />
     </q-card>
-    <q-tab-panels v-model="tab" animated>
-      <q-tab-panel name="stats">
-        Nothing to see here, yet.
-      </q-tab-panel>
-    </q-tab-panels>
+    <div v-if="tab=='stats'">
+      <div class="row">
+        <div class="col-grow col-md-8">
+      Nothing to see here, yet.
+        </div>
+        <div class="col col-md-4">
+          <q-card>
+            <q-list>
+              <q-item-label header>Balances</q-item-label>
+              <q-item v-for="holding of Object.entries(balance_info)" :key="holding[0]">
+                <q-item-section top>
+                  <q-item-label>{{holding[0]}}</q-item-label>
+                </q-item-section>
+                <q-item-section side top>
+                  {{holding[1].toFixed(2)}}
+                </q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item-label header>Status</q-item-label>
+              <q-item class="GPL__drawer-item GPL__drawer-item--storage">
+                <q-item-section avatar>
+                  <q-icon name="cloud" />
+                </q-item-section>
+                <q-item-section top>
+                  <q-item-label>Storage</q-item-label>
+                  <q-linear-progress :value="0" class="q-my-sm" />
+                  <q-item-label caption>0 GB of {{(allowance/1000).toFixed(3)}} GB</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card>
+        </div>
+      </div>
+    </div>
   </q-page>
 </template>
 
@@ -90,6 +119,12 @@ export default {
         address = this.account.address
       return address
     },
+    allowance: function(state) {
+      if ((this.balance_info !== null)&&(this.balance_info.ALEPH != undefined)) {
+        return this.balance_info.ALEPH * this.mb_per_aleph
+      }
+      return 0
+    },
     // profile() {
     //   let profile = this.profiles[this.profile_address]
     //   if (profile === undefined)
@@ -103,7 +138,9 @@ export default {
       'network_id',
       'api_server',
       'channel',
-      'profiles'
+      'profiles',
+      'balance_info',
+      'mb_per_aleph'
     ])
   },
   props: ['address'],

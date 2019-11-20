@@ -125,7 +125,6 @@
           </q-item>
 
           <q-separator class="q-my-md" />
-
           <q-item clickable class="GPL__drawer-item GPL__drawer-item--storage">
             <q-item-section avatar>
               <q-icon name="cloud" />
@@ -133,7 +132,7 @@
             <q-item-section top>
               <q-item-label>Storage</q-item-label>
               <q-linear-progress :value="storage" class="q-my-sm" />
-              <q-item-label caption>? GB of ? GB</q-item-label>
+              <q-item-label caption>0 GB of {{(allowance/1000).toFixed(3)}} GB</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -172,7 +171,14 @@ export default {
       api_server: state => state.api_server,
       network_id: state => state.network_id,
       menu: state => state.menu,
-      profiles: state => state.profiles
+      profiles: state => state.profiles,
+      balance_info: state => state.balance_info,
+      allowance: function(state) {
+        if ((state.balance_info !== null)&&(state.balance_info.ALEPH != undefined)) {
+          return state.balance_info.ALEPH * state.mb_per_aleph
+        }
+        return 0
+      }
     }),
     profile() {
       if (this.profiles[this.account.address] != undefined){
