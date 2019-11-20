@@ -1322,6 +1322,13 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.2.tgz#690a1475b84f2a884fd07cd797c00f5f31356ea8"
   integrity sha512-ce5d3q03Ex0sy4R14722Rmt6MT07Ua+k4FwDfdcToYJcMKNtRVQvJ6JCAPdAmAnbRb6CsX6aYb9m96NGod9uTw==
 
+"@types/secp256k1@^3.5.0":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@types/secp256k1/-/secp256k1-3.5.0.tgz#0f3baf16b07488c6da2633a63b4160bcf8d0fd5b"
+  integrity sha512-ZE39QhkIaNK6xbKIp1VLN5O36r97LuslLmRnjAcT0sVDxcfvrk3zqp/VnIfmGza7J6jDxR8dIai3hsCxPYglPA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/sizzle@*":
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.2.tgz#a811b8c18e2babab7d542b3365887ae2e4d9de47"
@@ -3789,6 +3796,15 @@ ecc-jsbn@~0.1.1:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
 
+eciesjs@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/eciesjs/-/eciesjs-0.3.1.tgz#bfdfe791a7996cc7a88a7c2829e0207a33e89a62"
+  integrity sha512-1YTPffpBf7Wd11uiz6rhyR8F+n+zWdL0wcSmbArb7gQ5c8rG8vb/yETvS9YWSa9h2zl+BB1nadXEvqXVjOjO5A==
+  dependencies:
+    "@types/secp256k1" "^3.5.0"
+    futoin-hkdf "^1.2.0"
+    secp256k1 "^3.6.0"
+
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
@@ -4862,6 +4878,11 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
+
+futoin-hkdf@^1.2.0:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/futoin-hkdf/-/futoin-hkdf-1.2.1.tgz#fcfc5af3049e9c5be1034d9420ef2073ab018d56"
+  integrity sha512-3VpqjhVhR/UCEs87YsUAvY59oimbAehXzJPBmYEMJZfOnPYoV8B92f1spBcuNlWsGIX+MWavCZI/Kw/w4b79IA==
 
 gauge@~2.7.3:
   version "2.7.4"
@@ -9262,7 +9283,7 @@ scss-tokenizer@^0.2.3:
     js-base64 "^2.1.8"
     source-map "^0.4.2"
 
-secp256k1@^3.7.1:
+secp256k1@^3.6.0, secp256k1@^3.7.1:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/secp256k1/-/secp256k1-3.7.1.tgz#12e473e0e9a7c2f2d4d4818e722ad0e14cc1e2f1"
   integrity sha512-1cf8sbnRreXrQFdH6qsg2H71Xw91fCCS9Yp021GnUNJzWJS/py96fS4lHbnTnouLp08Xj6jBoBB6V78Tdbdu5g==

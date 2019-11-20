@@ -8,7 +8,11 @@
     },
     "build_always": false,
     "__internal": {
-      "dev": {},
+      "dev": {
+        "spa": {
+          "iconHash": "71a86653100f06a1f6b2545d2c4910ad"
+        }
+      },
       "build": {
         "spa": {
           "iconHash": "71a86653100f06a1f6b2545d2c4910ad"
