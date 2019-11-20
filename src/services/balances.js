@@ -3,7 +3,8 @@ import axios from 'axios'
 export async function get_nuls_balance_info(address, explorer_url) {
   let response = await axios.get(`${explorer_url}/addresses/${address}.json`)
   let balance_info = {
-    'NULS': 0
+    'NULS': 0,
+    'ALEPH': 0
   }
   if ((response.data.unspent_info.unspent_value !== undefined))
   {
@@ -19,7 +20,8 @@ export async function get_ethereum_balance_info(address, explorer_url) {
   let response = await axios.get(`${explorer_url}/getAddressInfo/${address}?apiKey=freekey`)
 
   let balance_info = {
-    'ETH': 0
+    'ETH': 0,
+    'ALEPH': 0
   }
   if ((response.data.ETH.balance !== undefined))
   {
