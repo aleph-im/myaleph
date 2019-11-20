@@ -1,6 +1,9 @@
 <template>
   <q-page padding class="column">
     <div class="col-auto row justify-between items-center">
+      <template v-if="$q.screen.lt.sm">
+        <q-btn round flat icon="arrow_back" :to="{'name': 'notes'}" />
+      </template>
       <h4 class="q-my-sm col-grow">
         {{title||'Note Title'}}
         <q-popup-edit v-model="title">
@@ -20,7 +23,9 @@
         </q-popup-edit>
       </h4>
       <span>
-        {{is_private?'encrypted':'public'}}
+        <template v-if="$q.screen.gt.xs">
+          {{is_private?'encrypted':'public'}}
+        </template>
         <q-toggle
           v-model="is_private"
           checked-icon="lock"
@@ -31,7 +36,7 @@
       </span>
     </div>
     <div class="col-grow">
-      <editor v-model="body" height="calc(100vh - 13.5rem)" mode="wysiwyg" />
+      <editor v-model="body" height="calc(100vh - 14rem)" mode="wysiwyg" />
     </div>
     <div class="col-auto row justify-end q-my-sm">
       <q-btn push color="primary" :loading="saving" rounded icon="save" label="Save" size="sm" @click.stop="submit" />

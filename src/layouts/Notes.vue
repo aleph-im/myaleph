@@ -1,34 +1,12 @@
 <template>
   <q-page>
     <div v-if="account">
-      <q-splitter v-model="splitter">
+      <q-splitter v-model="splitter" v-if="$q.screen.gt.xs">
       <!-- <div class="fit row"> -->
         <!-- <div class="col-2 gt-sm"> -->
         <template v-slot:before>
           <q-scroll-area style="height: calc(100vh - 4.5rem)">
-            <q-list padding>
-              <q-item-label header>Notes</q-item-label>
-              <template v-for="item in notes">
-                <q-item :to="{'name': 'edit-note', params:{'hash': item.hash}}" :key="item.hash+'it'" clickable>
-                  <q-item-section>
-                    <q-item-label>{{item.content.title}}</q-item-label>
-                    <q-item-label overline>
-                      {{item.time * 1000 | moment("from")}}
-                      <q-tooltip>{{item.time * 1000 | moment("LLL")}}</q-tooltip>
-                    </q-item-label>
-                    <q-item-label caption lines="3">{{item.content.body}}</q-item-label>
-                  </q-item-section>
-
-                  <q-item-section side top>
-                    <q-icon v-if="item.content.private" name="lock" size="xs" color="positive" />
-                    <q-icon v-else name="lock_open" size="xs" />
-                  </q-item-section>
-                </q-item>
-
-                <q-separator spaced inset :key="item.hash+'sep'" />
-              </template>
-
-            </q-list>
+            <notes-list :notes="notes" />
           </q-scroll-area>
           <q-btn round push size="md" color="primary" class="fixed" icon="note_add"
           :style="'margin-top:-4rem; margin-left: calc('+splitter+'vw - ' + ($q.screen.gt.md ? 6 : 4) + 'rem)'"
@@ -42,6 +20,14 @@
         </template>
       <!-- </div> -->
       </q-splitter>
+      <div v-else>
+        <div v-if="is_home">
+          <notes-list :notes="notes" />
+          <q-btn round push size="md" color="primary" class="fixed-bottom-right q-ma-md" icon="note_add"
+          :to="{'name': 'new-note'}"/>
+        </div>
+        <router-view v-else />
+      </div>
     </div>
     <div v-else>
       Please log in.
@@ -52,6 +38,7 @@
 <script>
 import { mapState } from 'vuex'
 import { aggregates, posts, encryption } from 'aleph-js'
+import NotesList from '../components/NotesList'
 export default {
   name: 'NotesLayout',
   computed: {
@@ -62,13 +49,19 @@ export default {
       'api_server',
       'channel',
       'notes'
-    ])
+    ]),
+    is_home() {
+      return (this.$route.name === 'notes')
+    }
   },
   data() {
     return {
       posts: [],
       splitter: 20
     }
+  },
+  components: {
+    NotesList
   },
   methods: {
     async getNotes() {
@@ -82,6 +75,7 @@ export default {
     async $route(to, from) {
       // await this.getProfile()
       // await this.getPosts()
+      console.log(this.$route)
     },
     async current_page() {
       // await this.getPosts()
