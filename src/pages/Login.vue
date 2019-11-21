@@ -47,10 +47,10 @@
               </div>
 
               <!-- Submit -->
-              <q-btn class="btn btn-lg btn-block q-mx-sm q-my-md" push color="secondary" v-on:click="generate">
+              <q-btn class="btn btn-lg btn-block q-mx-sm q-my-md" push color="secondary" v-on:click="generate" :loading="generating">
                 {{$t('actions.regenerate')}}
               </q-btn>
-              <q-btn class="btn btn-lg btn-block  q-mx-sm q-my-md" push color="primary" v-on:click="add">
+              <q-btn class="btn btn-lg btn-block  q-mx-sm q-my-md" push color="primary" v-on:click="add" :loading="adding">
                 {{$t('actions.add_it')}}
               </q-btn>
 
@@ -89,7 +89,7 @@
 
             <!-- Submit -->
             <q-btn class="btn btn-lg btn-block btn-primary mb-3" push :color="prvState()===true ? 'primary' : 'grey'"
-            :disable="prvState()!==true" v-on:click="add">
+            :disable="prvState()!==true" v-on:click="add" :loading="adding">
               {{$t('actions.add_it')}}
             </q-btn>
           </q-form>
@@ -121,7 +121,7 @@
 
             <!-- Submit -->
             <q-btn class="btn btn-lg btn-block btn-primary mb-3" push :color="prvState()===true ? 'primary' : 'grey'"
-            :disable="prvState()!==true" v-on:click="add">
+            :disable="prvState()!==true" v-on:click="add" :loading="adding">
               {{$t('actions.add_it')}}
             </q-btn>
           </q-form>
@@ -161,7 +161,7 @@
                     <code class="self-center full-width no-outline text-truncate" tabindex="0">{{address||'--'}}</code>
                   </template>
                 </q-field>
-                <q-btn class="btn btn-lg btn-block btn-primary mb-3" :disabled="!prvState" v-on:click="add">
+                <q-btn class="btn btn-lg btn-block btn-primary mb-3" :disabled="!prvState" v-on:click="add" :loading="adding">
                   {{$t('actions.add_it')}}
                 </q-btn>
             </form>
@@ -249,6 +249,8 @@ export default {
       'address': null,
       'keystore_file': null,
       'mnemonics': null,
+      'adding': false,
+      'generating': false,
       'modes': [
         'create',
         'import_mnemonics',
@@ -315,12 +317,13 @@ export default {
     //   } while (!secp256k1.privateKeyVerify(privKey))
     //   window.crypto.getRandomValues(randArr) // populate array with cryptographically secure random numbers
     //   this.private_key = privKey.toString('hex')
-
+      this.generating = true;
       this.mnemonics =  bip39.generateMnemonic()
       let v = await bip39.mnemonicToSeed(this.mnemonics)
       let b = bip32.fromSeed(v)
       this.private_key = b.privateKey.toString('hex')
       this.analyze()
+      this.generating = false;
     },
     async analyze () {
       if (this.mode == 'import_mnemonics') {
@@ -379,6 +382,7 @@ export default {
         await this.generate()
     },
     async add () {
+      this.adding = true
       this.$store.dispatch(
         'store_account',
         await nuls2.import_account({
@@ -394,6 +398,7 @@ export default {
       //   'address': this.address
       // })
       await this.$fetch_profile(this.address)
+      this.adding = false
       this.$router.push('/')
     },
     async keystore_upload() {
