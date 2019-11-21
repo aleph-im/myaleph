@@ -41,6 +41,9 @@
     <div class="col-auto row justify-end q-my-sm">
       <q-btn push color="primary" :loading="saving" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
     </div>
+    <q-inner-loading :showing="loading">
+      <q-spinner-gears size="50px" color="primary" />
+    </q-inner-loading>
   </q-page>
 </template>
 
@@ -72,7 +75,8 @@ export default {
       processing: false,
       tags: [],
       is_private: true,
-      saving: false
+      saving: false,
+      loading: false
     }
   },
   props: [
@@ -114,10 +118,12 @@ export default {
       }
     },
     async refresh() {
+      this.loading = true
       if (this.hash) {
         await this.getPost()
       }
       await this.setState()
+      this.loading = false
     },
     async submit() {
       this.saving = true

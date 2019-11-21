@@ -102,6 +102,9 @@
         </div>
       </div>
     </div>
+    <q-inner-loading :showing="loading">
+      <q-spinner-gears size="50px" color="primary" />
+    </q-inner-loading>
   </q-page>
 </template>
 
@@ -116,7 +119,8 @@ export default {
       'tab': 'stats',
       'name': '',
       'bio': '',
-      'profile': {}
+      'profile': {},
+      'loading': false
     }
   },
   computed: {
@@ -189,6 +193,7 @@ export default {
       }
     },
     async refresh() {
+      this.loading = true
       await this.$fetch_profile(this.profile_address)
 
       let profile = this.profiles[this.profile_address]
@@ -200,7 +205,7 @@ export default {
         this.name = this.profile.name
         this.bio = this.profile.bio
       }
-
+      this.loading = false
     }
   },
   async mounted() {
