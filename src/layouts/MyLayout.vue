@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr fff">
-    <q-dialog v-model="show_backup">
+    <q-dialog v-model="show_backup" v-if="account">
       <q-card>
         <q-card-section>
           <div class="text-h6">Backup</div>
