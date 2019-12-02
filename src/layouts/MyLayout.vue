@@ -230,6 +230,7 @@ export default {
       show_backup: false,
       links1: [
         { icon: 'assignment_ind', text:'Profile', link: {'name': 'profile'}, exact: true },
+        { icon: 'insert_drive_file', text: 'Files', link: {'name': 'files'}, exact: false },
         { icon: 'note', text:'Notes', link: {'name': 'notes'}, exact: false },
         // { icon: 'far fa-newspaper', text:'My Feed' },
         // { icon: 'photo', text: 'Photos' },
