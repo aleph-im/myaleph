@@ -17,7 +17,7 @@ Vue.use(Vuex)
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     state: {
-      api_server: 'https://api2.aleph.im',
+      api_server: 'http://localhost:8080',
       site_chain: 'NULS',
       site_address: 'TTatYAULiEfV6e7Tqt9z8YCr7dz2KkbJ',
       network_id: 1,
@@ -30,6 +30,7 @@ export default function (/* { ssrContext } */) {
       pages: {},
       menu: [],
       notes: [],
+      files: [],
       mb_per_aleph: 0.25,
       balance_info: null,
       channel: "MYALEPH"
@@ -41,7 +42,10 @@ export default function (/* { ssrContext } */) {
       set_pages(state, pages) { // TODO: handle per-page mutation
         state.pages = pages
       },
-      set_notes(state, notes) { // TODO: handle per-page mutation
+      set_files(state, files) { // TODO: handle per-files mutation
+        state.files = files
+      },
+      set_notes(state, notes) {
         state.notes = notes
       },
       update_note(state, new_note) {
@@ -54,7 +58,7 @@ export default function (/* { ssrContext } */) {
       add_note(state, new_note) {
         state.notes.unshift(new_note)
       },
-      set_menu(state, menu_items) { // TODO: handle per-page mutation
+      set_menu(state, menu_items) {
         state.menu = menu_items
       },
       store_profile(state, payload) {
@@ -104,6 +108,26 @@ export default function (/* { ssrContext } */) {
               post.content.title = encryption.decrypt(state.account, post.content.title)
               post.content.encrypted_body = post.content.body
               post.content.body = encryption.decrypt(state.account, post.content.body)
+            }
+          } catch (e) {
+            console.error("Can't decrypt...", e)
+          }
+          post_list.push(post)
+        }
+        commit('set_notes', post_list)
+      },
+      async update_files({ state, commit }) {
+        let result = await posts.get_posts('file', {
+          pagination: 10000,
+          addresses: [state.account.address],
+          api_server: state.api_server
+        })
+        let post_list = []
+        for (let post of result.posts) {
+          try {
+            if (post.content.private) {
+              post.content.encrypted_title = post.content.title
+              post.content.title = encryption.decrypt(state.account, post.content.title)
             }
           } catch (e) {
             console.error("Can't decrypt...", e)
