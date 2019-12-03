@@ -4,9 +4,10 @@
     :data="files"
     :columns="file_columns"
     row-key="filename"
-    virtual-scroll
+    :virtual-scroll="virtualScroll"
+    :flat="flat"
     :pagination.sync="pagination"
-    :rows-per-page-options="[0]">
+    :rows-per-page-options="virtualScroll ? [0] : undefined">
     <template v-slot:body-cell-thumbnail="props">
       <q-td :props="props">
         <div>
@@ -14,6 +15,11 @@
             <img :src="props.value" style="object-fit: cover;" />
           </q-avatar>
         </div>
+      </q-td>
+    </template>
+    <template v-slot:body-cell-actions="props">
+      <q-td :props="props">
+        <q-btn flat round color="grey" icon="cloud_download" />
       </q-td>
     </template>
   </q-table>
@@ -28,7 +34,10 @@ const { humanStorageSize } = format
 export default {
   name: 'files-list',
   props: {
-    'files': Array
+    'files': Array,
+    'title': String,
+    'flat': Boolean,
+    'virtualScroll': Boolean
   },
   data() {
     return {
@@ -73,6 +82,11 @@ export default {
           sortable: true,
           field: row => row.time,
           'format': val => moment.unix(val).fromNow()
+        },
+        {
+          name: 'actions',
+          align: 'left',
+          sortable: true
         }
       ]
     }
