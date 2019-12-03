@@ -6,3 +6,15 @@
 .text-mono {
     font-family: 'IBM Plex Mono', monospace;
 }
+
+.filename-col {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 30vw;
+}
+
+.thumbnail-col {
+    width: 48px;
+    padding-right: 0 !important;
+}
