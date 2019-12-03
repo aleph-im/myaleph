@@ -15,22 +15,7 @@
     </q-dialog>
 
     <p v-if="files.length">
-      <q-table
-        title="Files"
-        :data="files"
-        :columns="file_columns"
-        row-key="filename"
-        hide-footer>
-        <template v-slot:body-cell-thumbnail="props">
-          <q-td :props="props">
-            <div>
-              <q-avatar rounded size="48px" v-if="props.value">
-                <img :src="props.value" style="object-fit: cover;" />
-              </q-avatar>
-            </div>
-          </q-td>
-        </template>
-      </q-table>
+      <files-list :files="files" />
     </p>
     <p v-else>
       No note here yet... Why not <router-link :to="{'name': 'new-note'}">write one</router-link>?
@@ -57,6 +42,8 @@ import { mapState } from 'vuex'
 import { aggregates, posts, encryption } from 'aleph-js'
 import { encrypt_content, decrypt_content } from '../services/encryption.js'
 import AlephUploader from '../components/Uploader.js'
+import FilesList from '../components/FilesList'
+import NotesList from '../components/NotesList'
 import downscale from 'downscale'
 export default {
   name: 'FileBrowser',
@@ -73,38 +60,12 @@ export default {
   data() {
     return {
       upload_shown: false,
-      loading: false,
-      file_columns: [
-        {
-          name: 'thumbnail',
-          align: 'left',
-          field: row => row.content.thumbnail_url
-        },
-        {
-          name: 'filename',
-          required: true,
-          label: 'Filename',
-          align: 'left',
-          sortable: true,
-          field: row => row.content.filename
-        },
-        {
-          name: 'mimetype',
-          align: 'left',
-          label: 'Mime-Type',
-          field: row => row.content.mimetype
-        },
-        {
-          name: 'time',
-          align: 'left',
-          label: 'Mime-Type',
-          field: row => row.content.time
-        },
-      ]
+      loading: false
     }
   },
   components: {
-    AlephUploader
+    AlephUploader,
+    FilesList
   },
   methods: {
     async getFiles() {
@@ -134,7 +95,9 @@ export default {
           store_message: file.message_hash,
           hash: file.item_hash,
           engine: file.item_type,
-          status: 'visible' // default status
+          status: 'visible', // default status
+          size: file.size,
+          full_size: file.encrypted_size
         }
         if (file.type.startsWith("image")) {
           console.log(file)
