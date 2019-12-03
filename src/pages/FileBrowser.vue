@@ -15,7 +15,22 @@
     </q-dialog>
 
     <p v-if="files.length">
-      You have uploaded {{files.length}} files so far, good job!
+      <q-table
+        title="Files"
+        :data="files"
+        :columns="file_columns"
+        row-key="filename"
+        hide-footer>
+        <template v-slot:body-cell-thumbnail="props">
+          <q-td :props="props">
+            <div>
+              <q-avatar rounded size="48px" v-if="props.value">
+                <img :src="props.value" style="object-fit: cover;" />
+              </q-avatar>
+            </div>
+          </q-td>
+        </template>
+      </q-table>
     </p>
     <p v-else>
       No note here yet... Why not <router-link :to="{'name': 'new-note'}">write one</router-link>?
@@ -31,6 +46,9 @@
         <q-fab-action @click="upload" color="primary" icon="cloud_upload" />
       </q-fab>
     </q-page-sticky>
+    <q-inner-loading :showing="loading">
+      <q-spinner-gears size="50px" color="primary" />
+    </q-inner-loading>
   </q-page>
 </template>
 
@@ -54,7 +72,35 @@ export default {
   },
   data() {
     return {
-      upload_shown: false
+      upload_shown: false,
+      loading: false,
+      file_columns: [
+        {
+          name: 'thumbnail',
+          align: 'left',
+          field: row => row.content.thumbnail_url
+        },
+        {
+          name: 'filename',
+          required: true,
+          label: 'Filename',
+          align: 'left',
+          sortable: true,
+          field: row => row.content.filename
+        },
+        {
+          name: 'mimetype',
+          align: 'left',
+          label: 'Mime-Type',
+          field: row => row.content.mimetype
+        },
+        {
+          name: 'time',
+          align: 'left',
+          label: 'Mime-Type',
+          field: row => row.content.time
+        },
+      ]
     }
   },
   components: {
@@ -65,7 +111,9 @@ export default {
       await this.$store.dispatch('update_files')
     },
     async refresh() {
+      this.loading = true
       await this.getFiles()
+      this.loading = false
     },
     async upload() {
       const sleep = (milliseconds) => {
