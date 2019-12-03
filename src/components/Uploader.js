@@ -65,8 +65,10 @@ export default {
             resolve(reader.result)
             }
           })
+          file.original_size = file.size
           let content = encryption.encrypt_for_self(
             this.account, result, {as_hex: false})
+          file.encrypted_size = content.length
           this.__updateFile(file, 'uploading', file.size * 0.3)
 
           let message = await store.submit(
@@ -95,6 +97,7 @@ export default {
           this.uploadedSize += file.size
           this.__updateFile(file, 'uploading', file.size)
           this.__updateFile(file, 'uploaded')
+          file.original_size = file.size
           file.private = false
           file.message_hash = message.item_hash
           file.item_hash = message.content.item_hash
