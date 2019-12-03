@@ -5,7 +5,7 @@ import { posts, aggregates, encryption } from 'aleph-js'
 import {
   get_nuls_balance_info, get_ethereum_balance_info } from '../services/balances'
 import { encrypt_content, decrypt_content } from '../services/encryption.js'
-
+  
 
 // import example from './module-example'
 
@@ -60,6 +60,9 @@ export default function (/* { ssrContext } */) {
       add_note(state, new_note) {
         state.notes.unshift(new_note)
       },
+      add_file(state, new_file) {
+        state.files.unshift(new_file)
+      },
       set_menu(state, menu_items) {
         state.menu = menu_items
       },
@@ -103,6 +106,7 @@ export default function (/* { ssrContext } */) {
           api_server: state.api_server
         })
         let post_list = []
+        console.log(result.posts)
         for (let post of result.posts) {
           try {
             if (post.content.private) {
@@ -126,6 +130,7 @@ export default function (/* { ssrContext } */) {
           api_server: state.api_server
         })
         let post_list = []
+        console.log(result.posts)
         for (let post of result.posts) {
           try {
             if (post.content.private) {
