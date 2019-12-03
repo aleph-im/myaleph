@@ -36,8 +36,10 @@
 
 <script>
 import { mapState } from 'vuex'
-import { aggregates, posts } from 'aleph-js'
+import { aggregates, posts, encryption } from 'aleph-js'
+import { encrypt_content, decrypt_content } from '../services/encryption.js'
 import AlephUploader from '../components/Uploader.js'
+import downscale from 'downscale'
 export default {
   name: 'FileBrowser',
   computed: {
@@ -75,8 +77,39 @@ export default {
       this.$refs.uploader.pickFiles()
     },
     async uploaded(info) {
-      console.log(info)
       this.upload_shown = false
+      for (let file of info) {
+        let post_content = {
+          filename: file.name,
+          mimetype: file.type,
+          private: file.private,
+          store_message: file.message_hash,
+          hash: file.item_hash,
+          engine: file.item_type,
+          status: 'visible' // default status
+        }
+        if (file.type.startsWith("image")) {
+          console.log(file)
+          let canvas = await downscale(file, 200, 0, {returnCanvas: 1})
+          post_content['thumbnail_url'] = canvas.toDataURL('image/jpeg', 0.9)
+        }
+        let unencrypted_content = {};
+        Object.keys(post_content).forEach(function(key) {
+            unencrypted_content[ key ] = post_content[ key ]
+        })
+
+        if (file.private)
+          encrypt_content(post_content, this.account['public_key'], ['filename', 'mimetype', 'thumbnail_url'])
+
+        let msg = await posts.submit(
+          this.account.address, 'file', post_content,
+          {channel: this.channel,
+           api_server: this.api_server,
+           account: this.account})
+        
+        msg.content = unencrypted_content
+        this.$store.commit('add_file', msg)
+      }
     }
   },
   watch: {
