@@ -4,6 +4,8 @@ import { LocalStorage, SessionStorage } from 'quasar'
 import { posts, aggregates, encryption } from 'aleph-js'
 import {
   get_nuls_balance_info, get_ethereum_balance_info } from '../services/balances'
+import { encrypt_content, decrypt_content } from '../services/encryption.js'
+
 
 // import example from './module-example'
 
@@ -17,7 +19,7 @@ Vue.use(Vuex)
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     state: {
-      api_server: 'http://localhost:8080',
+      api_server: 'https://api2.aleph.im',
       site_chain: 'NULS',
       site_address: 'TTatYAULiEfV6e7Tqt9z8YCr7dz2KkbJ',
       network_id: 1,
@@ -104,10 +106,11 @@ export default function (/* { ssrContext } */) {
         for (let post of result.posts) {
           try {
             if (post.content.private) {
-              post.content.encrypted_title = post.content.title
-              post.content.title = encryption.decrypt(state.account, post.content.title)
-              post.content.encrypted_body = post.content.body
-              post.content.body = encryption.decrypt(state.account, post.content.body)
+              decrypt_content(post.content, ['title', 'body'], state.account)
+              // post.content.encrypted_title = post.content.title
+              // post.content.title = encryption.decrypt(state.account, post.content.title)
+              // post.content.encrypted_body = post.content.body
+              // post.content.body = encryption.decrypt(state.account, post.content.body)
             }
           } catch (e) {
             console.error("Can't decrypt...", e)
@@ -126,15 +129,14 @@ export default function (/* { ssrContext } */) {
         for (let post of result.posts) {
           try {
             if (post.content.private) {
-              post.content.encrypted_title = post.content.title
-              post.content.title = encryption.decrypt(state.account, post.content.title)
+              decrypt_content(post.content, ['filename', 'mimetype', 'thumbnail_url'], state.account)
             }
           } catch (e) {
             console.error("Can't decrypt...", e)
           }
           post_list.push(post)
         }
-        commit('set_notes', post_list)
+        commit('set_files', post_list)
       },
       async update_balance({ state, commit }) {
         if (state.account !== null) {

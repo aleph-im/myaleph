@@ -54,6 +54,7 @@ import 'tui-editor/dist/tui-editor.css';
 import 'tui-editor/dist/tui-editor-contents.css';
 import 'codemirror/lib/codemirror.css';
 import { Editor } from '@toast-ui/vue-editor'
+import { encrypt_content, decrypt_content } from '../services/encryption.js'
 
 
 export default {
@@ -99,14 +100,10 @@ export default {
       if (this.hash) {
         this.banner_hash = this.post.content.banner
         this.is_private = this.post.content.private
-        if (this.is_private) {
-          this.title = encryption.decrypt(this.account, this.post.content.title)
-          this.body = encryption.decrypt(this.account, this.post.content.body)
-        } else {
-          this.title = this.post.content.title
-          this.body = this.post.content.body
-        }
-        this.subtitle = this.post.content.subtitle
+        if (this.is_private)
+          decrypt_content(this.post.content, ['title', 'body'], this.account)
+        this.title = this.post.content.title
+        this.body = this.post.content.body
         if (this.post.content.tags !== undefined)
           this.tags = this.post.content.tags.map((t) => {return {text: t}})
         else
@@ -130,16 +127,20 @@ export default {
       let msg = null
       let body = this.body
       let title = this.title
-      if (this.is_private) {
-        body = encryption.encrypt_for_self(this.account, body)
-        title = encryption.encrypt_for_self(this.account, title)
-      }
+      // if (this.is_private) {
+      //   body = encryption.encrypt_for_self(this.account, body)
+      //   title = encryption.encrypt_for_self(this.account, title)
+      // }
       let post_content = {
         body: body,
         title: title,
         private: this.is_private
         // tags: this.tags.map(t => t.text)
       }
+
+      if (this.is_private)
+        encrypt_content(post_content, ['title', 'body'], this.account['public_key'])
+
       if (this.hash)
         msg = await posts.submit(
           this.account.address, 'amend', post_content,
