@@ -67,6 +67,7 @@ export default {
           })
           let content = encryption.encrypt_for_self(
             this.account, result, {as_hex: false})
+          this.__updateFile(file, 'uploading', file.size * 0.3)
 
           let message = await store.submit(
             this.account.address,
@@ -78,21 +79,26 @@ export default {
           // let file_hash = await storage_push_file(
           //   myBlob, {api_server: this.api_server})
           file.private = true
+          file.message_hash = message.item_hash
           file.item_hash = message.content.item_hash
           file.item_type = message.content.item_type
           this.__updateFile(file, 'uploading', file.size * 0.7)
-          
-
-
           this.__updateFile(file, 'uploaded')
-        } else { 
-          let file_hash = await storage_push_file(
-            file, {api_server: this.api_server})
+        } else {
+          let message = await store.submit(
+            this.account.address,
+            {fileobject: file,
+             channel: this.channel,
+             api_server: this.api_server,
+             account: this.account})
+
           this.uploadedSize += file.size
           this.__updateFile(file, 'uploading', file.size)
           this.__updateFile(file, 'uploaded')
-          file.hash = file_hash
-          file.engine = 'storage'
+          file.private = false
+          file.message_hash = message.item_hash
+          file.item_hash = message.content.item_hash
+          file.item_type = message.content.item_type
         }
       }
       this.$emit('uploaded', queue)
