@@ -14,7 +14,7 @@ export function decrypt_content(former, keys, account) {
       try {
         former[key] = encryption.decrypt(account, former[key])
       } catch (e) {
-        console.error("Can't decrypt field", key, e)
+        console.error("Can't decrypt field", key)
       }
     }
   }
