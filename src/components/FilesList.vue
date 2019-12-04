@@ -19,7 +19,7 @@
     </template>
     <template v-slot:body-cell-actions="props">
       <q-td :props="props">
-        <q-btn flat round color="grey" icon="cloud_download" />
+        <q-btn flat round color="grey" icon="cloud_download" @click="download(props.row)" />
       </q-td>
     </template>
   </q-table>
@@ -27,7 +27,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { aggregates, posts, encryption } from 'aleph-js'
+import { aggregates, posts, encryption, store } from 'aleph-js'
 import moment from 'moment'
 import { format } from 'quasar'
 const { humanStorageSize } = format
@@ -38,6 +38,38 @@ export default {
     'title': String,
     'flat': Boolean,
     'virtualScroll': Boolean
+  },
+  computed: {
+    ... mapState([
+      // map this.count to store.state.count
+      'account',
+      'network_id',
+      'api_server',
+      'channel',
+      'files'
+    ])
+  },
+  methods: {
+    async download(filepost) {
+      console.log(this.account)
+      let content = await store.retrieve(filepost.content.hash, {api_server: this.api_server})
+      console.log(content)
+      if (filepost.content.private) {
+        content = encryption.decrypt(this.account, content, {as_hex: false, as_string: false})
+      }
+      console.log(content.length)
+
+      const data = new Blob([content], {type: filepost.content.mimetype})
+      let link = document.createElement('a')
+      link.href = window.URL.createObjectURL(data)
+      link.download=filepost.content.filename
+      link.click()
+
+      setTimeout(function(){
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    }
   },
   data() {
     return {
