@@ -14,12 +14,15 @@
           <q-avatar rounded size="48px" v-if="props.value">
             <img :src="props.value" style="object-fit: cover;" />
           </q-avatar>
+          <q-avatar rounded size="48px" v-else-if="props.row.type === 'folder'" icon="folder" />
+          <q-avatar rounded size="48px" v-else icon="document" />
         </div>
       </q-td>
     </template>
     <template v-slot:body-cell-actions="props">
       <q-td :props="props">
-        <q-btn flat round color="grey" icon="cloud_download" @click="download(props.row)" />
+        <q-btn v-if="props.row.type === 'file'" flat round
+        color="grey" icon="cloud_download" @click="download(props.row)" />
       </q-td>
     </template>
   </q-table>
