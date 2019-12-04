@@ -59,7 +59,7 @@ export default {
         if (this.encrypt) {
           let reader = new FileReader()
 
-          reader.readAsBinaryString(file)
+          reader.readAsArrayBuffer(file)
           const result = await new Promise((resolve, reject) => {
             reader.onload = function(event) {
             resolve(reader.result)
@@ -68,12 +68,13 @@ export default {
           file.original_size = file.size
           let content = encryption.encrypt_for_self(
             this.account, result, {as_hex: false})
+
           file.encrypted_size = content.length
           this.__updateFile(file, 'uploading', file.size * 0.3)
 
           let message = await store.submit(
             this.account.address,
-            {fileobject: new Blob([content]),
+            {fileobject: new Blob([content], {type: 'application/octet-stream'}),
              channel: this.channel,
              api_server: this.api_server,
              account: this.account})
