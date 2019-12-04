@@ -34,7 +34,7 @@ export default function (/* { ssrContext } */) {
       notes: [],
       files: [],
       mb_per_aleph: 0.25,
-      balance_info: null,
+      balance_info: {},
       channel: "MYALEPH"
     },
     mutations: {
