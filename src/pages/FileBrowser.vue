@@ -13,13 +13,16 @@
         encrypt
       />
     </q-dialog>
-
-    <p v-if="files.length">
+    <p>
+      Warning: The files section is still an heavy work in progress.
+      To test the myaleph features, try the Notes section instead.
+    </p>
+    <div v-if="files.length">
       <files-list :files="files" />
-    </p>
-    <p v-else>
+    </div>
+    <!-- <p v-else>
       No note here yet... Why not <router-link :to="{'name': 'new-note'}">write one</router-link>?
-    </p>
+    </p> -->
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab
@@ -27,7 +30,7 @@
         direction="up"
         color="primary"
       >
-        <q-fab-action color="primary" icon="create_new_folder" />
+        <!-- <q-fab-action color="primary" icon="create_new_folder" /> -->
         <q-fab-action @click="upload" color="primary" icon="cloud_upload" />
       </q-fab>
     </q-page-sticky>
@@ -100,17 +103,17 @@ export default {
           full_size: file.encrypted_size
         }
         if (file.type.startsWith("image")) {
-          console.log(file)
           let canvas = await downscale(file, 200, 0, {returnCanvas: 1})
           post_content['thumbnail_url'] = canvas.toDataURL('image/jpeg', 0.9)
         }
+
         let unencrypted_content = {};
         Object.keys(post_content).forEach(function(key) {
             unencrypted_content[ key ] = post_content[ key ]
         })
 
         if (file.private)
-          encrypt_content(post_content, this.account['public_key'], ['filename', 'mimetype', 'thumbnail_url'])
+          encrypt_content(post_content, ['filename', 'mimetype', 'thumbnail_url'], this.account['public_key'])
 
         let msg = await posts.submit(
           this.account.address, 'file', post_content,
