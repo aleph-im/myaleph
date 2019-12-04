@@ -124,7 +124,7 @@ export default function (/* { ssrContext } */) {
         commit('set_notes', post_list)
       },
       async update_files({ state, commit }) {
-        let result = await posts.get_posts('file', {
+        let result = await posts.get_posts('file,folder', {
           pagination: 10000,
           addresses: [state.account.address],
           api_server: state.api_server
@@ -133,7 +133,7 @@ export default function (/* { ssrContext } */) {
         console.log(result.posts)
         for (let post of result.posts) {
           try {
-            if (post.content.private) {
+            if ((post.content.private)|(post.type==='folder')) {
               decrypt_content(post.content, ['filename', 'mimetype', 'thumbnail_url'], state.account)
             }
           } catch (e) {
