@@ -96,11 +96,11 @@ export default {
         files = files.filter((v) => (!v.original_ref))
 
       if (!this.show_archived)
-        files = files.filter((v) => (!v.content.status=='visible'))
+        files = files.filter((v) => (v.content.status==='visible'))
 
       files.sort((f1, f2) => {
-        if (f1.type == 'file' && f2.type == 'folder') return 1;
-        if (f1.type == 'folder' && f2.type == 'file') return -1;
+        if (f1.original_type == 'file' && f2.original_type == 'folder') return 1;
+        if (f1.original_type == 'folder' && f2.original_type == 'file') return -1;
 
         if (this.sorting === 'time') {
           if (f1.time < f2.time) return 1;
@@ -219,6 +219,7 @@ export default {
         msg.content = unencrypted_content
         msg.hash = msg.item_hash
         msg.type = 'folder'
+        msg.original_type = 'folder'
         msg.ref = this.folder
         msg.original_ref = this.folder
         this.$store.commit('add_file', msg)
@@ -261,6 +262,7 @@ export default {
         msg.content = unencrypted_content
         msg.hash = msg.item_hash
         msg.type = 'file'
+        msg.original_type = 'file'
         msg.ref = this.folder
         msg.original_ref = this.folder
         this.$store.commit('add_file', msg)
@@ -287,7 +289,8 @@ export default {
     }
   },
   async created() {
-    await this.refresh()
+    if (!this.files.length)
+      await this.refresh()
   }
 }
 </script>
