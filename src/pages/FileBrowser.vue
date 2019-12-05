@@ -20,44 +20,38 @@
       :index="lbidx"
       @hide="image_hide"
     ></vue-easy-lightbox>
-    <p>
-      Warning: The files section is still an heavy work in progress.
-      To test the myaleph features, try the Notes section instead.
-    </p>
-    <div v-if="files.length">
-      <div class="row justify-between items-center">
-        <q-btn v-if="folder" round flat icon="arrow_back"
-          :to="folder_object.content.ref ? {'name': 'folder', params:{'folder': folder_object.content.ref}} : {'name': 'files'} " />
-        <span v-if="folder" class="col-grow">
-          <h4 class="q-my-sm col-grow">{{folder_object.content.filename}}</h4>
-        </span>
-        <h4 v-else class="q-my-sm col-grow">Files</h4>
-        <div>
-          <template v-if="$q.screen.gt.xs">
-            {{show_archived?'archived visible':''}}
-          </template>
-          <q-toggle
-            v-model="show_archived"
-            checked-icon="archive"
-            color="green"
-            unchecked-icon="visibility_off"
-          />
-          <q-tooltip>Display archived items</q-tooltip>
-        </div>
+    <div class="row justify-between items-center">
+      <q-btn v-if="folder" round flat icon="arrow_back"
+        :to="folder_object.content.ref ? {'name': 'folder', params:{'folder': folder_object.content.ref}} : {'name': 'files'} " />
+      <span v-if="folder" class="col-grow">
+        <h4 class="q-my-sm col-grow">{{folder_object.content.filename}}</h4>
+      </span>
+      <h4 v-else class="q-my-sm col-grow">Files</h4>
+      <div>
+        <template v-if="$q.screen.gt.xs">
+          {{show_archived?'archived visible':''}}
+        </template>
+        <q-toggle
+          v-model="show_archived"
+          checked-icon="archive"
+          color="green"
+          unchecked-icon="visibility_off"
+        />
+        <q-tooltip>Display archived items</q-tooltip>
       </div>
-      <q-breadcrumbs class="text-grey">
-        <q-breadcrumbs-el icon="home" :to="{'name': 'home'}" label="Home" />
-        <q-breadcrumbs-el icon="insert_drive_file" :to="{'name': 'files'}" label="Files" />
-        <q-breadcrumbs-el 
-        v-for="f of breadcrumbs" :key="f.hash"
-        :to="{'name': 'folder', params: {'folder': f.hash}}"
-        icon="folder"
-        :label="f.name" />
-        <q-breadcrumbs-el v-if="this.folder" :label="this.folder_object.content.filename" icon="folder" />
-      </q-breadcrumbs>
-      <files-list :files="displayed_files" virtual-scroll flat class="q-my-md"
-                  @item-clicked="file_clicked" />
     </div>
+    <q-breadcrumbs class="text-grey">
+      <q-breadcrumbs-el icon="home" :to="{'name': 'home'}" label="Home" />
+      <q-breadcrumbs-el icon="insert_drive_file" :to="{'name': 'files'}" label="Files" />
+      <q-breadcrumbs-el 
+      v-for="f of breadcrumbs" :key="f.hash"
+      :to="{'name': 'folder', params: {'folder': f.hash}}"
+      icon="folder"
+      :label="f.name" />
+      <q-breadcrumbs-el v-if="this.folder" :label="this.folder_object.content.filename" icon="folder" />
+    </q-breadcrumbs>
+    <files-list :files="displayed_files" virtual-scroll flat class="q-my-md"
+                @item-clicked="file_clicked" />
     <!-- <p v-else>
       No note here yet... Why not <router-link :to="{'name': 'new-note'}">write one</router-link>?
     </p> -->
@@ -97,9 +91,12 @@ export default {
     displayed_files() {
       let files = this.files
       if (this.folder)
-        files = files.filter((v) => v.content.ref == this.folder)
+        files = files.filter((v) => v.original_ref == this.folder)
       else
-        files = files.filter((v) => v.content.ref == null)
+        files = files.filter((v) => (!v.original_ref))
+
+      if (!this.show_archived)
+        files = files.filter((v) => (!v.content.status=='visible'))
 
       files.sort((f1, f2) => {
         if (f1.type == 'file' && f2.type == 'folder') return 1;
@@ -126,7 +123,7 @@ export default {
 
       let steps = []
       
-      let last_ref = this.folder_object.content.ref
+      let last_ref = this.folder_object.original_ref
       while (last_ref) {
         let fo = this.files.find((v) => v.hash === last_ref)
         if (fo) {
@@ -134,7 +131,7 @@ export default {
             name: fo.content.filename,
             hash: fo.hash
           })
-          last_ref = fo.content.ref
+          last_ref = fo.original_ref
         } else
           return steps
       }
@@ -202,7 +199,6 @@ export default {
           return
         let post_content = {
           filename: data,
-          ref: this.folder,
           status: 'visible' // default status
         }
 
@@ -217,11 +213,14 @@ export default {
           this.account.address, 'folder', post_content,
           {channel: this.channel,
            api_server: this.api_server,
-           account: this.account})
+           account: this.account,
+           ref: this.folder})
         
         msg.content = unencrypted_content
         msg.hash = msg.item_hash
         msg.type = 'folder'
+        msg.ref = this.folder
+        msg.original_ref = this.folder
         this.$store.commit('add_file', msg)
       })
     },
@@ -232,7 +231,6 @@ export default {
           filename: file.name,
           mimetype: file.type,
           private: file.private,
-          ref: this.folder,
           store_message: file.message_hash,
           hash: file.item_hash,
           engine: file.item_type,
@@ -257,11 +255,14 @@ export default {
           this.account.address, 'file', post_content,
           {channel: this.channel,
            api_server: this.api_server,
-           account: this.account})
+           account: this.account,
+           ref: this.folder})
         
         msg.content = unencrypted_content
         msg.hash = msg.item_hash
         msg.type = 'file'
+        msg.ref = this.folder
+        msg.original_ref = this.folder
         this.$store.commit('add_file', msg)
       }
     },

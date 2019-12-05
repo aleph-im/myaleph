@@ -1,31 +1,4 @@
 <template>
-  <!-- <q-table
-    :title="title ? title : 'Files'"
-    :data="files"
-    :columns="file_columns"
-    row-key="filename"
-    :virtual-scroll="virtualScroll"
-    :flat="flat"
-    :pagination.sync="pagination"
-    :rows-per-page-options="virtualScroll ? [0] : undefined">
-    <template v-slot:body-cell-thumbnail="props">
-      <q-td :props="props">
-        <div>
-          <q-avatar rounded size="48px" v-if="props.value">
-            <img :src="props.value" style="object-fit: cover;" />
-          </q-avatar>
-          <q-avatar rounded size="48px" v-else-if="props.row.type === 'folder'" icon="folder" />
-          <q-avatar rounded size="48px" v-else icon="document" />
-        </div>
-      </q-td>
-    </template>
-    <template v-slot:body-cell-actions="props">
-      <q-td :props="props">
-        <q-btn v-if="props.row.type === 'file'" flat round
-        color="grey" icon="cloud_download" @click="download(props.row)" />
-      </q-td>
-    </template>
-  </q-table> -->
   <q-list :bordered="bordered" class="rounded-borders">
     <q-item-label header v-if="title">{{title}}</q-item-label>
     <template v-for="(file, index) of files">
@@ -85,6 +58,7 @@
 <script>
 import { mapState } from 'vuex'
 import { aggregates, posts, encryption, store } from 'aleph-js'
+import { encrypt_content, decrypt_content } from '../services/encryption.js'
 import moment from 'moment'
 import {download_file} from '../services/files'
 import { format } from 'quasar'
@@ -110,6 +84,36 @@ export default {
   methods: {
     async download(filepost) {
       await download_file(filepost, this.account, this.api_server)
+    },
+    async archive(filepost) {
+      await this.change_status(filepost, 'archived')
+    },
+    async change_status(filepost, new_status) {
+      let post_content = {};
+      Object.keys(filepost.content).forEach(function(key) {
+          post_content[key] = filepost.content[key]
+      })
+      post_content['status'] = new_status
+      let unencrypted_content = {};
+      Object.keys(filepost.content).forEach(function(key) {
+          unencrypted_content[key] = post_content[key]
+      })
+
+      if (post_content.private)
+        encrypt_content(post_content, ['filename', 'mimetype', 'thumbnail_url'], this.account['public_key'])
+
+      let msg = await posts.submit(
+        this.account.address, 'amend', post_content,
+        {channel: this.channel,
+          api_server: this.api_server,
+          account: this.account,
+          ref:filepost.hash})
+      msg.hash = filepost.hash
+      msg.type = filepost.type
+      msg.content = unencrypted_content
+      msg.ref = filepost.ref
+      msg.original_ref = filepost.ref
+      this.$store.commit('update_file', msg)
     }
   },
   data() {
@@ -117,52 +121,7 @@ export default {
       humanStorageSize: humanStorageSize,
       pagination: {
         rowsPerPage: 0
-      },
-      file_columns: [
-        {
-          name: 'thumbnail',
-          align: 'left',
-          field: row => row.content.thumbnail_url,
-          classes: 'thumbnail-col'
-        },
-        {
-          name: 'filename',
-          required: true,
-          label: 'Filename',
-          align: 'left',
-          sortable: true,
-          field: row => row.content.filename,
-          classes: 'filename-col'
-        },
-        // {
-        //   name: 'mimetype',
-        //   align: 'left',
-        //   label: 'Mime-Type',
-        //   sortable: true,
-        //   field: row => row.content.mimetype
-        // },
-        {
-          name: 'size',
-          align: 'left',
-          label: 'Size',
-          sortable: true,
-          field: row => row.content.size,
-          'format': val => val ? humanStorageSize(val) : '--'
-        },
-        {
-          name: 'time',
-          align: 'left',
-          label: 'Time',
-          sortable: true,
-          field: row => row.time,
-          'format': val => moment.unix(val).fromNow()
-        },
-        {
-          name: 'actions',
-          align: 'left',
-          sortable: true
-        }
-      ]
+      }
     }
   }
 }

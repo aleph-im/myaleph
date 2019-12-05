@@ -57,6 +57,13 @@ export default function (/* { ssrContext } */) {
           }
         }
       },
+      update_file(state, new_file) {
+        for (let file of state.files) {
+          if (file.hash === new_file.hash) {
+            Object.assign(file, new_file)
+          }
+        }
+      },
       add_note(state, new_note) {
         state.notes.unshift(new_note)
       },
