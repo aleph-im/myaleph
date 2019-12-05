@@ -1,5 +1,5 @@
 <template>
-  <q-table
+  <!-- <q-table
     :title="title ? title : 'Files'"
     :data="files"
     :columns="file_columns"
@@ -25,13 +25,68 @@
         color="grey" icon="cloud_download" @click="download(props.row)" />
       </q-td>
     </template>
-  </q-table>
+  </q-table> -->
+  <q-list :bordered="bordered" class="rounded-borders">
+    <q-item-label header v-if="title">{{title}}</q-item-label>
+    <template v-for="(file, index) of files">
+      <q-item :key="file.item_hash"
+              :to="file.type === 'folder' ? {'name': 'folder', params: {'folder': file.hash}} : null"
+              clickable>
+        <q-item-section avatar top @click="$emit('item-clicked', file)">
+            <q-avatar rounded size="48px" v-if="file.content.thumbnail_url">
+              <img :src="file.content.thumbnail_url" style="object-fit: cover;" />
+            </q-avatar>
+            <q-avatar size="48px" v-else-if="file.type === 'folder'" icon="folder" color="primary" text-color="white" />
+            <q-avatar size="48px" v-else icon="document" color="secondary" text-color="white" />
+        </q-item-section>
+        <q-item-section @click="$emit('item-clicked', file)">
+          <q-item-label lines="1">{{file.content.filename}}</q-item-label>
+          <q-item-label caption>{{file.time * 1000 | moment("LLL")}}</q-item-label>
+        </q-item-section>
+        <q-item-section side top v-if="file.content.size">
+          {{humanStorageSize(file.content.size)}}
+        </q-item-section>
+        <q-item-section top side>
+          <div class="text-grey-8 q-gutter-xs" v-if="file.type === 'file'">
+            <q-btn flat dense round class="gt-xs"
+                  size="12px" icon="cloud_download" @click="download(file)">
+              <q-tooltip>Download file</q-tooltip>
+            </q-btn>
+            <q-btn class="gt-xs" size="12px" flat dense round icon="archive"
+                  @click="archive(file)">
+              <q-tooltip>Archive file</q-tooltip>
+            </q-btn>
+            <q-btn size="12px" class="lt-sm" flat dense round icon="more_vert">
+              <q-menu>
+                <q-list style="min-width: 100px">
+                  <q-item clickable v-close-popup @click="download(file)">
+                    <q-item-section avatar>
+                      <q-icon color="primary" name="cloud_download" />
+                    </q-item-section>
+                    <q-item-section>Download</q-item-section>
+                  </q-item>
+                  <q-item clickable v-close-popup @click="archive(file)">
+                    <q-item-section avatar>
+                      <q-icon color="primary" name="archive" />
+                    </q-item-section>
+                    <q-item-section>Archive</q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
+          </div>
+        </q-item-section>
+      </q-item>
+      <q-separator spaced :key="'sep'+file.item_hash" v-if="index < (files.length-1)" />
+    </template>
+  </q-list>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { aggregates, posts, encryption, store } from 'aleph-js'
 import moment from 'moment'
+import {download_file} from '../services/files'
 import { format } from 'quasar'
 const { humanStorageSize } = format
 export default {
@@ -40,7 +95,8 @@ export default {
     'files': Array,
     'title': String,
     'flat': Boolean,
-    'virtualScroll': Boolean
+    'virtualScroll': Boolean,
+    'bordered': Boolean
   },
   computed: {
     ... mapState([
@@ -48,34 +104,17 @@ export default {
       'account',
       'network_id',
       'api_server',
-      'channel',
-      'files'
+      'channel'
     ])
   },
   methods: {
     async download(filepost) {
-      console.log(this.account)
-      let content = await store.retrieve(filepost.content.hash, {api_server: this.api_server})
-      console.log(content)
-      if (filepost.content.private) {
-        content = encryption.decrypt(this.account, content, {as_hex: false, as_string: false})
-      }
-      console.log(content.length)
-
-      const data = new Blob([content], {type: filepost.content.mimetype})
-      let link = document.createElement('a')
-      link.href = window.URL.createObjectURL(data)
-      link.download=filepost.content.filename
-      link.click()
-
-      setTimeout(function(){
-        // For Firefox it is necessary to delay revoking the ObjectURL
-        window.URL.revokeObjectURL(data);
-      }, 100);
+      await download_file(filepost, this.account, this.api_server)
     }
   },
   data() {
     return {
+      humanStorageSize: humanStorageSize,
       pagination: {
         rowsPerPage: 0
       },

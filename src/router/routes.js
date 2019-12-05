@@ -56,6 +56,12 @@ const routes = [
             name: 'files',
             path: '',
             component: () => import('pages/FileBrowser.vue')
+          },
+          {
+            name: 'folder',
+            path: 'folder/:folder',
+            component: () => import('pages/FileBrowser.vue'),
+            props: true
           }
         ]
       }
