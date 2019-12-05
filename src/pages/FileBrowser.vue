@@ -41,7 +41,7 @@
       </div>
     </div>
     <q-breadcrumbs class="text-grey">
-      <q-breadcrumbs-el icon="home" :to="{'name': 'home'}" label="Home" />
+      <!-- <q-breadcrumbs-el icon="home" :to="{'name': 'home'}" label="Home" /> -->
       <q-breadcrumbs-el icon="insert_drive_file" :to="{'name': 'files'}" label="Files" />
       <q-breadcrumbs-el 
       v-for="f of breadcrumbs" :key="f.hash"
