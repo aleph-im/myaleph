@@ -38,7 +38,7 @@
           icon="menu"
           class="q-mx-md"
         />
-        <q-toolbar-title v-if="$q.screen.gt.sm" shrink class="row items-center no-wrap"
+        <q-toolbar-title v-if="$q.screen.gt.sm" grow class="row col-grow items-center no-wrap"
                          @click="$router.push({name:'home'})">
           <img src="https://aleph.im/assets/img/logo.c052fb15.svg">
           <span class="q-ml-sm text-mono text-bold">
@@ -74,7 +74,7 @@
 
         <q-btn v-if="$q.screen.gt.xs && account" flat dense no-wrap color="grey" disabled icon="cloud_upload" no-caps label="Upload" class="q-ml-sm q-px-md" />
 
-        <q-space />
+        <!-- <q-space /> -->
 
         <div class="q-gutter-sm row items-center no-wrap">
           <q-btn v-if="!account"
