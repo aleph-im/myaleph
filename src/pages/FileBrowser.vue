@@ -314,16 +314,17 @@ export default {
       this.$q.loadingBar.stop()
     },
     async file_clicked(file) {
-      if (file.content.mimetype.startsWith('image/')) {
-        this.$q.loadingBar.start()
-        this.lbimgs = [
-          await retrieve_file_url(file, this.account, this.api_server,
-            {revoke_timeout: 1000}
-          )]
-        this.lbidx = 0
-        this.lbvisible = true
-        this.$q.loadingBar.stop()
-      }
+      if (file.content.mimetype)
+        if (file.content.mimetype.startsWith('image/')) {
+          this.$q.loadingBar.start()
+          this.lbimgs = [
+            await retrieve_file_url(file, this.account, this.api_server,
+              {revoke_timeout: 1000}
+            )]
+          this.lbidx = 0
+          this.lbvisible = true
+          this.$q.loadingBar.stop()
+        }
     },
     async image_hide() {
       this.lbvisible = false
