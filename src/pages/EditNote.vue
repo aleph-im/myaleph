@@ -110,7 +110,7 @@ export default {
           this.tags = []
       } else {
         this.title = ''
-        this.body = ''
+        this.body = 'Write your content here!'
         this.tags = []
       }
     },
