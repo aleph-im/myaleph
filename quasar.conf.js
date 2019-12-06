@@ -62,8 +62,8 @@ module.exports = function (ctx) {
 
       config: {
         loadingBar: {
-          color: 'primary',
-          size: '1px',
+          color: 'secondary',
+          size: '2px',
           position: 'top',
           skipHijack: true
         }

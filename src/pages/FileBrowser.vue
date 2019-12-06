@@ -19,43 +19,46 @@
       :index="lbidx"
       @hide="image_hide"
     ></vue-easy-lightbox>
-    <div class="row justify-between items-center">
-      <q-btn v-if="folder" round flat icon="arrow_back"
-        :to="folder_object.content.ref ? {'name': 'folder', params:{'folder': folder_object.content.ref}} : {'name': 'files'} " />
-      <span v-if="folder" class="col-grow">
-        <h4 class="q-my-sm col-grow">{{folder_object.content.filename}}</h4>
-      </span>
-      <h4 v-else class="q-my-sm col-grow">Files</h4>
-      <div class="col-md-2">
-        <q-select v-model="sorting"
-        :options="sort_options" emit-value map-options
-        label="Sort by" round dense flat options-dense />
+    <q-pull-to-refresh @refresh="_refresh" ref="refresher">
+      <div class="row justify-between items-center">
+        <q-btn v-if="folder" round flat icon="arrow_back"
+          :to="folder_object.content.ref ? {'name': 'folder', params:{'folder': folder_object.content.ref}} : {'name': 'files'} " />
+        <span v-if="folder" class="col-grow">
+          <h4 class="q-my-sm col-grow">{{folder_object.content.filename}}</h4>
+        </span>
+        <h4 v-else class="q-my-sm col-grow">Files</h4>
+        <div class="col-md-2">
+          <q-select v-model="sorting"
+          :options="sort_options" emit-value map-options
+          label="Sort by" round dense flat options-dense />
+        </div>
+        <div>
+          <!-- <template v-if="$q.screen.gt.xs">
+            {{show_archived?'archived visible':''}}
+          </template> -->
+          <q-toggle
+            v-model="show_archived"
+            checked-icon="archive"
+            color="blue"
+            unchecked-icon="visibility_off"
+          />
+          <q-tooltip>Display archived items</q-tooltip>
+        </div>
       </div>
-      <div>
-        <!-- <template v-if="$q.screen.gt.xs">
-          {{show_archived?'archived visible':''}}
-        </template> -->
-        <q-toggle
-          v-model="show_archived"
-          checked-icon="archive"
-          color="blue"
-          unchecked-icon="visibility_off"
-        />
-        <q-tooltip>Display archived items</q-tooltip>
-      </div>
-    </div>
-    <q-breadcrumbs class="text-grey">
-      <!-- <q-breadcrumbs-el icon="home" :to="{'name': 'home'}" label="Home" /> -->
-      <q-breadcrumbs-el icon="insert_drive_file" :to="{'name': 'files'}" label="Files" />
-      <q-breadcrumbs-el 
-      v-for="f of breadcrumbs" :key="f.hash"
-      :to="{'name': 'folder', params: {'folder': f.hash}}"
-      icon="folder"
-      :label="f.name" />
-      <q-breadcrumbs-el v-if="this.folder" :label="this.folder_object.content.filename" icon="folder" />
-    </q-breadcrumbs>
-    <files-list :files="displayed_files" virtual-scroll flat class="q-my-md"
-                @item-clicked="file_clicked" />
+      <q-breadcrumbs class="text-grey">
+        <!-- <q-breadcrumbs-el icon="home" :to="{'name': 'home'}" label="Home" /> -->
+        <q-breadcrumbs-el icon="insert_drive_file" :to="{'name': 'files'}" label="Files" />
+        <q-breadcrumbs-el 
+        v-for="f of breadcrumbs" :key="f.hash"
+        :to="{'name': 'folder', params: {'folder': f.hash}}"
+        icon="folder"
+        :label="f.name" />
+        <q-breadcrumbs-el v-if="this.folder" :label="this.folder_object.content.filename" icon="folder" />
+      </q-breadcrumbs>
+
+      <files-list :files="displayed_files" virtual-scroll flat class="q-my-md"
+                    @item-clicked="file_clicked" />
+    </q-pull-to-refresh>
     <!-- <p v-else>
       No note here yet... Why not <router-link :to="{'name': 'new-note'}">write one</router-link>?
     </p> -->
@@ -198,11 +201,17 @@ export default {
       await this.$store.dispatch('update_files')
     },
     async refresh() {
+      console.log(this.$refs)
+      this.$refs.refresher.trigger()
+    },
+    async _refresh(done) {
       // this.loading = true
-      // this.$q.loadingBar.start()
-      // this.$q.loadingBar.increment(0.2)
+      this.$q.loadingBar.start()
+      this.$q.loadingBar.increment(0.2)
       await this.getFiles()
-      // this.$q.loadingBar.stop()
+      if (done)
+        done()
+      this.$q.loadingBar.stop()
       // this.loading = false
     },
     async upload() {
@@ -328,7 +337,7 @@ export default {
   },
   async created() {
     if (!this.files.length)
-      await this.refresh()
+      setTimeout(this.refresh.bind(this), 100)
   }
 }
 </script>
