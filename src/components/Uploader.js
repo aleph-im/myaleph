@@ -53,8 +53,17 @@ export default {
       }
 
       const queue = this.queuedFiles.slice(0)
+      const accepted_files = []
       for (let file of queue) {
         console.log(queue)
+        if (file.size >= 4194304){
+          this.__updateFile(file, 'failed', file.size * 0.3)
+          this.$q.notify({
+            message: `File ${file.name} is bigger than 4mb, can't upload.`,
+            color: "negative"
+          })
+          continue
+        }
 
         if (this.encrypt) {
           let reader = new FileReader()
@@ -104,8 +113,9 @@ export default {
           file.item_hash = message.content.item_hash
           file.item_type = message.content.item_type
         }
+        accepted_files.push(file)
       }
-      this.$emit('uploaded', queue)
+      this.$emit('uploaded', accepted_files)
     //   this.queuedFiles = []
     //   if (this.xhrProps.batch(queue)) {
     //     this.__runFactory(queue)

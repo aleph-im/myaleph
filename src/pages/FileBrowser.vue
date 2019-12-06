@@ -5,7 +5,6 @@
       <aleph-uploader
         url="http://localhost:8080/upload"
         style="max-width: 300px"
-        :max-file-size="4194304"
         auto-upload
         multiple
         @uploaded="uploaded"
@@ -231,6 +230,7 @@ export default {
           return
         let post_content = {
           filename: data,
+          private: true,
           status: 'visible' // default status
         }
 
