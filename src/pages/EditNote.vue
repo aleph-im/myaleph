@@ -1,10 +1,10 @@
 <template>
-  <q-page padding class="column">
+  <q-page class="column note-edit-page">
     <div class="col-auto row justify-between items-center">
       <template v-if="$q.screen.lt.sm">
         <q-btn round flat icon="arrow_back" :to="{'name': 'notes'}" />
       </template>
-      <h4 class="q-my-sm col-grow">
+      <h4 class="q-ma-sm col-grow">
         {{title||'Note Title'}}
         <q-popup-edit v-model="title">
           <template v-slot="{ initialValue, value, emitValue, validate, set, cancel }">
@@ -22,7 +22,7 @@
           </template>
         </q-popup-edit>
       </h4>
-      <span>
+      <span class="q-ma-sm">
         <template v-if="$q.screen.gt.xs">
           {{is_private?'encrypted':'public'}}
         </template>
@@ -36,9 +36,9 @@
       </span>
     </div>
     <div class="col-grow">
-      <editor v-model="body" height="calc(100vh - 14rem)" mode="wysiwyg" />
+      <editor v-model="body" height="calc(100vh - 12rem)" mode="wysiwyg" class="note-editor" />
     </div>
-    <div class="col-auto row justify-end q-my-sm">
+    <div class="col-auto row justify-end q-ma-sm">
       <q-btn push color="primary" :loading="saving" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
     </div>
     <q-inner-loading :showing="loading">
@@ -197,3 +197,24 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.note-edit-page {
+  .tui-editor-defaultUI {
+    border: none;
+  }
+
+  .te-toolbar-section,
+  .te-mode-switch-section {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  &:focus-within {
+    .te-toolbar-section,
+    .te-mode-switch-section {
+      opacity: 1;
+    }
+  }
+}
+</style>
