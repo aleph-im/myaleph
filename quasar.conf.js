@@ -56,8 +56,18 @@ module.exports = function (ctx) {
         'LocalStorage',
         'SessionStorage',
         'Notify',
-        'Dialog'
-      ]
+        'Dialog',
+        'LoadingBar'
+      ],
+
+      config: {
+        loadingBar: {
+          color: 'primary',
+          size: '1px',
+          position: 'top',
+          skipHijack: true
+        }
+      }
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie

@@ -20,35 +20,36 @@
           {{humanStorageSize(file.content.size)}}
         </q-item-section>
         <q-item-section top side>
-          <div class="text-grey-8 q-gutter-xs" v-if="file.original_type === 'file'">
+          <div class="text-grey-8 q-gutter-xs">
             <q-btn flat dense round class="gt-xs"
-                  size="12px" icon="cloud_download" @click="download(file)">
+                  size="12px" icon="cloud_download" @click="download(file)"
+                  v-if="file.original_type === 'file'">
               <q-tooltip>Download file</q-tooltip>
             </q-btn>
             <q-btn class="gt-xs" size="12px" flat dense round icon="archive"
-                  @click="archive(file)" v-if="file.content.status === 'visible'">
+                  @click.prevent="archive(file)" v-if="file.content.status === 'visible'">
               <q-tooltip>Archive file</q-tooltip>
             </q-btn>
             <q-btn class="gt-xs" size="12px" flat dense round icon="unarchive"
-                  @click="unarchive(file)" v-else>
+                  @click.prevent="unarchive(file)" v-else>
               <q-tooltip>Un-Archive file</q-tooltip>
             </q-btn>
             <q-btn size="12px" class="lt-sm" flat dense round icon="more_vert">
               <q-menu>
                 <q-list style="min-width: 100px">
-                  <q-item clickable v-close-popup @click="download(file)">
+                  <q-item clickable v-close-popup @click="download(file)"  v-if="file.original_type === 'file'">
                     <q-item-section avatar>
                       <q-icon color="primary" name="cloud_download" />
                     </q-item-section>
                     <q-item-section>Download</q-item-section>
                   </q-item>
-                  <q-item clickable v-close-popup @click="archive(file)" v-if="file.content.status === 'visible'">
+                  <q-item clickable v-close-popup @click.prevent="archive(file)" v-if="file.content.status === 'visible'">
                     <q-item-section avatar>
                       <q-icon color="primary" name="archive" />
                     </q-item-section>
                     <q-item-section>Archive</q-item-section>
                   </q-item>
-                  <q-item clickable v-close-popup @click="unarchive(file)" v-else>
+                  <q-item clickable v-close-popup @click.prevent="unarchive(file)" v-else>
                     <q-item-section avatar>
                       <q-icon color="primary" name="unarchive" />
                     </q-item-section>
@@ -93,7 +94,9 @@ export default {
   },
   methods: {
     async download(filepost) {
+      this.$q.loadingBar.start()
       await download_file(filepost, this.account, this.api_server)
+      this.$q.loadingBar.stop()
     },
     async archive(filepost) {
       await this.change_status(filepost, 'archived')

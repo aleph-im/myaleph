@@ -71,7 +71,9 @@ export default {
       await this.$store.dispatch('update_notes')
     },
     async refresh() {
+      this.$q.loadingBar.start()
       await this.getNotes()
+      this.$q.loadingBar.stop()
     }
   },
   watch: {

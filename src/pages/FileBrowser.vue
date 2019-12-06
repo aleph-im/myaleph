@@ -27,14 +27,19 @@
         <h4 class="q-my-sm col-grow">{{folder_object.content.filename}}</h4>
       </span>
       <h4 v-else class="q-my-sm col-grow">Files</h4>
+      <div class="col-md-2">
+        <q-select v-model="sorting"
+        :options="sort_options" emit-value map-options
+        label="Sort by" round dense flat options-dense />
+      </div>
       <div>
-        <template v-if="$q.screen.gt.xs">
+        <!-- <template v-if="$q.screen.gt.xs">
           {{show_archived?'archived visible':''}}
-        </template>
+        </template> -->
         <q-toggle
           v-model="show_archived"
           checked-icon="archive"
-          color="green"
+          color="blue"
           unchecked-icon="visibility_off"
         />
         <q-tooltip>Display archived items</q-tooltip>
@@ -97,14 +102,24 @@ export default {
 
       if (!this.show_archived)
         files = files.filter((v) => (v.content.status==='visible'))
+      
+      console.log(this.sorting)
 
       files.sort((f1, f2) => {
         if (f1.original_type == 'file' && f2.original_type == 'folder') return 1;
         if (f1.original_type == 'folder' && f2.original_type == 'file') return -1;
-
+        console.log(this.sorting)
         if (this.sorting === 'time') {
           if (f1.time < f2.time) return 1;
           if (f2.time < f1.time) return -1;
+        }
+        if (this.sorting === 'name') {
+          if (f1.content.filename.toLowerCase() < f2.content.filename.toLowerCase()) return -1;
+          if (f2.content.filename.toLowerCase() < f1.content.filename.toLowerCase()) return 1;
+        }
+        if (this.sorting === 'size') {
+          if (f1.content.size < f2.content.size) return 1;
+          if (f2.content.size < f1.content.size) return -1;
         }
       })
       return files
@@ -158,7 +173,21 @@ export default {
       sorting: 'time',
       lbimgs: '',  // Img Url , string or Array
       lbvisible: false,
-      lbidx: 0   // default: 0
+      lbidx: 0,   // default: 0,
+      sort_options: [
+        {
+          label: 'Last updated',
+          value: 'time'
+        },
+        {
+          label: 'Name',
+          value: 'name'
+        },
+        {
+          label: 'Size',
+          value: 'size'
+        }
+      ]
     }
   },
   components: {
@@ -170,9 +199,12 @@ export default {
       await this.$store.dispatch('update_files')
     },
     async refresh() {
-      this.loading = true
+      // this.loading = true
+      // this.$q.loadingBar.start()
+      // this.$q.loadingBar.increment(0.2)
       await this.getFiles()
-      this.loading = false
+      // this.$q.loadingBar.stop()
+      // this.loading = false
     },
     async upload() {
       const sleep = (milliseconds) => {
@@ -227,6 +259,7 @@ export default {
     },
     async uploaded(info) {
       this.upload_shown = false
+      this.$q.loadingBar.start()
       for (let file of info) {
         let post_content = {
           filename: file.name,
@@ -251,6 +284,7 @@ export default {
 
         if (file.private)
           encrypt_content(post_content, ['filename', 'mimetype', 'thumbnail_url'], this.account['public_key'])
+        this.$q.loadingBar.increment(1/info.length/2)
 
         let msg = await posts.submit(
           this.account.address, 'file', post_content,
@@ -266,16 +300,20 @@ export default {
         msg.ref = this.folder
         msg.original_ref = this.folder
         this.$store.commit('add_file', msg)
+        this.$q.loadingBar.increment(1/info.length/2)
       }
+      this.$q.loadingBar.stop()
     },
     async file_clicked(file) {
       if (file.content.mimetype.startsWith('image/')) {
+        this.$q.loadingBar.start()
         this.lbimgs = [
           await retrieve_file_url(file, this.account, this.api_server,
             {revoke_timeout: 1000}
           )]
         this.lbidx = 0
         this.lbvisible = true
+        this.$q.loadingBar.stop()
       }
     },
     async image_hide() {
