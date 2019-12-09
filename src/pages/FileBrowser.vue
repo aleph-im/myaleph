@@ -24,9 +24,14 @@
         <q-btn v-if="folder" round flat icon="arrow_back"
           :to="folder_object.content.ref ? {'name': 'folder', params:{'folder': folder_object.content.ref}} : {'name': 'files'} " />
         <span v-if="folder" class="col-grow">
-          <h4 class="q-my-sm col-grow">{{folder_object.content.filename}}</h4>
+          <h4 class="q-my-sm col-grow">
+            <q-icon name="archive" v-if="folder_object.content.status === 'archived'" color="grey" />
+            {{folder_object.content.filename}}
+          </h4>
         </span>
-        <h4 v-else class="q-my-sm col-grow">Files</h4>
+        <h4 v-else class="q-my-sm col-grow">
+          Files
+        </h4>
         <div class="col-md-2">
           <q-select v-model="sorting"
           :options="sort_options" emit-value map-options
@@ -44,6 +49,7 @@
           />
           <q-tooltip>Display archived items</q-tooltip>
         </div>
+        <file-menu v-if="folder" :file="folder_object" size="md" />
       </div>
       <q-breadcrumbs class="text-grey">
         <!-- <q-breadcrumbs-el icon="home" :to="{'name': 'home'}" label="Home" /> -->
@@ -90,6 +96,7 @@ import { encrypt_content, decrypt_content } from '../services/encryption.js'
 import { retrieve_file_url } from '../services/files'
 import AlephUploader from '../components/Uploader.js'
 import FilesList from '../components/FilesList'
+import FileMenu from '../components/FileMenu'
 import NotesList from '../components/NotesList'
 import downscale from 'downscale'
 export default {
@@ -194,7 +201,8 @@ export default {
   },
   components: {
     AlephUploader,
-    FilesList
+    FilesList,
+    FileMenu
   },
   methods: {
     async getFiles() {
@@ -314,6 +322,7 @@ export default {
       this.$q.loadingBar.stop()
     },
     async file_clicked(file) {
+      console.log(file)
       if (file.content.mimetype)
         if (file.content.mimetype.startsWith('image/')) {
           this.$q.loadingBar.start()
@@ -325,6 +334,9 @@ export default {
           this.lbvisible = true
           this.$q.loadingBar.stop()
         }
+      if (file.original_type === 'folder') {
+        this.$router.push({'name': 'folder', params: {'folder': file.hash}})
+      }
     },
     async image_hide() {
       this.lbvisible = false
