@@ -1,5 +1,11 @@
 <template>
   <q-layout view="lHh Lpr fff">
+    <vue-easy-lightbox
+      :visible="lbvisible"
+      :imgs="lbimgs"
+      :index="lbidx"
+      @hide="image_hide"
+    ></vue-easy-lightbox>
     <q-dialog v-model="show_backup" v-if="account">
       <q-card>
         <q-card-section>
@@ -228,6 +234,9 @@ export default {
       search: '',
       storage: 0,
       show_backup: false,
+      lbimgs: '',  // Img Url , string or Array
+      lbvisible: false,
+      lbidx: 0,   // default: 0,
       links1: [
         { icon: 'assignment_ind', text:'Profile', link: {'name': 'profile'}, exact: true },
         { icon: 'insert_drive_file', text: 'Files', link: {'name': 'files'}, exact: false },
@@ -284,6 +293,22 @@ export default {
         go()
       }, 3000)
     },
+
+    open_lightbox(items, index) {
+      this.lbimgs = items
+      this.lbidx = index
+      this.lbvisible = true
+    },
+    
+    async image_hide() {
+      this.lbvisible = false
+    }
+  },
+  created() {
+    this.$root.$on('open_lightbox', this.open_lightbox)
+  },
+  beforeDestroy() {
+    this.$root.$off('open_lightbox', this.open_lightbox)
   }
 }
 </script>

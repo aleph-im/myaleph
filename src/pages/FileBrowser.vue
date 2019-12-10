@@ -12,13 +12,6 @@
         encrypt
       />
     </q-dialog>
-
-    <vue-easy-lightbox
-      :visible="lbvisible"
-      :imgs="lbimgs"
-      :index="lbidx"
-      @hide="image_hide"
-    ></vue-easy-lightbox>
     <q-pull-to-refresh @refresh="_refresh" ref="refresher">
       <div class="row justify-between items-center">
         <q-btn v-if="folder" round flat icon="arrow_back"
@@ -62,8 +55,7 @@
         <q-breadcrumbs-el v-if="this.folder" :label="this.folder_object.content.filename" icon="folder" />
       </q-breadcrumbs>
 
-      <files-list :files="displayed_files" virtual-scroll flat class="q-my-md"
-                    @item-clicked="file_clicked" />
+      <files-list :files="displayed_files" virtual-scroll flat class="q-my-md" />
     </q-pull-to-refresh>
     <!-- <p v-else>
       No note here yet... Why not <router-link :to="{'name': 'new-note'}">write one</router-link>?
@@ -178,9 +170,6 @@ export default {
       current_folder: null,
       show_archived: false,
       sorting: 'time',
-      lbimgs: '',  // Img Url , string or Array
-      lbvisible: false,
-      lbidx: 0,   // default: 0,
       sort_options: [
         {
           label: 'Last updated',
@@ -320,32 +309,6 @@ export default {
         this.$q.loadingBar.increment(1/info.length/2)
       }
       this.$q.loadingBar.stop()
-    },
-    async file_clicked(file) {
-      if (file.content.mimetype)
-        if (file.content.mimetype.startsWith('image/')) {
-          this.$q.loadingBar.start()
-          let file_url = await retrieve_file_url(
-            file, this.account, this.api_server,
-              {revoke_timeout: 1000})
-          if (file_url) {
-            this.lbimgs = [file_url]
-            this.lbidx = 0
-            this.lbvisible = true
-          } else {
-            this.$q.notify({
-              message: "Can't load file",
-              color: "negative"
-            })
-          }
-          this.$q.loadingBar.stop()
-        }
-      if (file.original_type === 'folder') {
-        this.$router.push({'name': 'folder', params: {'folder': file.hash}})
-      }
-    },
-    async image_hide() {
-      this.lbvisible = false
     }
   },
   watch: {
