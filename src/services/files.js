@@ -4,26 +4,34 @@ var revokeObjectURL = (window.URL || window.webkitURL || {}).revokeObjectURL || 
 
 export async function retrieve_file(filepost, account, api_server) {
   let content = await store.retrieve(filepost.content.hash, {api_server: api_server})
-  if (filepost.content.private) {
-      content = encryption.decrypt(account, content, {as_hex: false, as_string: false})
+  if (content !== null) {
+    if (filepost.content.private) {
+        content = encryption.decrypt(account, content, {as_hex: false, as_string: false})
+    }
+  
+    const data = new Blob([content], {type: filepost.content.mimetype})
+    return data
+  } else {
+    return null
   }
-
-  const data = new Blob([content], {type: filepost.content.mimetype})
-  return data
 }
 
 export async function retrieve_file_url(filepost, account, api_server,
   {revoke_timeout = null} = {}) {
   const data = await retrieve_file(filepost, account, api_server)
-  const objurl = createObjectURL(data)
-  if (revoke_timeout) {
-    setTimeout(function(){
-      // For Firefox it is necessary to delay revoking the ObjectURL
-      revokeObjectURL(objurl);
-    }, revoke_timeout);
+  if (data !== null) {
+    const objurl = createObjectURL(data)
+    if (revoke_timeout) {
+      setTimeout(function(){
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        revokeObjectURL(objurl);
+      }, revoke_timeout);
+    }
+    
+    return objurl
+  } else {
+    return null
   }
-  
-  return objurl
 }
 
 export async function download_file(filepost, account, api_server,
