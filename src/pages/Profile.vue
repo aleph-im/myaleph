@@ -47,7 +47,7 @@
         </div>
       </q-card-section>
 
-        <q-tabs
+        <!-- <q-tabs
           v-model="tab"
           dense
           class="text-grey"
@@ -57,16 +57,31 @@
           narrow-indicator
         >
           <q-tab name="stats" label="Statistics" />
-        </q-tabs>
+        </q-tabs> -->
 
-        <q-separator />
+        <!-- <q-separator /> -->
     </q-card>
     <div v-if="tab=='stats'">
-      <div class="row">
-        <div class="col-12 col-sm-6 col-md-8">
-        Nothing to see here, yet.
+      <div class="row q-col-gutter-sm">
+        <div class="col-12 col-sm-6 col-md-8 row q-col-gutter-sm">
+          <div class="col-lg col-grow">
+            <q-card>
+              <q-card-section>
+                <div class="text-subtitle1">Files</div>
+              </q-card-section>
+              <files-list :files="displayed_files" dense />
+            </q-card>
+          </div>
+          <div class="col-lg col-grow">
+            <q-card>
+              <q-card-section>
+                <div  class="text-subtitle1">Notes</div>
+              </q-card-section>
+              <notes-list :notes="displayed_notes" dense />
+            </q-card>
+          </div>
         </div>
-        <div class="col-12 col-sm-6 col-md-4">
+        <div class="col-12 col-sm-6 col-md-4" v-if="!address">
           <q-card>
             <q-list>
               <q-item-label header>Address</q-item-label>
@@ -112,6 +127,9 @@
 import { mapState } from 'vuex'
 import { aggregates, posts } from 'aleph-js'
 import SubmitContent from '../components/SubmitContent.vue'
+import FilesList from '../components/FilesList'
+import NotesList from '../components/NotesList'
+
 export default {
   name: 'PageIndex',
   data() {
@@ -120,10 +138,17 @@ export default {
       'name': '',
       'bio': '',
       'profile': {},
-      'loading': false
+      'loading': false,
+      'loaded_notes': [],
+      'loaded_files': [],
+      'shown_notes': 10,
+      'shown_files': 10
     }
   },
   computed: {
+    is_own() {
+      return (!this.address)
+    },
     profile_address() {
       let address = this.address
       if (!address)
@@ -143,6 +168,19 @@ export default {
 
     //   return profile
     // },
+    displayed_notes() {
+      if (this.is_own) {
+        return this.notes.slice(0,this.shown_notes)
+      }
+    },
+    displayed_files() {
+      if (this.is_own) {
+        let files = this.files.filter(
+          (f) => (f.original_type === 'file') && (f.content.status === 'visible')
+        )
+        return files.slice(0,this.shown_files)
+      }
+    },
     ... mapState([
       // map this.count to store.state.count
       'account',
@@ -151,14 +189,15 @@ export default {
       'channel',
       'profiles',
       'balance_info',
-      'mb_per_aleph'
+      'mb_per_aleph',
+      'notes',
+      'files'
     ])
   },
   props: ['address'],
   methods: {
     async save_name(value, initial_value) {
       if (value && (value !== initial_value)) {
-        console.log("blah")
         await aggregates.submit(this.account.address, "profile", {
           'name': value
         }, {
@@ -205,6 +244,15 @@ export default {
         this.name = this.profile.name
         this.bio = this.profile.bio
       }
+
+      if (this.is_own) {
+        if (!this.notes.length)
+          await this.$store.dispatch('update_notes')
+        if (!this.files.length)
+          await this.$store.dispatch('update_files')
+      }
+
+
       this.loading = false
     }
   },
@@ -222,7 +270,11 @@ export default {
       await this.refresh()
     }
   },
-  components: {SubmitContent}
+  components: {
+    SubmitContent,
+    FilesList,
+    NotesList
+  }
 }
 </script>
 
