@@ -72,8 +72,10 @@ export default {
           unencrypted_content[key] = post_content[key]
       })
 
-      if ((post_content.private === undefined)||(post_content.private))
+      if ((post_content.private === undefined)||(post_content.private)) {
+        post_content['private'] = true
         encrypt_content(post_content, ['filename', 'mimetype', 'thumbnail_url'], this.account['public_key'])
+      }
 
       let msg = await posts.submit(
         this.account.address, 'amend', post_content,
