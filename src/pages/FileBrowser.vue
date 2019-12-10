@@ -205,18 +205,21 @@ export default {
     FileMenu
   },
   methods: {
-    async getFiles() {
-      await this.$store.dispatch('update_files')
+    async getFiles(progress) {
+      await this.$store.dispatch('update_files', progress)
     },
     async refresh() {
       console.log(this.$refs)
       this.$refs.refresher.trigger()
     },
     async _refresh(done) {
+      async function progress(percent) {
+        this.$q.loadingBar.increment(0.2+(0.8*percent))
+      }
       // this.loading = true
       this.$q.loadingBar.start()
       this.$q.loadingBar.increment(0.2)
-      await this.getFiles()
+      await this.getFiles(progress)
       if (done)
         done()
       this.$q.loadingBar.stop()
@@ -322,16 +325,22 @@ export default {
       this.$q.loadingBar.stop()
     },
     async file_clicked(file) {
-      console.log(file)
       if (file.content.mimetype)
         if (file.content.mimetype.startsWith('image/')) {
           this.$q.loadingBar.start()
-          this.lbimgs = [
-            await retrieve_file_url(file, this.account, this.api_server,
-              {revoke_timeout: 1000}
-            )]
-          this.lbidx = 0
-          this.lbvisible = true
+          let file_url = await retrieve_file_url(
+            file, this.account, this.api_server,
+              {revoke_timeout: 1000})
+          if (file_url) {
+            this.lbimgs = [file_url]
+            this.lbidx = 0
+            this.lbvisible = true
+          } else {
+            this.$q.notify({
+              message: "Can't load file",
+              color: "negative"
+            })
+          }
           this.$q.loadingBar.stop()
         }
       if (file.original_type === 'folder') {
