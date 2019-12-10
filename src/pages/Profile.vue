@@ -64,20 +64,34 @@
     <div v-if="tab=='stats'">
       <div class="row q-col-gutter-sm">
         <div class="col-12 col-sm-6 col-md-8 row q-col-gutter-sm">
-          <div class="col-lg col-grow">
+          <div class="col-lg col-grow" v-if="is_own | displayed_files.length">
             <q-card>
-              <q-card-section>
+              <q-card-section class="row justify-between">
                 <div class="text-subtitle1">Files</div>
+                <div>
+                  <q-btn rounded size="sm" color="primary" icon-right="chevron_right"
+                         label="view all" :to="{name: 'files'}" />
+                </div>
               </q-card-section>
-              <files-list :files="displayed_files" dense />
+              <files-list :files="displayed_files" dense v-if="displayed_files.length" />
+              <q-card-section v-else-if="is_own">
+                Nothing to see here, yet... Why don't you upload some?
+              </q-card-section>
             </q-card>
           </div>
-          <div class="col-lg col-grow">
+          <div class="col-lg col-grow" v-if="is_own | displayed_notes.length">
             <q-card>
-              <q-card-section>
-                <div  class="text-subtitle1">Notes</div>
+              <q-card-section class="row justify-between">
+                <div class="text-subtitle1">Notes</div>
+                <div>
+                  <q-btn rounded size="sm" color="primary" icon-right="chevron_right"
+                         label="view all" :to="{name: 'notes'}" />
+                </div>
               </q-card-section>
-              <notes-list :notes="displayed_notes" dense />
+              <notes-list :notes="displayed_notes" dense v-if="displayed_notes.length" />
+              <q-card-section v-else-if="is_own">
+                Nothing to see here, yet... Why don't you write some?
+              </q-card-section>
             </q-card>
           </div>
         </div>
