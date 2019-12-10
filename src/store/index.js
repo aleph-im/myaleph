@@ -106,15 +106,16 @@ export default function (/* { ssrContext } */) {
         }
         await commit('set_account', null)
       },
-      async update_notes({ state, commit }) {
+      async update_notes({ state, commit }, progress_callback) {
         let result = await posts.get_posts('note', {
           pagination: 1000,
           addresses: [state.account.address],
           api_server: state.api_server
         })
         let post_list = []
-        console.log(result.posts)
+        let i = 0
         for (let post of result.posts) {
+          i += 1
           try {
             if (post.content.private) {
               decrypt_content(post.content, ['title', 'body'], state.account)
@@ -126,19 +127,22 @@ export default function (/* { ssrContext } */) {
           } catch (e) {
             console.error("Can't decrypt...", e)
           }
+          if (progress_callback !== undefined)
+            await progress_callback(i / result.posts.length)
           post_list.push(post)
         }
         commit('set_notes', post_list)
       },
-      async update_files({ state, commit }) {
+      async update_files({ state, commit }, progress_callback) {
         let result = await posts.get_posts('file,folder', {
           pagination: 10000,
           addresses: [state.account.address],
           api_server: state.api_server
         })
         let post_list = []
-        console.log(result.posts)
+        let i = 0
         for (let post of result.posts) {
+          i += 1
           try {
             if ((post.content.private)|(post.type==='folder')) {
               decrypt_content(post.content, ['filename', 'mimetype', 'thumbnail_url'], state.account)
@@ -146,6 +150,8 @@ export default function (/* { ssrContext } */) {
           } catch (e) {
             console.error("Can't decrypt...", e)
           }
+          if (progress_callback !== undefined)
+            await progress_callback(i / result.posts.length)
           post_list.push(post)
         }
         commit('set_files', post_list)

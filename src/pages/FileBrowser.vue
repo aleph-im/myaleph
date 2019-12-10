@@ -111,8 +111,6 @@ export default {
 
       if (!this.show_archived)
         files = files.filter((v) => (v.content.status==='visible'))
-      
-      console.log(this.sorting)
 
       files.sort((f1, f2) => {
         if (f1.original_type == 'file' && f2.original_type == 'folder') return 1;
@@ -209,7 +207,6 @@ export default {
       await this.$store.dispatch('update_files', progress)
     },
     async refresh() {
-      console.log(this.$refs)
       this.$refs.refresher.trigger()
     },
     async _refresh(done) {
@@ -219,7 +216,7 @@ export default {
       // this.loading = true
       this.$q.loadingBar.start()
       this.$q.loadingBar.increment(0.2)
-      await this.getFiles(progress)
+      await this.getFiles(progress.bind(this))
       if (done)
         done()
       this.$q.loadingBar.stop()
