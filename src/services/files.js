@@ -34,12 +34,17 @@ export async function retrieve_file_url(filepost, account, api_server,
   }
 }
 
-export async function download_file(filepost, account, api_server,
-  {revoke_timeout = 1000} = {}) {
+export async function navigate_to_file(filepost, account, api_server,
+  {revoke_timeout = 1000, download = false} = {}) {
   const data = await retrieve_file(filepost, account, api_server)
   let link = document.createElement('a')
   link.href = createObjectURL(data)
-  link.download=filepost.content.filename
+  if (download)
+    link.download=filepost.content.filename
+  else {
+    link.target='_blank'
+    link.rel='nofollow'
+  }
   link.click()
   if (revoke_timeout) {
     setTimeout(function(){

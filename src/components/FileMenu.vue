@@ -31,7 +31,7 @@ import { mapState } from 'vuex'
 import { aggregates, posts, encryption, store } from 'aleph-js'
 import { encrypt_content, decrypt_content } from '../services/encryption.js'
 import moment from 'moment'
-import {download_file} from '../services/files'
+import {navigate_to_file} from '../services/files'
 import { format } from 'quasar'
 const { humanStorageSize } = format
 export default {
@@ -52,7 +52,7 @@ export default {
   methods: {
     async download(filepost) {
       this.$q.loadingBar.start()
-      await download_file(filepost, this.account, this.api_server)
+      await navigate_to_file(filepost, this.account, this.api_server, {download: true})
       this.$q.loadingBar.stop()
     },
     async archive(filepost) {
