@@ -22,8 +22,8 @@
           </template>
         </q-popup-edit>
       </h4>
-      <span class="q-ma-sm">
-        <template v-if="$q.screen.gt.xs">
+      <span class="q-ma-sm"  v-if="$q.screen.gt.xs">
+        <template>
           {{is_private?'encrypted':'public'}}
         </template>
         <q-toggle
@@ -32,13 +32,25 @@
           color="green"
           unchecked-icon="lock_open"
         />
+        <!-- <q-btn push color="info" round icon="share" size="xs" @click.stop="share"  class="q-mr-sm" /> -->
         <q-btn push color="primary" :loading="saving" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
       </span>
     </div>
     <div class="col-grow">
       <editor v-model="body" height="calc(100vh - 12rem)" mode="wysiwyg" class="note-editor" />
     </div>
-    <div class="col-auto row justify-end q-ma-sm">
+    <div class="col-auto row justify-between q-ma-sm">
+      <div>
+        <q-toggle
+          v-model="is_private"
+          checked-icon="lock"
+          color="green"
+          unchecked-icon="lock_open"  v-if="$q.screen.lt.sm"
+        />
+        <template v-if="$q.screen.lt.sm">
+          {{is_private?'encrypted':'public'}}
+        </template>
+      </div>
       <q-btn push color="primary" :loading="saving" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
     </div>
     <q-inner-loading :showing="loading">
