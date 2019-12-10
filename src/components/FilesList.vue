@@ -1,19 +1,19 @@
 <template>
-  <q-list :bordered="bordered" class="rounded-borders">
+  <q-list :bordered="bordered" :dense="dense" class="rounded-borders">
     <q-item-label header v-if="title">{{title}}</q-item-label>
     <template v-for="(file, index) of files">
       <q-item :key="file.item_hash"
               clickable :class="file.content.status === 'archived' ? 'text-grey-8 text-strike' : ''">
         <q-item-section avatar top @click="$emit('item-clicked', file)">
-            <q-avatar rounded size="48px" v-if="file.content.thumbnail_url">
+            <q-avatar rounded :size="dense?'24px':'48px'" v-if="file.content.thumbnail_url">
               <img :src="file.content.thumbnail_url" style="object-fit: cover;" />
             </q-avatar>
-            <q-avatar size="48px" v-else-if="file.original_type === 'folder'" icon="folder" color="primary" text-color="white" />
-            <q-avatar size="48px" v-else icon="document" color="secondary" text-color="white" />
+            <q-avatar :size="dense?'24px':'48px'" v-else-if="file.original_type === 'folder'" icon="folder" color="primary" text-color="white" />
+            <q-avatar :size="dense?'24px':'48px'" v-else icon="document" color="secondary" text-color="white" />
         </q-item-section>
         <q-item-section @click="$emit('item-clicked', file)">
           <q-item-label lines="1">{{file.content.filename}}</q-item-label>
-          <q-item-label caption>{{file.time * 1000 | moment("LLL")}}</q-item-label>
+          <q-item-label caption v-if="!dense">{{file.time * 1000 | moment("LLL")}}</q-item-label>
         </q-item-section>
         <q-item-section side top v-if="file.content.size">
           {{humanStorageSize(file.content.size)}}
@@ -24,7 +24,7 @@
           </div>
         </q-item-section>
       </q-item>
-      <q-separator spaced :key="'sep'+file.item_hash" v-if="index < (files.length-1)" />
+      <q-separator spaced :key="'sep'+file.item_hash" v-if="!dense && (index < (files.length-1))" />
     </template>
   </q-list>
 </template>
@@ -45,7 +45,8 @@ export default {
     'title': String,
     'flat': Boolean,
     'virtualScroll': Boolean,
-    'bordered': Boolean
+    'bordered': Boolean,
+    'dense': Boolean
   },
   computed: {
     ... mapState([
