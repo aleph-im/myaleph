@@ -84,7 +84,7 @@
         <div>
           <p>Saved them? Good, let's start!</p>
           <p class="q-gutter-sm row justify-end">
-            <q-btn push rounded color="secondary" label="Let's start!" @click="$store.emit('set_account', new_account)" />
+            <q-btn push rounded color="secondary" label="Let's start!" @click="add_account" />
           </p>
         </div>
       </div>
@@ -110,6 +110,17 @@ export default {
     return {
       slide: 'welcome',
       new_account: null
+    }
+  },
+  methods: {
+    async add_account() {
+      this.adding = true
+      this.$store.dispatch(
+        'store_account', this.new_account
+      )
+      await this.$fetch_profile(this.new_account.address)
+      this.adding = false
+      this.$router.push('/')
     }
   },
   async mounted() {
