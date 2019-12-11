@@ -1,5 +1,8 @@
 <template>
   <q-layout view="lHh Lpr fff">
+    <q-dialog v-model="display_onboarding">
+      <onboarding />
+    </q-dialog>
     <vue-easy-lightbox
       :visible="lbvisible"
       :imgs="lbimgs"
@@ -200,6 +203,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import Onboarding from '../components/Onboarding'
 export default {
   name: 'MyLayout',
   computed: {
@@ -227,7 +231,7 @@ export default {
       return {}
     }
   },
-
+  components: {Onboarding},
   data () {
     return {
       leftDrawerOpen: false,
@@ -237,6 +241,7 @@ export default {
       lbimgs: '',  // Img Url , string or Array
       lbvisible: false,
       lbidx: 0,   // default: 0,
+      display_onboarding: true,
       links1: [
         { icon: 'img:statics/icons/home.svg', text:'Profile', link: {'name': 'profile'}, exact: true },
         { icon: 'img:statics/icons/folder-cloud.svg', text: 'Files', link: {'name': 'files'}, exact: false },

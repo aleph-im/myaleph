@@ -107,10 +107,10 @@ const en = {
     `,
     heading: "Add new account",
     create: "Create new account",
-    import_mnemonics: "Import mnemonics",
-    import_privkey: "Import private key",
-    import_encrypted_privkey: "Import encrypted key",
-    import_keystore: "Import keystore",
+    import_mnemonics: "Login by mnemonics",
+    import_privkey: "Login by private key",
+    import_encrypted_privkey: "Login by encrypted key",
+    import_keystore: "Login by keystore",
     add_view_only: "Add view-only account"
   },
 
