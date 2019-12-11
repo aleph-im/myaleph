@@ -4,10 +4,10 @@
       v-if="!account"
       v-model="display_onboarding"
       persistent 
-      :maximized="$q.screen.lt.sm"
-      :full-height="$q.screen.lt.sm"
+      :maximized="$q.screen.lt.md"
+      :full-height="$q.screen.lt.md"
       >
-      <onboarding />
+      <onboarding @close="display_onboarding=false" />
     </q-dialog>
     <vue-easy-lightbox
       :visible="lbvisible"
@@ -93,8 +93,8 @@
 
         <div class="q-gutter-sm row items-center no-wrap">
           <q-btn v-if="!account"
-                 push color="primary" label="Login"
-                 :to="{name: 'login'}" />
+                 push color="primary" label="Login &amp; Sign-up"
+                 @click="display_onboarding=true" />
           <q-btn round flat v-else>
             <q-avatar size="26px" color="secondary" text-color="white" class="profile-avatar">
               <q-icon v-if="!profile | !profile.avatar" name="assignment_ind" />
@@ -310,6 +310,10 @@ export default {
       this.lbidx = index
       this.lbvisible = true
     },
+
+    open_onboarding() {
+      this.display_onboarding = true
+    },
     
     async image_hide() {
       this.lbvisible = false
@@ -317,9 +321,11 @@ export default {
   },
   created() {
     this.$root.$on('open_lightbox', this.open_lightbox)
+    this.$root.$on('open_onboarding', this.open_onboarding)
   },
   beforeDestroy() {
     this.$root.$off('open_lightbox', this.open_lightbox)
+    this.$root.$off('open_onboarding', this.open_onboarding)
   }
 }
 </script>
