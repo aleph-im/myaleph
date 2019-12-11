@@ -135,7 +135,7 @@
         <q-list padding>
           <q-item v-for="link in links1" :key="link.text" clickable class="GPL__drawer-item" :to="link.link" :exact="link.exact">
             <q-item-section avatar>
-              <q-icon :name="link.icon" />
+              <q-icon :name="link.icon"  size="lg" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ link.text }}</q-item-label>
@@ -183,10 +183,10 @@
       <router-view />
       <q-page-sticky v-if="$q.screen.gt.md" expand position="left">
         <div class="fit q-pt-xl q-px-sm column">
-          <router-link v-for="link in links1" :key="link.text" :to="link.link">
+          <router-link v-for="link in links1" :key="link.text" :to="link.link" class="q-mb-md">
             <template v-slot="props">
               <q-btn round flat stack no-caps size="26px" class="GPL__side-btn"  v-bind="buttonProps(props)">
-                <q-icon size="22px" :name="link.icon" />
+                <q-icon size="48px" :name="link.icon" />
                 <div class="GPL__side-btn__label">{{ link.text }}</div>
               </q-btn>
             </template>
@@ -238,9 +238,9 @@ export default {
       lbvisible: false,
       lbidx: 0,   // default: 0,
       links1: [
-        { icon: 'assignment_ind', text:'Profile', link: {'name': 'profile'}, exact: true },
-        { icon: 'insert_drive_file', text: 'Files', link: {'name': 'files'}, exact: false },
-        { icon: 'note', text:'Notes', link: {'name': 'notes'}, exact: false },
+        { icon: 'img:statics/icons/home.svg', text:'Profile', link: {'name': 'profile'}, exact: true },
+        { icon: 'img:statics/icons/folder-cloud.svg', text: 'Files', link: {'name': 'files'}, exact: false },
+        { icon: 'img:statics/icons/note.svg', text:'Notes', link: {'name': 'notes'}, exact: false },
         // { icon: 'far fa-newspaper', text:'My Feed' },
         // { icon: 'photo', text: 'Photos' },
         // { icon: 'people', text: 'Contacts' }
