@@ -39,6 +39,10 @@ export default function (/* { ssrContext } */) {
     },
     mutations: {
       set_account(state, account) {
+        if (state.account !== account) {
+          state.notes = []
+          state.files = []
+        }
         state.account = account
       },
       set_pages(state, pages) { // TODO: handle per-page mutation
