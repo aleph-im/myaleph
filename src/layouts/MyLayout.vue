@@ -249,9 +249,9 @@ export default {
       lbidx: 0,   // default: 0,
       display_onboarding: true,
       links1: [
-        { icon: 'img:statics/icons/home.svg', text:'Profile', link: {'name': 'profile'}, exact: true },
-        { icon: 'img:statics/icons/folder-cloud.svg', text: 'Files', link: {'name': 'files'}, exact: false },
-        { icon: 'img:statics/icons/note.svg', text:'Notes', link: {'name': 'notes'}, exact: false },
+        { icon: 'img:statics/ux/icons/home.svg', text:'Profile', link: {'name': 'profile'}, exact: true },
+        { icon: 'img:statics/ux/icons/folder-cloud.svg', text: 'Files', link: {'name': 'files'}, exact: false },
+        { icon: 'img:statics/ux/icons/note.svg', text:'Notes', link: {'name': 'notes'}, exact: false },
         // { icon: 'far fa-newspaper', text:'My Feed' },
         // { icon: 'photo', text: 'Photos' },
         // { icon: 'people', text: 'Contacts' }
