@@ -332,6 +332,24 @@ export default {
     border-radius: 0 24px 24px 0;
     margin-right: 12px;
 
+    img.q-icon {
+      filter: none;
+      -webkit-filter: grayscale(100%);
+      -moz-filter:    grayscale(100%);
+      -ms-filter:     grayscale(100%);
+      -o-filter:      grayscale(100%);
+    }
+
+    &.q-router-link--active {
+      img.q-icon {
+        filter: none;
+        -webkit-filter: grayscale(0%);
+        -moz-filter:    grayscale(0%);
+        -ms-filter:     grayscale(0%);
+        -o-filter:      grayscale(0%);
+      }
+    }
+
     .q-item__section--avatar {
       padding-left: 12px;
 
@@ -361,6 +379,22 @@ export default {
       line-height: 24px;
       letter-spacing: .01785714em;
       font-weight: 500;
+    }
+
+    img {
+      filter: none;
+      -webkit-filter: grayscale(100%);
+      -moz-filter:    grayscale(100%);
+      -ms-filter:     grayscale(100%);
+      -o-filter:      grayscale(100%);
+    }
+
+    &.text-primary img {
+      filter: none;
+      -webkit-filter: grayscale(0%);
+      -moz-filter:    grayscale(0%);
+      -ms-filter:     grayscale(0%);
+      -o-filter:      grayscale(0%);
     }
   }
 
