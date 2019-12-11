@@ -84,7 +84,7 @@
         <div>
           <p>Saved them? Good, let's start!</p>
           <p class="q-gutter-sm row justify-end">
-            <q-btn push rounded color="secondary" label="Let's start!" @click="add_account" />
+            <q-btn push rounded color="secondary" label="Let's start!" @click="add_account" :loading="adding" />
           </p>
         </div>
       </div>
@@ -109,7 +109,8 @@ export default {
   data () {
     return {
       slide: 'welcome',
-      new_account: null
+      new_account: null,
+      adding: false
     }
   },
   methods: {
