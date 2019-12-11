@@ -67,7 +67,9 @@ module.exports = function (ctx) {
           position: 'top',
           skipHijack: true
         }
-      }
+      },
+
+      cssAddon: true
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie
