@@ -9,35 +9,34 @@
     navigation-icon="radio_button_unchecked"
     navigation
     padding
-    height="400px"
     class="bg-white shadow-1 rounded-borders onboarding-carousel"
   >
     <q-carousel-slide name="welcome" class="column no-wrap flex-grow slide-welcome">
       <div class="q-my-md">
         <p class="logo">
           <img src="https://aleph.im/assets/img/logo.c052fb15.svg">
-          <span class="q-ml-sm text-mono text-bold text-h5">
-            my aleph.im
+          <span class="q-ml-sm text-mono text-bold text-h5">my aleph.im
             <q-badge color="primary" outline transparent align="middle">tech preview</q-badge>
           </span>
         </p>
-        Welcome to your new digital home.
+        <p>
+          Welcome to your new digital home.
+        </p>
+        <p>
+          My Aleph stores your data securely, using state of the art encryption.
+          Our philosophy is "Privacy by design". Nobody but yourself has access to your data.
+        </p>
+        <p>
+          Do you have an account already?
+        </p>
+        <p class="row q-gutter-sm">
+          <q-btn push rounded color="primary" label="Yes, log me in" @click="$emit('close')" :to="{'name': 'login'}" />
+          <q-btn push rounded color="secondary" label="No, please sign me up" @click="slide='signup'" />
+        </p>
       </div>
     </q-carousel-slide>
-    <q-carousel-slide :name="2" class="column no-wrap flex-center">
+    <q-carousel-slide name="signup" class="column no-wrap flex-center">
       <q-icon name="live_tv" color="primary" size="56px" />
-      <div class="q-mt-md text-center">
-        a
-      </div>
-    </q-carousel-slide>
-    <q-carousel-slide :name="3" class="column no-wrap flex-center">
-      <q-icon name="layers" color="primary" size="56px" />
-      <div class="q-mt-md text-center">
-        a
-      </div>
-    </q-carousel-slide>
-    <q-carousel-slide :name="4" class="column no-wrap flex-center">
-      <q-icon name="terrain" color="primary" size="56px" />
       <div class="q-mt-md text-center">
         a
       </div>
@@ -60,6 +59,7 @@ export default {
 
 .onboarding-carousel {
   min-width: 1024px;
+  min-height: 300px;
   overflow: hidden;
 
   @media (max-width: $breakpoint-md-max) {
@@ -93,7 +93,7 @@ export default {
         position: absolute;
         margin-top: -0.5rem;
         @media (max-width: $breakpoint-sm-max) {
-        margin-left: -5rem;
+        margin-left: -3rem;
         }
       }
     }

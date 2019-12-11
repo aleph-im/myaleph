@@ -241,7 +241,7 @@ export default {
     return {
       // msg: 'Welcome to Your Vue.js App'
       'step': 1,
-      'mode': 'create',
+      'mode': 'import_mnemonics',
       'encrypted_private_key': '',
       'private_key': '',
       'passphrase': '',

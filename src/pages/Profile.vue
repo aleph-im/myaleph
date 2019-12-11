@@ -271,9 +271,9 @@ export default {
     }
   },
   async mounted() {
-    if ((!this.address)&&(!this.account)) {
-      this.$router.push({'name': 'login'})
-    }
+    // if ((!this.address)&&(!this.account)) {
+    //   this.$router.push({'name': 'login'})
+    // }
       await this.refresh()
   },
   watch: {

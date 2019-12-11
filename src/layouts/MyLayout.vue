@@ -1,6 +1,12 @@
 <template>
   <q-layout view="lHh Lpr fff">
-    <q-dialog v-model="display_onboarding">
+    <q-dialog 
+      v-if="!account"
+      v-model="display_onboarding"
+      persistent 
+      :maximized="$q.screen.lt.sm"
+      :full-height="$q.screen.lt.sm"
+      >
       <onboarding />
     </q-dialog>
     <vue-easy-lightbox
