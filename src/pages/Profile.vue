@@ -1,5 +1,5 @@
 <template>
-  <q-page padding class="profile-page">
+  <q-page padding class="profile-page" v-if="(this.is_own&&(this.account!==null))|(!this.is_own)">
     <q-card class="profile-card q-ma-xl q-ml-1">
       <q-card-section class="bg-primary text-white profile-title">
         <q-avatar size="8rem" color="secondary" text-color="white" class="profile-avatar shadow-6">
@@ -135,6 +135,8 @@
       <q-spinner-gears size="50px" color="primary" />
     </q-inner-loading>
   </q-page>
+  <q-page v-else class="onboard-wait">
+  </q-page>
 </template>
 
 <script>
@@ -246,6 +248,13 @@ export default {
       }
     },
     async refresh() {
+      if (this.is_own && (this.account===null)) {
+        this.name = ''
+        this.bio = ''
+        this.profile = null
+        this.$root.$emit('open_onboarding')
+        return
+      }
       this.loading = true
       await this.$fetch_profile(this.profile_address)
 
@@ -293,6 +302,20 @@ export default {
 </script>
 
 <style lang="scss">
+.onboard-wait{
+  &:before {
+    content:"";
+    position:absolute;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    background: url('../statics/ux/working-bg.svg') left -8vw bottom -2vw / 100% no-repeat #fff;
+    opacity:.5;
+    z-index:-1;
+  }
+}
+
 .profile-page {
   background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   &>* {
