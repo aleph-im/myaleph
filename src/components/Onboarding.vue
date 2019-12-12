@@ -122,11 +122,11 @@ export default {
       await this.$fetch_profile(this.new_account.address)
       this.adding = false
       this.$router.push('/')
+      this.$emit('close')
     }
   },
   async mounted() {
     this.new_account = await nuls2.new_account({chain_id: this.network_id})
-    console.log(this.new_account)
   }
 }
 </script>

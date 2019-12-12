@@ -1,7 +1,6 @@
 <template>
   <q-layout view="lHh Lpr fff">
     <q-dialog 
-      v-if="!account"
       v-model="display_onboarding"
       persistent 
       :maximized="$q.screen.lt.md"
@@ -98,7 +97,7 @@
           <q-btn round flat v-else>
             <q-avatar size="26px" color="secondary" text-color="white" class="profile-avatar">
               <q-icon v-if="!profile | !profile.avatar" name="assignment_ind" />
-              <img v-if="profile.avatar" :src="profile.avatar" />
+              <img v-if="profile && profile.avatar" :src="profile.avatar" />
             </q-avatar>
             <q-tooltip>Account</q-tooltip>
             <q-menu anchor="top right" self="top right">
@@ -247,7 +246,7 @@ export default {
       lbimgs: '',  // Img Url , string or Array
       lbvisible: false,
       lbidx: 0,   // default: 0,
-      display_onboarding: true,
+      display_onboarding: false,
       links1: [
         { icon: 'img:statics/ux/icons/home.svg', text:'Profile', link: {'name': 'profile'}, exact: true },
         { icon: 'img:statics/ux/icons/folder-cloud.svg', text: 'Files', link: {'name': 'files'}, exact: false },
@@ -317,6 +316,13 @@ export default {
     
     async image_hide() {
       this.lbvisible = false
+    }
+  },
+  watch: {
+    account(to, from) {
+      console.log(from ,to)
+      if (to !== null)
+        this.open_onboarding = false
     }
   },
   created() {
