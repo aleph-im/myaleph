@@ -1,6 +1,17 @@
 
 const routes = [
   {
+    path: '/landing',
+    component: () => import('layouts/Outside.vue'),
+    children: [
+      {
+        name: 'landing',
+        path: '',
+        component: () => import('pages/outside/Home.vue') 
+      }
+    ]
+  },
+  {
     path: '/',
     component: () => import('layouts/MyLayout.vue'),
     children: [
