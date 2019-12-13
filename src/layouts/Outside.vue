@@ -1,5 +1,13 @@
 <template>
   <q-layout view="hhh lpR fFf">
+    <q-dialog 
+      v-model="display_onboarding"
+      persistent 
+      :maximized="$q.screen.lt.md"
+      :full-height="$q.screen.lt.md"
+      >
+      <onboarding @close="display_onboarding=false" />
+    </q-dialog>
     <q-header class="bg-transparent text-black">
       <q-toolbar>
         <q-toolbar-title>
@@ -21,6 +29,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import Onboarding from '../components/Onboarding'
 export default {
   name: 'OutsideLayout',
   computed: {
@@ -32,6 +41,14 @@ export default {
       'channel',
       'files'
     ])
+  },
+  data() {
+    return {
+      display_onboarding: false
+    }
+  },
+  components: {
+    Onboarding
   }
 }
 </script>

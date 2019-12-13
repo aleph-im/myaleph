@@ -14,7 +14,7 @@
       <div class="bottombox"></div>
       <div class="leftbox"></div>
       <div class="rightbox gt-xs"></div>
-      <q-parallax class="floating right gt-md" :speed="1.0">
+      <q-parallax class="floating right gt-sm" :speed="1.0">
         <template v-slot:media="scope">
           <div></div>
         </template>
@@ -82,7 +82,7 @@
                   <div class="col-grow">
                     <editor v-model="selected_note.content.body" height="350px" mode="wysiwyg" class="note-editor" />
                   </div>
-                  <div class="col-auto row justify-between q-ma-sm">
+                  <div class="col-auto row justify-end q-ma-sm">
                     <q-btn push color="primary" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
                   </div>
                 </div>
@@ -176,11 +176,16 @@ export default {
         addresses: [this.demo_address],
         api_server: this.api_server
       })
-      this.notes = result.posts.filter((p) => (!p.content.private))
-      this.selected_note = this.notes[this.notes.length-1]
+      this.notes = result.posts.filter((p) => (!p.content.private)).sort((a, b) => (b.time > a.time))
+      this.selected_note = this.notes[0]
     },
     note_clicked(note) {
       this.selected_note = note
+    },
+    submit() {
+      this.$q.notify({
+        message: 'This is just a demo, join us to save your data!'
+      })
     }
   },
   async mounted() {
@@ -237,6 +242,7 @@ export default {
   position: absolute;
   height: 100%;
   &.right {
+    left: calc(50% + 350px);
     width: 300px;
     right: 5vw;
   }
