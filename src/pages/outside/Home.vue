@@ -40,7 +40,8 @@
               <!-- <div class="col-2 gt-sm"> -->
               <template v-slot:before>
                 <q-scroll-area style="height: 450px">
-                  <notes-list :notes="notes" title="Notes" padding no-links />
+                  <notes-list :notes="notes" title="Notes" padding no-links
+                              :active-item="selected_note" @itemclick="note_clicked" />
                 </q-scroll-area>
                 <q-btn round push size="md" color="primary" icon="note_add"
                 style="position: absolute; bottom: 1rem; right: 1rem" />
@@ -176,7 +177,10 @@ export default {
         api_server: this.api_server
       })
       this.notes = result.posts.filter((p) => (!p.content.private))
-      this.selected_note = this.notes[0]
+      this.selected_note = this.notes[this.notes.length-1]
+    },
+    note_clicked(note) {
+      this.selected_note = note
     }
   },
   async mounted() {
