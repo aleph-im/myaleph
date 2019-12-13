@@ -1,12 +1,13 @@
 <template>
   <q-layout view="hhh lpR fFf">
-    <q-header elevated class="bg-primary text-white">
+    <q-header class="bg-transparent text-black">
       <q-toolbar>
         <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">
-          </q-avatar>
-          Title
+            <img src="https://aleph.im/assets/img/logo.c052fb15.svg">
+            <span class="q-ml-sm text-mono text-bold">
+                my
+                <q-badge color="primary" outline transparent align="middle">tech preview</q-badge>
+            </span>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>

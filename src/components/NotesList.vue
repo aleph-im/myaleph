@@ -2,7 +2,7 @@
   <q-list :padding="padding" :dense="dense">
     <q-item-label header v-if="title">{{title}}</q-item-label>
     <template v-for="item in notes">
-      <q-item :to="{'name': 'edit-note', params:{'hash': item.hash}}" :key="item.hash+'it'" clickable>
+      <q-item :to="noLinks ? null : {'name': 'edit-note', params:{'hash': item.hash}}" :key="item.hash+'it'" clickable>
         <q-item-section>
         <q-item-label>{{item.content.title}}</q-item-label>
         <q-item-label overline>
@@ -32,7 +32,8 @@ export default {
     'notes': Array,
     'padding': Boolean,
     'dense': Boolean,
-    'title': String
+    'title': String,
+    'noLinks': Boolean
   }
 }
 </script>
