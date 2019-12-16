@@ -36,7 +36,9 @@
           </p>
           <p class="q-gutter-sm">
             <q-btn push rounded color="primary" label="Yes, log me in" @click="$emit('close')" :to="{'name': 'login'}" />
-            <q-btn push rounded color="secondary" label="No, please sign me up" @click="slide='signup'" />
+            <q-btn push rounded color="secondary" label="No, please sign me up" @click="slide='signup'">
+              <q-tooltip>Takes a few seconds!</q-tooltip>
+            </q-btn>
           </p>
         </div>
       </div>

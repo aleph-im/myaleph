@@ -5,15 +5,17 @@
       src="statics/outside/galaxy.jpg"
       class="hero"
       :speed="0.5"
+      :height="$q.screen.gt.xs ? 500 : 300"
     >
       <div class="hero-content">
-        <h5 class="text-white" style="z-index: 100">
-          Take back your digital life. MyAleph is...
-        </h5>
+        <p class="text-mono title">
+          MyAleph is <vue-typer :text="typer_text"></vue-typer> storage<br />
+          to take back your digital life.
+        </p>
       </div>
       <div class="bottombox"></div>
       <div class="leftbox"></div>
-      <div class="rightbox gt-xs"></div>
+      <!-- <div class="rightbox gt-xs"></div> -->
       <q-parallax class="floating right gt-sm" :speed="1.0">
         <template v-slot:media="scope">
           <div></div>
@@ -115,7 +117,7 @@
         </q-tabs>
       </q-card>
     </div>
-    <div class="q-pa-xl">
+    <div class="q-pa-md q-px-sm-lg q-px-md-xl">
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sollicitudin neque leo, ac elementum risus finibus sed. Nullam quis imperdiet diam. Ut posuere, velit eu condimentum suscipit, neque odio maximus ex, sit amet sodales ante augue ac velit. Quisque tincidunt placerat lacus, sed tincidunt urna euismod id. Nulla non fringilla nisl, ut rutrum orci. Cras non vestibulum erat, quis porttitor augue. Nunc egestas gravida justo, eget iaculis magna pharetra vitae.
       </p>
@@ -140,6 +142,7 @@ import { mapState } from 'vuex'
 import { aggregates, posts } from 'aleph-js'
 import NotesList from '../../components/NotesList'
 import { Editor } from '@toast-ui/vue-editor'
+import { VueTyper } from 'vue-typer'
 import 'tui-editor/dist/tui-editor.css';
 import 'tui-editor/dist/tui-editor-contents.css';
 export default {
@@ -163,7 +166,13 @@ export default {
       ],
       selected_note: {
         content: {}
-      }
+      },
+      typer_text: [
+        'a secure',
+        'an encrypted',
+        'a distributed',
+        'an interactive'
+      ]
     }
   },
   methods: {
@@ -192,14 +201,14 @@ export default {
     await this.updateNotes()
   },
   components: {
-    NotesList, Editor
+    NotesList, Editor, VueTyper
   }
 }
 </script>
 
 <style lang="scss">
 .hero {
-  margin-top: -50px;
+  margin-top: -66px;
   // .leftbox {
   //   background: transparent url(../../statics/outside/leftbox.svg) left top/contain no-repeat;
   //   height: 102%;
@@ -224,6 +233,12 @@ export default {
     &.leftbox {
       transform:scale(-1,1);
       top: -20%;
+
+      @media (max-width: $breakpoint-xs-max) {
+        width: $breakpoint-xs-max;
+        height: 65%;
+        top: -30%;
+      }
     }
   }
   // .bottombox {
@@ -236,6 +251,29 @@ export default {
   //   transform:scale(1,-1);
   //   filter: grayscale(100%) brightness(10);
   // }
+
+  .hero-content {
+
+    &, .vue-typer .custom.char.typed {
+      z-index: 100;
+      color: #fff;
+    }
+
+    p {
+      width: 980px;
+      margin: 0 auto;
+      padding: 0 10px;
+
+      &.title {
+        font-size: 3rem;
+        text-shadow: 0px 2px 4px rgba(0, 0, 0, 1);
+
+        @media (max-width: $breakpoint-sm-max) {
+          font-size: 4.4vw;
+        }
+      }
+    }
+  }
 }
 
 .floating {
@@ -259,10 +297,6 @@ export default {
       position: relative;
     }
   }
-}
-
-.hero-content {
-  padding-bottom: 5rem;
 }
 
 .note-edit-page {
