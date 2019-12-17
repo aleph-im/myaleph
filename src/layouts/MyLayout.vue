@@ -93,7 +93,7 @@
         <div class="q-gutter-sm row items-center no-wrap">
           <q-btn v-if="!account"
                  push color="primary" label="Login &amp; Sign-up"
-                 @click="display_onboarding=true" />
+                 @click="display_onboarding=true" no-caps />
           <q-btn round flat v-else>
             <q-avatar size="26px" color="secondary" text-color="white" class="profile-avatar">
               <q-icon v-if="!profile | !profile.avatar" name="assignment_ind" />

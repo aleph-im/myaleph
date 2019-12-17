@@ -20,13 +20,13 @@
         <div class="q-gutter-sm row items-center no-wrap">
           <q-btn v-if="!account"
                  push color="primary" label="Login &amp; Sign-up"
-                 @click="display_onboarding=true" />
-          <q-btn round flat v-else>
-            <q-avatar size="26px" color="secondary" text-color="white" class="profile-avatar">
+                 @click="display_onboarding=true" no-caps />
+          <q-btn v-else push color="primary"  :to="{name:'profile'}" no-caps>
+            Enter
+            <q-avatar size="26px" color="secondary" text-color="white" class="profile-avatar on-right">
               <q-icon v-if="!profile | !profile.avatar" name="assignment_ind" />
               <img v-if="profile && profile.avatar" :src="profile.avatar" />
             </q-avatar>
-            <q-tooltip>Enter</q-tooltip>
           </q-btn>
         </div>
       </q-toolbar>
