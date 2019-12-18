@@ -94,8 +94,55 @@
             </q-splitter>
           </q-tab-panel>
           <q-tab-panel name="files">
-            <div class="text-h6">Files</div>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            <q-scroll-area style="height: 450px">
+              
+              <div class="row justify-between items-center">
+                <q-btn v-if="current_folder" round flat icon="arrow_back"
+                  @click="select_folder(null)" />
+                <span v-if="current_folder" class="col-grow">
+                  <h4 class="q-my-sm col-grow">
+                    <q-icon name="archive" v-if="current_folder.content.status === 'archived'" color="grey" />
+                    {{current_folder.content.filename}}
+                  </h4>
+                </span>
+                <h4 v-else class="q-my-sm col-grow">
+                  Files
+                </h4>
+                <div class="col-md-2">
+                  <q-select v-model="sorting"
+                  :options="sort_options" emit-value map-options
+                  label="Sort by" round dense flat options-dense />
+                </div>
+                <div>
+                  <!-- <template v-if="$q.screen.gt.xs">
+                    {{show_archived?'archived visible':''}}
+                  </template> -->
+                  <q-toggle
+                    v-model="show_archived"
+                    checked-icon="archive"
+                    color="blue"
+                    unchecked-icon="visibility_off"
+                  />
+                  <q-tooltip>Display archived items</q-tooltip>
+                </div>
+                <file-menu v-if="current_folder" :file="folder_object" size="md" />
+              </div>
+
+              <files-list :files="displayed_files" />
+            </q-scroll-area>
+            <q-fab
+              icon="add"
+              direction="up"
+              color="primary"
+              style="position: absolute; bottom: 1rem; right: 1rem"
+            >
+              <q-fab-action @click="submit" color="primary" icon="create_new_folder">
+                <q-tooltip anchor="center left" self="center right">New folder</q-tooltip>
+              </q-fab-action>
+              <q-fab-action @click="submit" color="primary" icon="cloud_upload">
+                <q-tooltip anchor="center left" self="center right">Upload file</q-tooltip>
+              </q-fab-action>
+            </q-fab>
           </q-tab-panel>
           <q-tab-panel name="photos">
             <div class="text-h6">Photos</div>
@@ -141,6 +188,7 @@
 import { mapState } from 'vuex'
 import { aggregates, posts } from 'aleph-js'
 import NotesList from '../../components/NotesList'
+import FilesList from '../../components/FilesList'
 import { Editor } from '@toast-ui/vue-editor'
 import { VueTyper } from 'vue-typer'
 import 'tui-editor/dist/tui-editor.css';
@@ -148,6 +196,35 @@ import 'tui-editor/dist/tui-editor-contents.css';
 export default {
   name: 'Home',
   computed: {
+      displayed_files() {
+        let files = this.files
+        if (this.current_folder)
+          files = files.filter((v) => v.original_ref == this.current_folder.hash)
+        else
+          files = files.filter((v) => (!v.original_ref))
+
+        if (!this.show_archived)
+          files = files.filter((v) => (v.content.status==='visible'))
+
+        files.sort((f1, f2) => {
+          if (f1.original_type == 'file' && f2.original_type == 'folder') return 1;
+          if (f1.original_type == 'folder' && f2.original_type == 'file') return -1;
+
+          if (this.sorting === 'time') {
+            if (f1.time < f2.time) return 1;
+            if (f2.time < f1.time) return -1;
+          }
+          if (this.sorting === 'name') {
+            if (f1.content.filename.toLowerCase() < f2.content.filename.toLowerCase()) return -1;
+            if (f2.content.filename.toLowerCase() < f1.content.filename.toLowerCase()) return 1;
+          }
+          if (this.sorting === 'size') {
+            if (f1.content.size < f2.content.size) return 1;
+            if (f2.content.size < f1.content.size) return -1;
+          }
+        })
+        return files
+      },
       ... mapState([
         // map this.count to store.state.count
         'account',
@@ -161,6 +238,7 @@ export default {
       demotab: 'notes',
       splitter: 20,
       demo_address: 'NULSd6HgYtEzGV6LmtYa2eEyREzwumJmxhcdE',
+      files: [],
       notes: [
 
       ],
@@ -172,12 +250,36 @@ export default {
         'an encrypted',
         'a distributed',
         'an interactive'
+      ],
+      current_folder: null,
+      show_archived: false,
+      sorting: 'time',
+      sort_options: [
+        {
+          label: 'Last updated',
+          value: 'time'
+        },
+        {
+          label: 'Name',
+          value: 'name'
+        },
+        {
+          label: 'Size',
+          value: 'size'
+        }
       ]
     }
   },
   methods: {
-    updateFiles() {
-
+    async updateFiles() {
+      let result = await posts.get_posts('file', {
+        pagination: 10000,
+        addresses: [this.demo_address],
+        api_server: this.api_server
+      })
+      this.files = result.posts.filter(
+          (p) => (!p.content.private)
+        )
     },
     async updateNotes() {
       let result = await posts.get_posts('note', {
@@ -199,9 +301,10 @@ export default {
   },
   async mounted() {
     await this.updateNotes()
+    await this.updateFiles()
   },
   components: {
-    NotesList, Editor, VueTyper
+    NotesList, FilesList, Editor, VueTyper
   }
 }
 </script>
