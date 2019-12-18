@@ -7,6 +7,9 @@
         <q-item-section avatar top @click="file_clicked(file)">
             <q-avatar rounded :size="dense?'24px':'48px'" v-if="file.content.thumbnail_url">
               <img :src="file.content.thumbnail_url" style="object-fit: cover;" />
+              <q-badge floating color="grey" v-if="!file.content.private">
+                <q-icon name="public" />
+              </q-badge>
             </q-avatar>
             <q-avatar :size="dense?'24px':'48px'" v-else-if="file.original_type === 'folder'" icon="folder" color="primary" text-color="white" />
             <q-avatar :size="dense?'24px':'48px'" v-else :icon="get_icon(file)" color="secondary" text-color="white" />
