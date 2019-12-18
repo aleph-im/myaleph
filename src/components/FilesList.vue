@@ -5,14 +5,16 @@
       <q-item :key="file.item_hash"
               clickable :class="file.content.status === 'archived' ? 'text-grey-8 text-strike' : ''">
         <q-item-section avatar top @click="file_clicked(file)">
-            <q-avatar rounded :size="dense?'24px':'48px'" v-if="file.content.thumbnail_url">
-              <img :src="file.content.thumbnail_url" style="object-fit: cover;" />
+            <q-avatar :rounded="!!file.content.thumbnail_url" text-color="white"
+                      :size="dense?'24px':'48px'"
+                      :color="file.original_type === 'folder' ? 'primary': 'secondary'">
+              <img :src="file.content.thumbnail_url" style="object-fit: cover;" v-if="file.content.thumbnail_url" />
+              <q-icon name="folder" color="primary" text-color="white" v-else-if="file.original_type === 'folder'" />
+              <q-icon :name="get_icon(file)" v-else />
               <q-badge floating color="grey" v-if="!file.content.private">
                 <q-icon name="public" />
               </q-badge>
             </q-avatar>
-            <q-avatar :size="dense?'24px':'48px'" v-else-if="file.original_type === 'folder'" icon="folder" color="primary" text-color="white" />
-            <q-avatar :size="dense?'24px':'48px'" v-else :icon="get_icon(file)" color="secondary" text-color="white" />
         </q-item-section>
         <q-item-section @click="file_clicked(file)">
           <q-item-label lines="1">{{file.content.filename}}</q-item-label>

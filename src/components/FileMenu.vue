@@ -16,17 +16,17 @@
             <q-item-section>Make public &amp; share</q-item-section>
           </q-item>
           <q-separator />
-          <q-item clickable v-close-popup @click.prevent="archive(file)" v-if="file.content.status === 'visible'">
-          <q-item-section avatar>
-              <q-icon color="primary" name="archive" />
-          </q-item-section>
-          <q-item-section>Archive</q-item-section>
+          <q-item clickable v-close-popup @click.prevent="archive(file)" v-if="(account !== null) && (file.content.status === 'visible')">
+            <q-item-section avatar>
+                <q-icon color="primary" name="archive" />
+            </q-item-section>
+            <q-item-section>Archive</q-item-section>
           </q-item>
-          <q-item clickable v-close-popup @click.prevent="unarchive(file)" v-else>
-          <q-item-section avatar>
-              <q-icon color="primary" name="unarchive" />
-          </q-item-section>
-          <q-item-section>Un-Archive</q-item-section>
+          <q-item clickable v-close-popup @click.prevent="unarchive(file)" v-else-if="account !== null">
+            <q-item-section avatar>
+                <q-icon color="primary" name="unarchive" />
+            </q-item-section>
+            <q-item-section>Un-Archive</q-item-section>
           </q-item>
       </q-list>
       </q-menu>

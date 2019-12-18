@@ -7,6 +7,12 @@
       >
       <onboarding @close="display_onboarding=false" />
     </q-dialog>
+    <vue-easy-lightbox
+      :visible="lbvisible"
+      :imgs="lbimgs"
+      :index="lbidx"
+      @hide="image_hide"
+    ></vue-easy-lightbox>
     <q-header class="bg-transparent text-black q-pa-sm">
       <q-toolbar>
         <q-toolbar-title class="logo">
@@ -63,11 +69,37 @@ export default {
   },
   data() {
     return {
-      display_onboarding: false
+      display_onboarding: false,
+      lbimgs: '',  // Img Url , string or Array
+      lbvisible: false,
+      lbidx: 0,   // default: 0,
     }
   },
   components: {
     Onboarding
+  },
+  methods: {
+    open_lightbox(items, index) {
+      this.lbimgs = items
+      this.lbidx = index
+      this.lbvisible = true
+    },
+
+    open_onboarding() {
+      this.display_onboarding = true
+    },
+    
+    async image_hide() {
+      this.lbvisible = false
+    }
+  },
+  created() {
+    this.$root.$on('open_lightbox', this.open_lightbox)
+    this.$root.$on('open_onboarding', this.open_onboarding)
+  },
+  beforeDestroy() {
+    this.$root.$off('open_lightbox', this.open_lightbox)
+    this.$root.$off('open_onboarding', this.open_onboarding)
   }
 }
 </script>
