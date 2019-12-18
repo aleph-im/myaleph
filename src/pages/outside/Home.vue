@@ -145,8 +145,10 @@
             </q-fab>
           </q-tab-panel>
           <q-tab-panel name="photos">
-            <div class="text-h6">Photos</div>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            <q-scroll-area style="height: 450px">
+              <div class="text-h4">Photos</div>
+              Work in progress, coming soon!
+            </q-scroll-area>
           </q-tab-panel>
         </q-tab-panels>
 
