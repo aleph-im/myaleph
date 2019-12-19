@@ -15,7 +15,7 @@
     <q-pull-to-refresh @refresh="_refresh" ref="refresher">
       <div class="row justify-between items-center">
         <q-btn v-if="folder" round flat icon="arrow_back"
-          :to="folder_object.content.ref ? {'name': 'folder', params:{'folder': folder_object.content.ref}} : {'name': 'files'} " />
+          :to="folder_object.original_ref ? {'name': 'folder', params:{'folder': folder_object.original_ref}} : {'name': 'files'} " />
         <span v-if="folder" class="col-grow">
           <h4 class="q-my-sm col-grow">
             <q-icon name="archive" v-if="folder_object.content.status === 'archived'" color="grey" />
