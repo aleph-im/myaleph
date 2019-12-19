@@ -66,9 +66,19 @@ export default {
     },
     async archive(filepost) {
       await this.change_status(filepost, 'archived')
+
+      this.$q.notify({
+        message: `${filepost.content.filename} archived`,
+        color: "positive"
+      })
     },
     async unarchive(filepost) {
       await this.change_status(filepost, 'visible')
+
+      this.$q.notify({
+        message: `${filepost.content.filename} recovered`,
+        color: "positive"
+      })
     },
     async change_status(filepost, new_status) {
       let msg = await update_post(
@@ -87,17 +97,19 @@ export default {
       })
       post_content['private'] = false
 
-      let file_message = await store.submit(
-        this.account.address,
-        {fileobject: new Blob([content], {type: filepost.content.mimetype}),
-          channel: this.channel,
-          api_server: this.api_server,
-          account: this.account,
-          storage_engine: 'ipfs'})
+      if (filepost.original_type == 'file') {
+        let file_message = await store.submit(
+          this.account.address,
+          {fileobject: new Blob([content], {type: filepost.content.mimetype}),
+            channel: this.channel,
+            api_server: this.api_server,
+            account: this.account,
+            storage_engine: 'ipfs'})
 
-      post_content['store_message'] = file_message.item_hash
-      post_content['hash'] = file_message.content.item_hash
-      post_content['engine'] = file_message.content.item_type
+        post_content['store_message'] = file_message.item_hash
+        post_content['hash'] = file_message.content.item_hash
+        post_content['engine'] = file_message.content.item_type
+      }
 
       let msg = await posts.submit(
         this.account.address, 'amend', post_content,
@@ -111,6 +123,17 @@ export default {
       msg.content = post_content
       msg.original_ref = filepost.original_ref
       this.$store.commit('update_file', msg)
+
+      if (filepost.original_type == 'file')
+        this.$q.notify({
+          message: `${filepost.content.filename} made public and pinned on IPFS`,
+          color: "positive"
+        })
+      else
+        this.$q.notify({
+          message: `${filepost.content.filename} made public`,
+          color: "positive"
+        })
     }
   }
 }
