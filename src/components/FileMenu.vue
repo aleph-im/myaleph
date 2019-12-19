@@ -39,7 +39,8 @@ import { mapState } from 'vuex'
 import { aggregates, posts, encryption, store } from 'aleph-js'
 import { encrypt_content, decrypt_content } from '../services/encryption.js'
 import moment from 'moment'
-import {navigate_to_file, retrieve_file} from '../services/files'
+import { navigate_to_file, retrieve_file } from '../services/files'
+import { update_post } from '../services/posts'
 import { format } from 'quasar'
 const { humanStorageSize } = format
 export default {
@@ -70,31 +71,12 @@ export default {
       await this.change_status(filepost, 'visible')
     },
     async change_status(filepost, new_status) {
-      let post_content = {};
-      Object.keys(filepost.content).forEach(function(key) {
-          post_content[key] = filepost.content[key]
-      })
-      post_content['status'] = new_status
-      let unencrypted_content = {};
-      Object.keys(filepost.content).forEach(function(key) {
-          unencrypted_content[key] = post_content[key]
-      })
-
-      if ((post_content.private === undefined)||(post_content.private)) {
-        post_content['private'] = true
-        encrypt_content(post_content, ['filename', 'mimetype', 'thumbnail_url'], this.account['public_key'])
-      }
-
-      let msg = await posts.submit(
-        this.account.address, 'amend', post_content,
-        {channel: this.channel,
-          api_server: this.api_server,
-          account: this.account,
-          ref:filepost.hash})
-      msg.hash = filepost.hash
-      msg.original_type = filepost.original_type
-      msg.content = unencrypted_content
-      msg.original_ref = filepost.original_ref
+      let msg = await update_post(
+        filepost, 
+        {'status': new_status},
+        ['filename', 'mimetype', 'thumbnail_url'],
+        this.account, this.api_server, this.channel
+      )
       this.$store.commit('update_file', msg)
     },
     async make_public(filepost) {
