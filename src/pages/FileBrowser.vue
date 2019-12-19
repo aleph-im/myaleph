@@ -19,7 +19,23 @@
         <span v-if="folder" class="col-grow">
           <h4 class="q-my-sm col-grow">
             <q-icon name="archive" v-if="folder_object.content.status === 'archived'" color="grey" />
-            {{folder_object.content.filename}}
+            {{folder_title}}
+
+            <q-popup-edit v-model="folder_title" @save="save_folder_name">
+              <template v-slot="{ initialValue, value, emitValue, validate, set, cancel }">
+                <q-input
+                  autofocus
+                  dense
+                  hint="Your title"
+                  v-model="folder_title"
+                >
+                  <template v-slot:after>
+                    <q-btn flat dense color="negative" icon="cancel" @click.stop="cancel" />
+                    <q-btn flat dense color="positive" icon="save" @click.stop="set" />
+                  </template>
+                </q-input>
+              </template>
+            </q-popup-edit>
           </h4>
         </span>
         <h4 v-else class="q-my-sm col-grow">
@@ -86,6 +102,7 @@ import { mapState } from 'vuex'
 import { aggregates, posts, encryption } from 'aleph-js'
 import { encrypt_content, decrypt_content } from '../services/encryption.js'
 import { retrieve_file_url } from '../services/files'
+import { update_post } from '../services/posts'
 import AlephUploader from '../components/Uploader.js'
 import FilesList from '../components/FilesList'
 import FileMenu from '../components/FileMenu'
@@ -170,6 +187,7 @@ export default {
       current_folder: null,
       show_archived: false,
       sorting: 'time',
+      folder_title: '',
       sort_options: [
         {
           label: 'Last updated',
@@ -192,11 +210,18 @@ export default {
     FileMenu
   },
   methods: {
+    async update() {
+      let new_title = ''
+      if (this.folder_object) {
+        new_title = this.folder_object.content.filename
+      }
+      this.folder_title = new_title
+    },
     async getFiles(progress) {
       await this.$store.dispatch('update_files', progress)
     },
     async refresh() {
-      this.$refs.refresher.trigger()
+      await this._refresh()
     },
     async _refresh(done) {
       async function progress(percent) {
@@ -210,6 +235,7 @@ export default {
         done()
       this.$q.loadingBar.stop()
       // this.loading = false
+      this.update()
     },
     async upload() {
       const sleep = (milliseconds) => {
@@ -309,17 +335,36 @@ export default {
         this.$q.loadingBar.increment(1/info.length/2)
       }
       this.$q.loadingBar.stop()
+    },
+    async save_folder_name(value, initial_value) {
+      console.log(value, initial_value)
+      if (value != initial_value) {
+        let msg = await update_post(
+          this.folder_object, 
+          {'filename': value},
+          ['filename', 'mimetype', 'thumbnail_url'],
+          this.account, this.api_server, this.channel
+        )
+        this.$store.commit('update_file', msg)
+      }
     }
   },
   watch: {
     async $route(to, from) {
+      this.update()
     },
     async current_page() {
+    },
+    async folder(to, from) {
+      this.update()
     }
   },
   async created() {
     if (!this.files.length)
       setTimeout(this.refresh.bind(this), 100)
+  },
+  async mounted() {
+    this.update()
   }
 }
 </script>
