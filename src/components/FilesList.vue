@@ -9,7 +9,7 @@
                       :size="dense?'24px':'48px'"
                       :color="file.original_type === 'folder' ? 'primary': 'secondary'">
               <img :src="file.content.thumbnail_url" style="object-fit: cover;" v-if="file.content.thumbnail_url" />
-              <q-icon name="folder" color="primary" text-color="white" v-else-if="file.original_type === 'folder'" />
+              <q-icon name="folder" v-else-if="file.original_type === 'folder'" />
               <q-icon :name="get_icon(file)" v-else />
               <q-badge floating color="grey" v-if="!file.content.private">
                 <q-icon name="public" />
