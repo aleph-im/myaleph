@@ -23,7 +23,7 @@ export default function (/* { ssrContext } */) {
       site_chain: 'NULS',
       site_address: 'TTatYAULiEfV6e7Tqt9z8YCr7dz2KkbJ',
       network_id: 1,
-      ipfs_gateway: 'https://ipfs.io/ipfs/',
+      ipfs_gateway: 'https://ipfs.aleph.im/ipfs/',
       account: null,
       profiles: {},
       last_broadcast: null,

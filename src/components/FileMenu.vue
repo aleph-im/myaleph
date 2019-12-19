@@ -1,6 +1,6 @@
 <template>
   <q-btn :size="size?size:'12px'" flat dense round icon="more_vert">
-      <q-menu>
+    <q-menu>
       <q-list style="min-width: 100px">
           <q-item clickable v-close-popup @click.prevent="download(file)"  v-if="file.original_type === 'file'">
           <q-item-section avatar>
@@ -14,6 +14,13 @@
                 <q-icon color="primary" name="public" />
             </q-item-section>
             <q-item-section>Make public &amp; share</q-item-section>
+          </q-item>
+          <q-separator v-if="!file.content.private && (file.original_type === 'file')" />
+          <q-item clickable v-close-popup @click.prevent="copy_public_link(file)" r v-if="!file.content.private && (file.original_type === 'file')">
+            <q-item-section avatar>
+                <q-icon color="primary" name="share" />
+            </q-item-section>
+            <q-item-section>Get public link</q-item-section>
           </q-item>
           <q-separator />
           <q-item clickable v-close-popup @click.prevent="archive(file)" v-if="(account !== null) && (file.content.status === 'visible')">
@@ -29,7 +36,7 @@
             <q-item-section>Un-Archive</q-item-section>
           </q-item>
       </q-list>
-      </q-menu>
+    </q-menu>
   </q-btn>
 </template>
 
@@ -41,7 +48,7 @@ import { encrypt_content, decrypt_content } from '../services/encryption.js'
 import moment from 'moment'
 import { navigate_to_file, retrieve_file } from '../services/files'
 import { update_post } from '../services/posts'
-import { format } from 'quasar'
+import { format, copyToClipboard } from 'quasar'
 const { humanStorageSize } = format
 export default {
   name: 'files-menu',
@@ -55,7 +62,8 @@ export default {
       'account',
       'network_id',
       'api_server',
-      'channel'
+      'channel',
+      'ipfs_gateway'
     ])
   },
   methods: {
@@ -63,6 +71,34 @@ export default {
       this.$q.loadingBar.start()
       await navigate_to_file(filepost, this.account, this.api_server, {download: true})
       this.$q.loadingBar.stop()
+    },
+    async copy_public_link(filepost) {
+      if (filepost.content.private) {
+        this.$q.notify({
+          message: `${filepost.content.filename} isn't public, sharing is not supported yet.`,
+          color: "negative"
+        })
+      } else {
+        console.log(filepost)
+        let link = null
+        if (filepost.content.engine === 'ipfs') {
+          link = `${this.ipfs_gateway}${filepost.content.hash}`
+        } else {
+          link = `${this.api_server}/api/v0/storage/raw/${filepost.content.hash}?find`
+        }
+        try {
+          await copyToClipboard(link)
+          this.$q.notify({
+            message: "Sharing link copied to clipboard",
+            color: "positive"
+          })
+        } catch {
+          this.$q.notify({
+            message: "Can't copy to clipboard",
+            color: "negative"
+          })
+        }
+      }
     },
     async archive(filepost) {
       await this.change_status(filepost, 'archived')
