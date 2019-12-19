@@ -90,50 +90,57 @@ export default {
       this.$store.commit('update_file', msg)
     },
     async make_public(filepost) {
-      let content = await retrieve_file(filepost, this.account, this.api_server)
-      let post_content = {};
-      Object.keys(filepost.content).forEach(function(key) {
-          post_content[key] = filepost.content[key]
-      })
-      post_content['private'] = false
-
       if (filepost.original_type == 'file') {
-        let file_message = await store.submit(
-          this.account.address,
-          {fileobject: new Blob([content], {type: filepost.content.mimetype}),
-            channel: this.channel,
-            api_server: this.api_server,
-            account: this.account,
-            storage_engine: 'ipfs'})
+        this.$q.dialog({
+          title: 'Making file public',
+          message: 'Your file will be made public and shared on IPFS, are you sure?',
+          cancel: true,
+          persistent: true
+        }).onOk((async function() {
+          let content = await retrieve_file(filepost, this.account, this.api_server)
+          let file_message = await store.submit(
+            this.account.address,
+            {fileobject: new Blob([content], {type: filepost.content.mimetype}),
+              channel: this.channel,
+              api_server: this.api_server,
+              account: this.account,
+              storage_engine: 'ipfs'})
 
-        post_content['store_message'] = file_message.item_hash
-        post_content['hash'] = file_message.content.item_hash
-        post_content['engine'] = file_message.content.item_type
-      }
+          let msg = await update_post(
+            filepost, 
+            {
+              'private': false,
+              'store_message': file_message.item_hash,
+              'hash': file_message.content.item_hash,
+              'engine': file_message.content.item_type
+            },
+            ['filename', 'mimetype', 'thumbnail_url'],
+            this.account, this.api_server, this.channel
+          )
+          this.$store.commit('update_file', msg)
 
-      let msg = await posts.submit(
-        this.account.address, 'amend', post_content,
-        {channel: this.channel,
-          api_server: this.api_server,
-          account: this.account,
-          ref:filepost.hash})
-
-      msg.hash = filepost.hash
-      msg.original_type = filepost.original_type
-      msg.content = post_content
-      msg.original_ref = filepost.original_ref
-      this.$store.commit('update_file', msg)
-
-      if (filepost.original_type == 'file')
-        this.$q.notify({
-          message: `${filepost.content.filename} made public and pinned on IPFS`,
-          color: "positive"
-        })
-      else
+          this.$q.notify({
+            message: `${filepost.content.filename} made public and pinned on IPFS`,
+            color: "positive"
+          })
+        }).bind(this))
+      } else {
+        let msg = await update_post(
+          filepost, 
+          {
+            'private': false
+          },
+          ['filename', 'mimetype', 'thumbnail_url'],
+          this.account, this.api_server, this.channel
+        )
+        this.$store.commit('update_file', msg)
         this.$q.notify({
           message: `${filepost.content.filename} made public`,
           color: "positive"
         })
+      }
+
+      
     }
   }
 }
