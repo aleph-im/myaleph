@@ -35,7 +35,7 @@ export default {
 
 <style lang="scss">
 
-// body {
-//   background: url('assets/bg.svg') no-repeat center -100px;
-// }
+html, body {
+  background: #fff;
+}
 </style>
