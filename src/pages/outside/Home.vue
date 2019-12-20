@@ -37,7 +37,7 @@
       <q-card class="demo-card text-black">
         <q-tab-panels v-model="demotab" animated>
           <q-tab-panel name="notes">
-            <q-splitter v-model="splitter">
+            <q-splitter v-model="splitter" v-if="$q.screen.gt.xs">
             <!-- <div class="fit row"> -->
               <!-- <div class="col-2 gt-sm"> -->
               <template v-slot:before>
@@ -51,47 +51,23 @@
               </template>
               <template v-slot:after>
               <!-- <div class="col-grow"> -->
-                <div class="column note-edit-page q-pl-sm">
-                  <div class="col-auto row justify-between items-center">
-                    <h4 class="q-ma-sm col-grow">
-                      {{selected_note.content.title||'Note Title'}}
-                      <q-popup-edit v-model="selected_note.content.title">
-                        <template v-slot="{ initialValue, value, emitValue, validate, set, cancel }">
-                          <q-input
-                            autofocus
-                            dense
-                            hint="Your title"
-                            v-model="selected_note.content.title"
-                          >
-                          </q-input>
-                        </template>
-                      </q-popup-edit>
-                    </h4>
-                    <span class="q-ma-sm">
-                      <template>
-                        {{selected_note.content.private?'encrypted':'public'}}
-                      </template>
-                      <q-toggle
-                        v-model="selected_note.content.private"
-                        checked-icon="lock"
-                        color="green"
-                        unchecked-icon="lock_open"
-                      />
-                      <!-- <q-btn push color="info" round icon="share" size="xs" @click.stop="share"  class="q-mr-sm" /> -->
-                      <q-btn push color="primary" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
-                    </span>
-                  </div>
-                  <div class="col-grow">
-                    <editor v-model="selected_note.content.body" height="350px" mode="wysiwyg" class="note-editor" />
-                  </div>
-                  <div class="col-auto row justify-end q-ma-sm">
-                    <q-btn push color="primary" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
-                  </div>
-                </div>
+                <mock-note-edit :note="selected_note" @submit="submit" />
               <!-- </div> -->
               </template>
             <!-- </div> -->
             </q-splitter>
+            <div v-else>
+              <mock-note-edit :note="selected_note" @submit="submit" v-if="selected_note" show-back @back="selected_note=null" />
+              <div v-else>
+                <q-scroll-area style="height: 450px">
+                  <notes-list :notes="notes" title="Notes" padding no-links
+                              :active-item="selected_note" @itemclick="note_clicked" />
+                </q-scroll-area>
+                <q-btn round push size="md" color="primary" icon="note_add"
+                style="position: absolute; bottom: 1rem; right: 1rem" />
+              </div>
+
+            </div>
           </q-tab-panel>
           <q-tab-panel name="files">
             <q-scroll-area style="height: 450px">
@@ -191,6 +167,7 @@ import { mapState } from 'vuex'
 import { aggregates, posts } from 'aleph-js'
 import NotesList from '../../components/NotesList'
 import FilesList from '../../components/FilesList'
+import MockNoteEdit from './MockNoteEdit'
 import { Editor } from '@toast-ui/vue-editor'
 import { VueTyper } from 'vue-typer'
 import 'tui-editor/dist/tui-editor.css';
@@ -306,7 +283,7 @@ export default {
     await this.updateFiles()
   },
   components: {
-    NotesList, FilesList, Editor, VueTyper
+    NotesList, FilesList, MockNoteEdit, VueTyper
   }
 }
 </script>
