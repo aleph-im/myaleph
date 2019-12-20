@@ -7,10 +7,14 @@
       :speed="0.5"
       :height="$q.screen.gt.xs ? 500 : 300"
     >
-      <div class="hero-content">
+      <div class="content">
         <p class="text-mono title">
           MyAleph is <vue-typer :text="typer_text"></vue-typer> storage<br />
           to take back your digital life.
+          <q-btn v-if="!account"
+                 push color="primary" label="Join us!"
+                 @click="$root.$emit('open_onboarding')" no-caps />
+          <q-btn v-else push color="primary"  :to="{name:'profile'}" no-caps label="Enter!" />
         </p>
       </div>
       <div class="bottombox"></div>
@@ -142,22 +146,86 @@
         </q-tabs>
       </q-card>
     </div>
-    <div class="q-pa-md q-px-sm-lg q-px-md-xl">
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sollicitudin neque leo, ac elementum risus finibus sed. Nullam quis imperdiet diam. Ut posuere, velit eu condimentum suscipit, neque odio maximus ex, sit amet sodales ante augue ac velit. Quisque tincidunt placerat lacus, sed tincidunt urna euismod id. Nulla non fringilla nisl, ut rutrum orci. Cras non vestibulum erat, quis porttitor augue. Nunc egestas gravida justo, eget iaculis magna pharetra vitae.
-      </p>
-      <p>
-        Etiam ac lacus neque. Nam eget consequat dui, vel egestas dui. Etiam id enim et ex pretium rutrum. Vestibulum sed consectetur magna, nec laoreet elit. Morbi pulvinar pharetra dui at pulvinar. Vestibulum auctor, ex eu iaculis finibus, nunc quam finibus eros, tincidunt interdum libero magna a purus. Ut vestibulum sed metus non auctor. Mauris nec iaculis nulla. Curabitur vitae lacus sed orci posuere blandit. Curabitur commodo porttitor velit, sit amet efficitur eros imperdiet eu. Nullam ut condimentum sapien, eu molestie mauris. Vestibulum bibendum tristique venenatis. Suspendisse accumsan ut mauris non faucibus. Fusce in augue sed tellus ultrices pulvinar nec ac libero. Sed gravida, enim eu blandit sollicitudin, nulla odio bibendum elit, id interdum metus mauris id mi. Aenean dapibus ut metus a faucibus.
-      </p>
-      <p>
-        Aliquam accumsan gravida neque, sed porttitor turpis sagittis ac. Curabitur malesuada lobortis dolor eget posuere. Mauris id commodo nulla, nec luctus ante. Vestibulum nunc ex, sagittis ut porttitor eu, sodales vel mauris. Quisque pellentesque felis orci, ut cursus mauris vestibulum nec. Phasellus volutpat, odio vel ullamcorper vehicula, odio eros efficitur enim, ac mattis orci erat eget neque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Quisque viverra purus quis imperdiet suscipit. Maecenas in fermentum turpis.
-      </p>
-      <p>
-        Phasellus sed ipsum eget eros commodo dignissim a ut nibh. In fermentum rhoncus ante, id posuere mi vehicula eu. Phasellus ornare rhoncus nisi, in faucibus metus porta vel. Sed purus sapien, lacinia vel lacinia in, commodo non neque. Aliquam erat volutpat. Mauris a libero sed sem ornare vulputate eget eget diam. In ullamcorper magna et mauris vestibulum sagittis.
-      </p>
-      <p>
-        Vivamus eu cursus purus. Duis vitae euismod diam, ut posuere dui. Vivamus id sagittis lacus. Morbi dapibus non risus a aliquam. Integer hendrerit diam egestas diam placerat, a finibus risus mattis. Proin mattis lectus enim, a pretium nisl euismod ac. Quisque arcu purus, maximus id erat sed, malesuada volutpat eros. Nullam convallis suscipit lorem, id gravida neque scelerisque ut. Praesent varius molestie augue ut blandit. Proin luctus nibh vitae ligula ultricies luctus. 
-      </p>
+    <div class="q-pa-xl q-px-sm-lg q-px-md-xl hero-section">
+      <q-parallax class="floating left large gt-sm" :speed="1.0"
+      :height="$q.screen.gt.xs ? 500 : 300">
+        <template v-slot:media="scope">
+          <div></div>
+        </template>
+        <template v-slot:content="scope">
+          <div class="absolute column items-center"
+              :style="{
+                top: ((scope.percentScrolled)*50) + '%',
+                left: (scope.percentScrolled * 50) + '%'
+              }">
+            <img src="statics/outside/woman_server.svg" />
+          </div>
+        </template>
+      </q-parallax>
+      <q-parallax class="floating right large gt-sm" :speed="1.0"
+      :height="$q.screen.gt.xs ? 500 : 300">
+        <template v-slot:media="scope">
+          <div></div>
+        </template>
+        <template v-slot:content="scope">
+          <div class="absolute column items-center"
+              :style="{
+                top: ((scope.percentScrolled)*10) + '%',
+                left: ((scope.percentScrolled*-1) * 50) + '%',
+                right: 0
+              }">
+            <img src="statics/outside/locked_computer.svg" />
+          </div>
+        </template>
+      </q-parallax>
+      <q-parallax class="floating right gt-sm" :speed="1.0"
+        :style="{
+          left: 'calc(50% + 400px)'
+          }"
+        :height="$q.screen.gt.xs ? 500 : 300">
+        <template v-slot:media="scope">
+          <div></div>
+        </template>
+        <template v-slot:content="scope">
+          <div class="absolute column items-center"
+              :style="{
+                top: ((scope.percentScrolled)* 50) + 40 + '%',
+                left: ((scope.percentScrolled*-1) * 30) + 70 + '%',
+                right: 0
+              }">
+            <img src="statics/outside/man_laptop.svg" />
+          </div>
+        </template>
+      </q-parallax>
+      <div class="content">
+        <h4 class="text-mono">
+          Fully encrypted, privacy by design.
+        </h4>
+        <div class="row q-gutter-sm">
+          <div class="col-sm">
+            <p>
+              Trade secrets, your family privacy and all your data should be yours, and your only, no exception. Unless your explicitely want to share it.
+            </p>
+            <p>
+              All your data is encrypted using state-of-the-art algorithms and can be accessed only by yourself.
+            </p>
+            <p>
+              Data is handled by multiple nodes that don't know what is inside your files and content.
+              No single company has control over your data.
+            </p>
+            <div class="row justify-between">
+              <img src="statics/outside/man_laptop.svg" class="gt-xs lt-md"/>
+              <q-btn v-if="!account"
+                      push color="primary" label="Join us!"
+                      @click="$root.$emit('open_onboarding')" no-caps />
+              <q-btn v-else push color="primary"  :to="{name:'profile'}" no-caps label="Enter!" />
+            </div>
+          </div>
+          <div class="col-sm lt-md">
+            <img src="statics/outside/locked_computer.svg" />
+          </div>
+        </div>
+      </div>
     </div>
   </q-page>
 </template>
@@ -204,12 +272,19 @@ export default {
         })
         return files
       },
+      profile() {
+        if (this.profiles[this.account.address] != undefined){
+          return this.profiles[this.account.address]
+        }
+        return {}
+      },
       ... mapState([
         // map this.count to store.state.count
         'account',
         'network_id',
         'api_server',
-        'channel'
+        'channel',
+        'profiles'
       ])
   },
   data() {
@@ -334,27 +409,44 @@ export default {
   //   filter: grayscale(100%) brightness(10);
   // }
 
-  .hero-content {
-
+  .content {
     &, .vue-typer .custom.char.typed {
       z-index: 100;
       color: #fff;
     }
 
-    p {
-      width: 980px;
-      margin: 0 auto;
-      padding: 0 10px;
+    .title {
+      text-shadow: 0px 2px 4px rgba(0, 0, 0, 1);
 
-      &.title {
-        font-size: 3rem;
-        text-shadow: 0px 2px 4px rgba(0, 0, 0, 1);
-
-        @media (max-width: $breakpoint-sm-max) {
-          font-size: 4.4vw;
-        }
+      .q-btn {
+        float: right;
       }
     }
+  }
+}
+
+.content {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 10px;
+  word-wrap: normal;
+
+  .title {
+    font-size: 3rem;
+
+    @media (max-width: $breakpoint-sm-max) {
+      font-size: 4.4vw;
+    }
+  }
+}
+
+.hero-section {
+  overflow: hidden;
+  position: relative;
+  min-height: 550px;
+
+  @media (max-width: $breakpoint-xs-max) {
+    min-height: 300px;
   }
 }
 
@@ -365,6 +457,14 @@ export default {
     left: calc(50% + 350px);
     width: 300px;
     right: 5vw;
+    &.large {
+      width: 500px;
+      left: calc(50% + 300px);
+    }
+  }
+  &.left {
+    right: calc(50% + 400px);
+    width: 300px;
   }
 }
 

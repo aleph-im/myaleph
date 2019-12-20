@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hhh lpR fFf">
+  <q-layout view="hhh lpR fff">
     <q-dialog 
       v-model="display_onboarding"
       :maximized="$q.screen.lt.md"
@@ -41,6 +41,10 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-footer class="bg-transparent text-black q-pa-sm">
+      Copyright ©2019 Aleph Project, all rights reserved. 
+    </q-footer>
 
   </q-layout>
 </template>
