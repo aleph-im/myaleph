@@ -43,7 +43,7 @@
     </q-page-container>
 
     <q-footer class="bg-transparent text-black q-pa-sm">
-      Copyright ©2019 Aleph Project, all rights reserved. 
+      Copyright ©2019 <a href="https://aleph.im/">aleph.im Project</a>, all rights reserved. 
     </q-footer>
 
   </q-layout>
