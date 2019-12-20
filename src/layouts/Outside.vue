@@ -19,7 +19,7 @@
             <img src="https://aleph.im/assets/img/logo.c052fb15.svg">
             <span class="q-ml-sm text-mono text-bold">
                 my.aleph.im
-                <q-badge color="primary" outline transparent align="middle">tech preview</q-badge>
+                <q-badge color="primary" transparent align="middle">tech preview</q-badge>
             </span>
         </q-toolbar-title>
         <q-space />
