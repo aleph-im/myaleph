@@ -1,7 +1,7 @@
 
 const routes = [
   {
-    path: '/landing',
+    path: '/l',
     component: () => import('layouts/Outside.vue'),
     children: [
       {

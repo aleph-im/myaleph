@@ -37,10 +37,10 @@ export default {
     }
   },
   mounted() {
-    // if (this.account) {
+    if (this.account) {
       this.$router.push({'name': 'profile'})
-    // } else
-    //   this.$router.push({'name': 'login'})
+    } else
+      this.$router.push({'name': 'landing'})
   },
   components: {SubmitContent}
 }
