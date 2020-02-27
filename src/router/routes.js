@@ -8,6 +8,19 @@ const routes = [
         name: 'landing',
         path: '',
         component: () => import('pages/outside/Home.vue') 
+      },
+      {
+        name: 'outside-notes',
+        path: 'n',
+        component: () => import('layouts/Empty.vue'),
+        children: [
+          {
+            name: 'view-note',
+            path: ':hash',
+            component: () => import('pages/outside/ViewNote.vue'),
+            props: true
+          },
+        ]
       }
     ]
   },
