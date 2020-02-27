@@ -51,7 +51,10 @@
           {{is_private?'encrypted':'public'}}
         </template>
       </div>
-      <q-btn push color="primary" :loading="saving" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
+      <div>
+        <q-btn push color="secondary" rounded icon="share" label="Share" size="sm" @click.stop="share" class="q-mr-sm" v-if="!saved_private" />
+        <q-btn push color="primary" :loading="saving" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
+      </div>
     </div>
     <q-inner-loading :showing="loading">
       <q-spinner-gears size="50px" color="primary" />
@@ -67,6 +70,7 @@ import 'tui-editor/dist/tui-editor-contents.css';
 import 'codemirror/lib/codemirror.css';
 import { Editor } from '@toast-ui/vue-editor'
 import { encrypt_content, decrypt_content } from '../services/encryption.js'
+import { format, copyToClipboard } from 'quasar'
 
 
 export default {
@@ -88,6 +92,7 @@ export default {
       processing: false,
       tags: [],
       is_private: true,
+      saved_private: true,
       saving: false,
       loading: false
     }
@@ -112,6 +117,7 @@ export default {
       if (this.hash) {
         this.banner_hash = this.post.content.banner
         this.is_private = this.post.content.private
+        this.saved_private = this.is_private
         if (this.is_private)
           decrypt_content(this.post.content, ['title', 'body'], this.account)
         this.title = this.post.content.title
@@ -185,6 +191,7 @@ export default {
         message: 'Note saved',
         color: "positive"
       })
+      this.saved_private = this.is_private
       if (this.hash) {
         msg.hash = this.hash
         this.$store.commit('update_note', msg)
@@ -193,6 +200,22 @@ export default {
         msg.hash = msg.item_hash
         this.$store.commit('add_note', msg)
         this.$router.push({ name: "edit-note", params: {hash: msg.item_hash} })
+      }
+    },
+    async share() {
+      let path = this.$router.resolve({'name': 'view-note', 'props': {'hash': this.hash}}).href
+      let link = window.location.origin + "/" + path
+      try {
+        await copyToClipboard(link)
+        this.$q.notify({
+          message: "Sharing link copied to clipboard",
+          color: "positive"
+        })
+      } catch {
+        this.$q.notify({
+          message: "Can't copy to clipboard",
+          color: "negative"
+        })
       }
     }
   },
