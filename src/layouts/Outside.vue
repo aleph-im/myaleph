@@ -43,7 +43,7 @@
     </q-page-container>
 
     <q-footer class="bg-transparent text-black q-pa-sm">
-      Copyright ©2019 <a href="https://aleph.im/">aleph.im Project</a>, all rights reserved. 
+      Copyright ©2019-present <a href="https://aleph.im/">aleph.im Project</a>, all rights reserved. 
     </q-footer>
 
   </q-layout>
@@ -108,12 +108,108 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .logo {
   .q-badge {
     position: absolute;
     margin-top: -0.2rem;
     margin-left: -5rem;
+  }
+}
+
+.hero {
+  margin-top: -66px;
+
+  border-bottom-left-radius: 30% 2%;
+  border-bottom-right-radius: 30% 5%;
+
+  .rightbox, .leftbox, .leftbox-sm {
+    background: transparent url(../statics/outside/rightbox.svg) right top/contain no-repeat;
+    height: 200px;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: -2px;
+
+    &.leftbox-sm,
+    &.leftbox {
+      transform:scale(-1,1);
+      top: -100px;
+
+      //@media (max-width: $breakpoint-xs-max) {
+      //  width: $breakpoint-xs-max;
+      //  height: 65%;
+      //  top: -30%;
+      //}
+    }
+  }
+  // .bottombox {
+  //   background: transparent url(../../statics/ux/wave4.svg) left -20px/100% no-repeat;
+  //   height: 100%;
+  //   width: 100%;
+  //   position: absolute;
+  //   left: 0;
+  //   bottom: 0;
+  //   transform:scale(1,-1);
+  //   filter: grayscale(100%) brightness(10);
+  // }
+
+  .content {
+    &, .vue-typer .custom.char.typed {
+      z-index: 100;
+      color: #fff;
+    }
+
+    .title {
+      text-shadow: 0px 2px 4px rgba(0, 0, 0, 1);
+
+      .q-btn {
+        float: right;
+      }
+    }
+  }
+}
+
+.content {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 10px;
+  word-wrap: normal;
+
+  .title {
+    font-size: 3rem;
+
+    @media (max-width: $breakpoint-sm-max) {
+      font-size: 4.4vw;
+    }
+  }
+}
+
+.hero-section {
+  overflow: hidden;
+  position: relative;
+  min-height: 550px;
+
+  @media (max-width: $breakpoint-xs-max) {
+    min-height: 300px;
+  }
+}
+
+.floating {
+  position: absolute;
+  height: 100%;
+  &.right {
+    left: calc(50% + 350px);
+    width: 300px;
+    right: 5vw;
+    &.large {
+      width: 500px;
+      left: calc(50% + 300px);
+    }
+  }
+  &.left {
+    right: calc(50% + 400px);
+    width: 300px;
   }
 }
 </style>
