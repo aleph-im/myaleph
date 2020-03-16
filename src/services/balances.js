@@ -33,3 +33,18 @@ export async function get_ethereum_balance_info(address, explorer_url) {
   }
   return balance_info
 }
+
+export async function get_neo_balance_info(address, explorer_url) {
+  let response = await axios.get(
+    `${explorer_url}/api/main_net/v1/get_balance/${address}`)
+
+  let balance_info = {
+    'ALEPH': 0,
+    'NEO': 0,
+    'GAS': 0
+  }
+  for (let holding of response.data.balance) {
+    balance_info[holding.asset_symbol] = holding.amount
+  }
+  return balance_info
+}
