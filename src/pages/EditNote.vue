@@ -69,9 +69,12 @@ import 'tui-editor/dist/tui-editor.css';
 import 'tui-editor/dist/tui-editor-contents.css';
 import 'codemirror/lib/codemirror.css';
 import { Editor } from '@toast-ui/vue-editor'
-import { encrypt_content, decrypt_content } from '../services/encryption.js'
+import { encrypt_content,
+         encrypt_content_for_self,
+         decrypt_content } from '../services/encryption.js'
 import { format, copyToClipboard } from 'quasar'
 
+import { encrypt, decrypt, PrivateKey } from 'eciesjs'
 
 export default {
   name: 'EditNote',
@@ -119,7 +122,7 @@ export default {
         this.is_private = this.post.content.private
         this.saved_private = this.is_private
         if (this.is_private)
-          decrypt_content(this.post.content, ['title', 'body'], this.account)
+          await decrypt_content(this.post.content, ['title', 'body'], this.account)
         this.title = this.post.content.title
         this.body = this.post.content.body
         if (this.post.content.tags !== undefined)
@@ -146,8 +149,8 @@ export default {
       let body = this.body
       let title = this.title
       // if (this.is_private) {
-      //   body = encryption.encrypt_for_self(this.account, body)
-      //   title = encryption.encrypt_for_self(this.account, title)
+      //   body = await encryption.encrypt_for_self(this.account, body)
+      //   title = await encryption.encrypt_for_self(this.account, title)
       // }
       let post_content = {
         body: body,
@@ -156,8 +159,20 @@ export default {
         // tags: this.tags.map(t => t.text)
       }
 
+      console.log(this.account)
+      console.log(PrivateKey.fromHex(this.account.private_key))
+      console.log(PrivateKey.fromHex(this.account.private_key).publicKey.toHex())
+
       if (this.is_private)
-        encrypt_content(post_content, ['title', 'body'], this.account['public_key'])
+        await encrypt_content_for_self(
+          post_content, ['title', 'body'],
+          this.account)
+
+      // if (this.is_private) {
+      //   body = encryption.encrypt_for_self(this.account, body)
+      //   title = encryption.encrypt_for_self(this.account, title)
+      // }
+
 
       if (this.hash)
         msg = await posts.submit(

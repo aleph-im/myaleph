@@ -1,5 +1,5 @@
 
-import { encrypt_content, decrypt_content } from '../services/encryption.js'
+import { encrypt_content_for_self, decrypt_content } from '../services/encryption.js'
 import { aggregates, posts, encryption, store } from 'aleph-js'
 
 export async function update_post(postitem, new_values, encrypted_fields, account, api_server, channel) {
@@ -11,7 +11,7 @@ export async function update_post(postitem, new_values, encrypted_fields, accoun
 
   if ((post_content.private === undefined)||(post_content.private)) {
     post_content['private'] = true
-    encrypt_content(post_content, encrypted_fields, account['public_key'])
+    await encrypt_content_for_self(post_content, encrypted_fields, account)
   }
 
   let msg = await posts.submit(

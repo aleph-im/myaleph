@@ -6,7 +6,7 @@ export async function retrieve_file(filepost, account, api_server) {
   let content = await store.retrieve(filepost.content.hash, {api_server: api_server})
   if (content !== null) {
     if (filepost.content.private) {
-        content = encryption.decrypt(account, content, {as_hex: false, as_string: false})
+        content = await encryption.decrypt(account, content, {as_hex: false, as_string: false})
     }
   
     const data = new Blob([content], {type: filepost.content.mimetype})

@@ -100,7 +100,7 @@
 <script>
 import { mapState } from 'vuex'
 import { aggregates, posts, encryption } from 'aleph-js'
-import { encrypt_content, decrypt_content } from '../services/encryption.js'
+import { encrypt_content, decrypt_content, encrypt_content_for_self } from '../services/encryption.js'
 import { retrieve_file_url } from '../services/files'
 import { update_post } from '../services/posts'
 import AlephUploader from '../components/Uploader.js'
@@ -271,7 +271,8 @@ export default {
             unencrypted_content[ key ] = post_content[ key ]
         })
 
-        encrypt_content(post_content, ['filename'], this.account['public_key'])
+        await encrypt_content_for_self(
+          post_content, ['filename'], this.account)
 
         let msg = await posts.submit(
           this.account.address, 'folder', post_content,
@@ -315,7 +316,8 @@ export default {
         })
 
         if (file.private)
-          encrypt_content(post_content, ['filename', 'mimetype', 'thumbnail_url'], this.account['public_key'])
+          await encrypt_content_for_self(
+            post_content, ['filename', 'mimetype', 'thumbnail_url'], this.account)
         this.$q.loadingBar.increment(1/info.length/2)
 
         let msg = await posts.submit(

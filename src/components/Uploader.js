@@ -75,7 +75,7 @@ export default {
             }
           })
           file.original_size = file.size
-          let content = encryption.encrypt_for_self(
+          let content = await encryption.encrypt_for_self(
             this.account, result, {as_hex: false})
 
           file.encrypted_size = content.length
