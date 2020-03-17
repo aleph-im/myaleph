@@ -27,6 +27,7 @@ export async function get_ethereum_balance_info(address, explorer_url) {
   {
     balance_info['ETH'] = response.data.ETH.balance
   }
+  if(response.data.tokens !== undefined)
   for (let holding of response.data.tokens) {
     let decimals = Number(holding.tokenInfo.decimals)
     balance_info[holding.tokenInfo.symbol] = holding.balance / (10**decimals)

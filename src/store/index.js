@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import { LocalStorage, SessionStorage } from 'quasar'
 import { posts, aggregates, encryption } from 'aleph-js'
 import {
-  get_nuls_balance_info, get_ethereum_balance_info } from '../services/balances'
+  get_nuls_balance_info, get_ethereum_balance_info, get_neo_balance_info } from '../services/balances'
 import { encrypt_content, decrypt_content } from '../services/encryption.js'
   
 
@@ -169,6 +169,10 @@ export default function (/* { ssrContext } */) {
           } else if (state.account.type === 'ETH') {
             commit('set_balance_info', await get_ethereum_balance_info(
               state.account.address, 'https://api.ethplorer.io'
+            ))
+          } else if (state.account.type === 'NEO') {
+            commit('set_balance_info', await get_neo_balance_info(
+              state.account.address, 'https://api.neoscan.io'
             ))
           }
         }
