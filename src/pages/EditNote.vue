@@ -260,7 +260,7 @@ export default {
     transition: opacity 0.3s;
   }
 
-  &:focus-within {
+  &:focus-within, &:hover {
     .te-toolbar-section,
     .te-mode-switch-section {
       opacity: 1;
