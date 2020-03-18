@@ -9,7 +9,7 @@
           rounded
           toggle-color="primary"
           :options="[
-            {value: 'NULS', label: 'NULS', icon: 'img:statics/ux/nuls.svg'},
+            {value: 'NULS2', label: 'NULS', icon: 'img:statics/ux/nuls.svg'},
             {value: 'ETH', label: 'Ethereum', icon: 'img:statics/ux/eth.svg'},
             {value: 'NEO', label: 'NEO', icon: 'img:statics/ux/neo.svg'}
           ]"
@@ -23,9 +23,9 @@
           narrow-indicator
           >
         <q-tab name='create' :label="$t('create.create')" />
-        <q-tab name='import_mnemonics' :label="$t('create.import_mnemonics')"  v-if="account_type != 'NEO' " />
+        <q-tab name='import_mnemonics' :label="$t('create.import_mnemonics')" />
         <q-tab name='import_privkey' :label="$t('create.import_privkey')" />
-        <q-tab name='import_encrypted_privkey' :label="$t('create.import_encrypted_privkey')"  v-if="account_type == 'NULS'" />
+        <q-tab name='import_encrypted_privkey' :label="$t('create.import_encrypted_privkey')"  v-if="account_type == 'NULS2'" />
       </q-tabs>
       <q-separator />
 
@@ -69,7 +69,7 @@
 
             </q-form>
         </q-tab-panel>
-        <q-tab-panel name="import_mnemonics" v-if="account_type != 'NEO' ">
+        <q-tab-panel name="import_mnemonics">
           <div>
             <vue-markdown :html="false" :source="$t('create.import_text')"></vue-markdown>
           </div>
@@ -138,7 +138,7 @@
             </q-btn>
           </q-form>
         </q-tab-panel>
-        <q-tab-panel name="import_encrypted_privkey" v-if="account_type == 'NULS'">
+        <q-tab-panel name="import_encrypted_privkey" v-if="account_type == 'NULS2'">
             <div class="text-center">
               <vue-markdown :html="false" :source="$t('create.import_encrypted_text')"></vue-markdown>
             </div>
@@ -226,7 +226,7 @@ export default {
     return {
       // msg: 'Welcome to Your Vue.js App'
       'step': 1,
-      'account_type': 'NULS',
+      'account_type': 'NULS2',
       'mode': 'import_mnemonics',
       'encrypted_private_key': '',
       'private_key': '',
@@ -291,7 +291,7 @@ export default {
     async generate () {
       this.generating = true;
 
-      if (this.account_type == 'NULS')
+      if (this.account_type == 'NULS2')
         this.tentative_account = await nuls2.new_account()
       else if (this.account_type == 'NEO')
         this.tentative_account = await neo.new_account()
@@ -303,12 +303,16 @@ export default {
       try {
         if (this.mode == 'import_mnemonics') {
           if (this.mnemoState()===true) {
-            if (this.account_type == 'NULS')
+            if (this.account_type == 'NULS2')
               this.tentative_account = await nuls2.import_account({
                 'mnemonics': this.mnemonics
               })
             else if (this.account_type == 'ETH')
               this.tentative_account = await ethereum.import_account({
+                'mnemonics': this.mnemonics
+              })
+            else if (this.account_type == 'NEO')
+              this.tentative_account = await neo.import_account({
                 'mnemonics': this.mnemonics
               })
           }
@@ -337,7 +341,7 @@ export default {
           }
         } else {
           if (this.private_key) {
-            if (this.account_type == 'NULS')
+            if (this.account_type == 'NULS2')
               this.tentative_account = await nuls2.import_account({
                 'private_key': this.private_key
               })
@@ -369,12 +373,6 @@ export default {
         await this.generate()
     },
     async switch() {
-      if (this.account_type=='NEO') {
-        if (this.mode == 'import_mnemonics') {
-          this.mode = 'import_privkey'
-          this.tentative_account = null
-        }
-      }
       if (this.mode == 'create')
         await this.generate()
       else
