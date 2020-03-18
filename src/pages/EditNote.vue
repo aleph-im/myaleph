@@ -37,7 +37,10 @@
       </span>
     </div>
     <div class="col-grow">
-      <editor v-model="body" height="calc(100vh - 12rem)" mode="wysiwyg" class="note-editor" />
+      <editor v-model="body" height="calc(100vh - 12rem)"
+       mode="wysiwyg" class="note-editor" :options="{
+         placeholder: 'Write your content here!'
+       }" />
     </div>
     <div class="col-auto row justify-between q-ma-sm">
       <div>
@@ -131,7 +134,7 @@ export default {
           this.tags = []
       } else {
         this.title = ''
-        this.body = 'Write your content here!'
+        this.body = ''
         this.tags = []
       }
     },
@@ -158,10 +161,6 @@ export default {
         private: this.is_private
         // tags: this.tags.map(t => t.text)
       }
-
-      console.log(this.account)
-      console.log(PrivateKey.fromHex(this.account.private_key))
-      console.log(PrivateKey.fromHex(this.account.private_key).publicKey.toHex())
 
       if (this.is_private)
         await encrypt_content_for_self(
@@ -265,6 +264,10 @@ export default {
     .te-mode-switch-section {
       opacity: 1;
     }
+  }
+
+  .CodeMirror {
+    padding: 0 25px;
   }
 }
 </style>
