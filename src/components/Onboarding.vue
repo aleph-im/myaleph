@@ -46,6 +46,25 @@
     <q-carousel-slide name="signup" class="column no-wrap flex-grow slide-signup">
       <div class="q-mt-md column  justify-between col-grow no-wrap">
         <h5 class="text-mono text-bold">Your new identity</h5>
+        <q-field borderless :label="$t('resource.account_type_unsure')" stack-label>
+          <template v-slot:control>
+            <q-btn-toggle
+              v-model="account_type"
+              no-caps
+              rounded
+              unelevated
+              color="white"
+              text-color="secondary"
+              toggle-color="secondary"
+              :options="[
+                {value: 'NULS2', label: 'NULS', icon: 'img:statics/ux/nuls.svg'},
+                {value: 'ETH', label: 'Ethereum', icon: 'img:statics/ux/eth.svg'},
+                {value: 'NEO', label: 'NEO', icon: 'img:statics/ux/neo.svg'}
+              ]"
+            >
+            </q-btn-toggle>
+          </template>
+        </q-field>
         <div>
           <p class="text-center lt-sm q-px-md main-image">
             <img src="statics/ux/verified-woman.svg">
@@ -96,7 +115,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { nuls2 } from 'aleph-js'
+import { nuls2, neo, ethereum } from 'aleph-js'
 export default {
   name: 'onboarding',
   computed: {
@@ -112,7 +131,13 @@ export default {
     return {
       slide: 'welcome',
       new_account: null,
-      adding: false
+      adding: false,
+      account_type: 'NULS2'
+    }
+  },
+  watch: {
+    async account_type() {
+      await this.generate()
     }
   },
   methods: {
@@ -125,10 +150,19 @@ export default {
       this.adding = false
       this.$router.push('/')
       this.$emit('close')
+    },
+    async generate() {
+      if (this.account_type == 'NULS2') {
+        this.new_account = await nuls2.new_account({chain_id: this.network_id})
+      } else if (this.account_type == 'NEO') {
+        this.new_account = await neo.new_account()
+      } else if (this.account_type == 'ETH') {
+        this.new_account = await ethereum.new_account()
+      }
     }
   },
   async mounted() {
-    this.new_account = await nuls2.new_account({chain_id: this.network_id})
+    await this.generate()
   }
 }
 </script>
