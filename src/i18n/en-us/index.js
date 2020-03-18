@@ -30,6 +30,8 @@ const en = {
     address: "Address",
     passphrase: "Passphrase",
 
+    account_type_unsure: "Account type (if unsure, leave default)",
+
     actions: "Actions",
 
     amount: "Amount",
