@@ -32,6 +32,7 @@ export default function (/* { ssrContext } */) {
       pages: {},
       menu: [],
       notes: [],
+      notebooks: {},
       files: [],
       mb_per_aleph: 0.25,
       balance_info: {},
@@ -54,6 +55,9 @@ export default function (/* { ssrContext } */) {
       set_notes(state, notes) {
         state.notes = notes
       },
+      set_notebooks(state, notebooks) {
+        state.notebooks = notebooks
+      },
       update_note(state, new_note) {
         for (let note of state.notes) {
           if (note.hash === new_note.hash) {
@@ -68,11 +72,17 @@ export default function (/* { ssrContext } */) {
           }
         }
       },
+      update_notebook(state, key, notebook) {
+        Object.assign(state.notebooks[key], notebook)
+      },
       add_note(state, new_note) {
         state.notes.unshift(new_note)
       },
       add_file(state, new_file) {
         state.files.unshift(new_file)
+      },
+      add_notebook(state, key, notebook) {
+        state.notebooks[key] = notebook
       },
       set_menu(state, menu_items) {
         state.menu = menu_items
@@ -176,6 +186,28 @@ export default function (/* { ssrContext } */) {
             ))
           }
         }
+      },
+      async update_notebooks({ state, commit }, progress_callback) {
+        let notebooks = await aggregates.fetch_one(
+          state.account.address,
+          'notebooks', {
+          api_server: state.api_server
+        })
+        let i = 0
+        let key_len = Object.keys(notebooks).length
+        for (let [key, item] of Object.entries(notebooks)) {
+          i += 1
+          try {
+            if (item.private) {
+              await decrypt_content(item, ['title', 'description'], state.account)
+            }
+          } catch (e) {
+            console.error("Can't decrypt...", e)
+          }
+          if (progress_callback !== undefined)
+            await progress_callback(i / key_len)
+        }
+        commit('set_notebooks', notebooks)
       }
       // async update_pages({ state, commit }) {
       //   let pages = await fetch_one(
