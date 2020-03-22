@@ -6,7 +6,9 @@
         <!-- <div class="col-2 gt-sm"> -->
         <template v-slot:before>
           <q-scroll-area style="height: calc(100vh - 4.5rem)">
-            <notes-list :notes="notes" title="Notes" padding show-search />
+            <notes-list :notes="notes" :notebooks="notebooks" title="Notes"
+                        show-selector padding show-search
+                        @createnotebook="create_notebook" />
           </q-scroll-area>
           <q-btn round push size="md" color="primary" class="fixed" icon="note_add"
           :style="'margin-top:-4rem; margin-left: calc('+splitter+'vw - ' + ($q.screen.gt.md ? 6 : 4) + 'rem)'"
@@ -22,7 +24,9 @@
       </q-splitter>
       <div v-else>
         <div v-if="is_home">
-          <notes-list :notes="notes" title="Notes" show-search padding />
+          <notes-list :notes="notes" :notebooks="notebooks"
+                      title="Notes" show-search show-selector padding 
+                      @createnotebook="create_notebook" />
           <p v-if="!notes.length" class="q-px-md">
             No note here yet... Why not <router-link :to="{'name': 'new-note'}">write one</router-link>?
           </p>
