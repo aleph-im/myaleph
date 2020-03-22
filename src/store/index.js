@@ -72,8 +72,8 @@ export default function (/* { ssrContext } */) {
           }
         }
       },
-      update_notebook(state, key, notebook) {
-        Object.assign(state.notebooks[key], notebook)
+      update_notebook(state, payload) {
+        Object.assign(state.notebooks[payload.key], payload.notebook)
       },
       add_note(state, new_note) {
         state.notes.unshift(new_note)
@@ -81,8 +81,9 @@ export default function (/* { ssrContext } */) {
       add_file(state, new_file) {
         state.files.unshift(new_file)
       },
-      add_notebook(state, key, notebook) {
-        state.notebooks[key] = notebook
+      add_notebook(state, payload) {
+        console.log(payload)
+        state.notebooks[payload.key] = payload.notebook
       },
       set_menu(state, menu_items) {
         state.menu = menu_items
@@ -193,20 +194,23 @@ export default function (/* { ssrContext } */) {
           'notebooks', {
           api_server: state.api_server
         })
-        let i = 0
-        let key_len = Object.keys(notebooks).length
-        for (let [key, item] of Object.entries(notebooks)) {
-          i += 1
-          try {
-            if (item.private) {
-              await decrypt_content(item, ['title', 'description'], state.account)
+        if (notebooks !== null) {
+          let i = 0
+          let key_len = Object.keys(notebooks).length
+          for (let [key, item] of Object.entries(notebooks)) {
+            i += 1
+            try {
+              if (item.private) {
+                await decrypt_content(item, ['name', 'description'], state.account)
+              }
+            } catch (e) {
+              console.error("Can't decrypt...", e)
             }
-          } catch (e) {
-            console.error("Can't decrypt...", e)
+            if (progress_callback !== undefined)
+              await progress_callback(i / key_len)
           }
-          if (progress_callback !== undefined)
-            await progress_callback(i / key_len)
-        }
+        } else
+          notebooks = {}
         commit('set_notebooks', notebooks)
       }
       // async update_pages({ state, commit }) {
