@@ -46,7 +46,7 @@
               <!-- <div class="col-2 gt-sm"> -->
               <template v-slot:before>
                 <q-scroll-area style="height: 450px">
-                  <notes-list :notes="notes" title="Notes" padding no-links
+                  <notes-list :notes="notes" title="Notes" padding no-links as-list
                               :active-item="selected_note" @itemclick="note_clicked" />
                 </q-scroll-area>
                 <q-btn round push size="md" color="primary" icon="note_add"
@@ -64,7 +64,7 @@
               <mock-note-edit :note="selected_note" @submit="submit" v-if="selected_note" show-back @back="selected_note=null" />
               <div v-else>
                 <q-scroll-area style="height: 450px">
-                  <notes-list :notes="notes" title="Notes" padding no-links
+                  <notes-list :notes="notes" title="Notes" padding no-links as-list
                               :active-item="selected_note" @itemclick="note_clicked" />
                 </q-scroll-area>
                 <q-btn round push size="md" color="primary" icon="note_add"

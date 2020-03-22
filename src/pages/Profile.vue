@@ -88,7 +88,7 @@
                          label="view all" :to="{name: 'notes'}" />
                 </div>
               </q-card-section>
-              <notes-list :notes="displayed_notes" dense v-if="displayed_notes.length" />
+              <notes-list as-list :notes="displayed_notes" dense v-if="displayed_notes.length" />
               <q-card-section v-else-if="is_own">
                 Nothing to see here, yet... Why don't you write some?
               </q-card-section>

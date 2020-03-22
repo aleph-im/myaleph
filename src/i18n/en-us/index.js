@@ -126,6 +126,10 @@ const en = {
 
   transfer: {
     target_address: 'Target address'
+  },
+
+  notes: {
+    unassigned_notebook: 'Not in a notebook'
   }
 };
 export default en
