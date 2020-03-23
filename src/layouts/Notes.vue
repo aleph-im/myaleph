@@ -45,6 +45,8 @@
 <script>
 import { mapState } from 'vuex'
 import { aggregates, posts, encryption } from 'aleph-js'
+import { encrypt_content_for_self } from '../services/encryption.js'
+import { v4 as uuidv4 } from 'uuid'
 import NotesList from '../components/NotesList'
 export default {
   name: 'NotesLayout',
@@ -55,7 +57,8 @@ export default {
       'network_id',
       'api_server',
       'channel',
-      'notes'
+      'notes',
+      'notebooks'
     ]),
     is_home() {
       return (this.$route.name === 'notes')
@@ -74,10 +77,61 @@ export default {
     async getNotes() {
       await this.$store.dispatch('update_notes')
     },
+    async getNotebooks() {
+      await this.$store.dispatch('update_notebooks')
+    },
     async refresh() {
       this.$q.loadingBar.start()
+      await this.getNotebooks()
       await this.getNotes()
       this.$q.loadingBar.stop()
+    },
+    async create_notebook() {
+      this.$q.dialog({
+        // dark: true,
+        title: 'Create new notebook',
+        message: 'Notebook name:',
+        prompt: {
+          // model: '',
+          type: 'text' // optional
+        },
+        cancel: true,
+        persistent: true
+      }).onOk(async data => {
+        if (!data)
+          return
+
+        const notebook_key = uuidv4()
+        let post_content = {
+          name: data,
+          description: '',
+          private: true,
+          status: 'visible' // default status
+        }
+
+        let unencrypted_content = {}
+        Object.keys(post_content).forEach(function(key) {
+            unencrypted_content[ key ] = post_content[ key ]
+        })
+
+        await encrypt_content_for_self(
+          post_content, ['name', 'description'], this.account)
+
+        await aggregates.submit(
+          this.account.address,
+          'notebooks', {
+            [notebook_key]: post_content
+          }, {
+            account: this.account,
+            channel: this.channel,
+            api_server: this.api_server
+          })
+        this.$store.commit('add_notebook',
+          {
+            key: notebook_key,
+            notebook: unencrypted_content
+          })
+      })
     }
   },
   watch: {
