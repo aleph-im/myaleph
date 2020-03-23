@@ -31,16 +31,30 @@
             <q-item-section>All notes</q-item-section>
           </q-item>
 
-          <q-separator />
+          <q-separator spaced />
 
-          <q-item clickable v-close-popup v-for="[key, item] of Object.entries(notebooks)" @click="setNotebook(key)" :key="key">
+          <q-item-label header v-if="not_empty_notebooks.length">Notebooks</q-item-label>
+
+          <q-item clickable v-close-popup v-for="key of not_empty_notebooks" @click="setNotebook(key)" :key="key">
             <q-item-section avatar>
               <q-icon name="fas fa-book" color="grey" />
             </q-item-section>
-            <q-item-section>{{item.name}}</q-item-section>
+            <q-item-section>{{notebooks[key].name}}</q-item-section>
+            <q-item-section side>{{count_per_notebook[key]}}</q-item-section>
           </q-item>
 
-          <q-separator />
+          <q-separator v-if="not_empty_notebooks.length" spaced />
+
+          <q-item-label header v-if="empty_notebooks.length">Empty notebooks</q-item-label>
+
+          <q-item clickable v-close-popup v-for="key of empty_notebooks" @click="setNotebook(key)" :key="key">
+            <q-item-section avatar>
+              <q-icon name="fas fa-book" color="grey" />
+            </q-item-section>
+            <q-item-section>{{notebooks[key].name}}</q-item-section>
+          </q-item>
+
+          <q-separator v-if="empty_notebooks.length" spaced />
 
           <q-item clickable v-close-popup @click="$emit('createnotebook')">
             <q-item-section avatar>
@@ -66,7 +80,7 @@
       <template v-for="item in displayed_notes">
         <note-list-item :key="item.hash" :item="item"
         :active="noLinks && (item === activeItem)" @click="$emit('itemclick', item)"
-        :noLinks="noLinks" :dense="dense" />
+        :noLinks="noLinks" :dense="dense" :notebooks="notebooks" :displayNotebook="(!dense) && (!notebook)" />
         <q-separator spaced inset :key="item.hash+'sep'" />
       </template>
     <!-- </template>
@@ -124,13 +138,23 @@ export default {
         return this.fuse.search(this.search_text)
     },
     notes_per_category() {
-      let notes = this.displayed_notes
-      let litems = collection.groupBy(notes, (i) => i.content.notebook ? i.content.notebook : null)
+      let litems = collection.groupBy(this.notes, (i) => i.content.notebook ? i.content.notebook : null)
       for (let key of Object.keys(this.notebooks)) {
         if (litems[key] == undefined)
           litems[key] = []
       }
       return litems
+    },
+    count_per_notebook() {
+      return Object.fromEntries(Object.entries(this.notes_per_category).map(
+        x => [x[0], x[1].length]
+      ));
+    },
+    empty_notebooks() {
+      return Object.entries(this.count_per_notebook).filter(x => (x[1] == 0) && (x[0] !== "null")).map(x => x[0])
+    },
+    not_empty_notebooks() {
+      return Object.entries(this.count_per_notebook).filter(x => (x[1] > 0) && (x[0] !== "null")).map(x => x[0])
     }
   },
   data() {
