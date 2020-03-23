@@ -133,7 +133,7 @@ export default function (/* { ssrContext } */) {
           i += 1
           try {
             if (post.content.private) {
-              await decrypt_content(post.content, ['title', 'body'], state.account)
+              await decrypt_content(post.content, ['title', 'body', 'notebook'], state.account)
               // post.content.encrypted_title = post.content.title
               // post.content.title = encryption.decrypt(state.account, post.content.title)
               // post.content.encrypted_body = post.content.body
