@@ -82,8 +82,8 @@ export default function (/* { ssrContext } */) {
         state.files.unshift(new_file)
       },
       add_notebook(state, payload) {
-        console.log(payload)
-        state.notebooks[payload.key] = payload.notebook
+        Vue.set(state.notebooks, payload.key, payload.notebook)
+        // state.notebooks[payload.key] = payload.notebook
       },
       set_menu(state, menu_items) {
         state.menu = menu_items
