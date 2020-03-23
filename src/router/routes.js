@@ -68,7 +68,7 @@ const routes = [
             path: 'new',
             name: 'new-note',
             component: () => import('pages/EditNote.vue'),
-            props: true
+            props: (route) => ({ notebook: route.query.notebook })
           },
         ]
       },
