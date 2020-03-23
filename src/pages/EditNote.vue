@@ -22,7 +22,12 @@
           </template>
         </q-popup-edit>
       </h4>
-      <span class="q-ma-sm"  v-if="$q.screen.gt.xs">
+      <q-select v-if="$q.screen.gt.xs" v-model="selected_notebook" :options="notebook_options" label="Notebook" sanitize emit-value map-options>
+        <template v-slot:prepend>
+          <q-icon name="event" />
+        </template>
+      </q-select>
+      <span class="q-ma-sm" v-if="$q.screen.gt.xs">
         <template>
           {{is_private?'encrypted':'public'}}
         </template>
@@ -42,7 +47,7 @@
          placeholder: 'Write your content here!'
        }" />
     </div>
-    <div class="col-auto row justify-between q-ma-sm">
+    <div class="col-auto row justify-between q-ma-sm items-end">
       <div>
         <q-toggle
           v-model="is_private"
@@ -54,6 +59,7 @@
           {{is_private?'encrypted':'public'}}
         </template>
       </div>
+      <q-select v-if="$q.screen.lt.sm" v-model="selected_notebook" :options="notebook_options" label="Notebook" sanitize emit-value map-options />
       <div>
         <q-btn push color="secondary" rounded icon="share" label="Share" size="sm" @click.stop="share" class="q-mr-sm" v-if="!saved_private" />
         <q-btn push color="primary" :loading="saving" rounded icon="save" label="Save" size="sm" @click.stop="submit" />
@@ -87,8 +93,26 @@ export default {
       'account',
       'network_id',
       'api_server',
-      'channel'
-    ])
+      'channel',
+      'account',
+      'notebooks'
+    ]),
+    notebook_options() {
+      let options = [
+        {
+          label: this.$t('notes.unassigned_notebook'),
+          value: null
+        }
+      ]
+      if (this.notebooks !== undefined)
+        for (let [key, notebook] of Object.entries(this.notebooks)) {
+          options.push({
+            label: notebook.name,
+            value: key
+          })
+        }
+      return options
+    }
   },
   data() {
     return {
@@ -100,11 +124,13 @@ export default {
       is_private: true,
       saved_private: true,
       saving: false,
-      loading: false
+      loading: false,
+      selected_notebook: null
     }
   },
   props: [
-    'hash'
+    'hash',
+    'notebook'
   ],
   components: { 
     'editor': Editor
@@ -125,17 +151,25 @@ export default {
         this.is_private = this.post.content.private
         this.saved_private = this.is_private
         if (this.is_private)
-          await decrypt_content(this.post.content, ['title', 'body'], this.account)
+          await decrypt_content(this.post.content, ['title', 'body', 'notebook'], this.account)
         this.title = this.post.content.title
         this.body = this.post.content.body
         if (this.post.content.tags !== undefined)
           this.tags = this.post.content.tags.map((t) => {return {text: t}})
         else
           this.tags = []
+        if (this.post.content.notebook !== undefined)
+          this.selected_notebook = this.post.content.notebook
+        else
+          this.selected_notebook = null
       } else {
         this.title = ''
         this.body = ''
         this.tags = []
+        if (this.notebook)
+          this.selected_notebook = this.notebook
+        else
+          this.selected_notebook = null
       }
     },
     async refresh() {
@@ -158,13 +192,14 @@ export default {
       let post_content = {
         body: body,
         title: title,
-        private: this.is_private
+        private: this.is_private,
+        notebook: this.selected_notebook
         // tags: this.tags.map(t => t.text)
       }
 
       if (this.is_private)
         await encrypt_content_for_self(
-          post_content, ['title', 'body'],
+          post_content, ['title', 'body', 'notebook'],
           this.account)
 
       // if (this.is_private) {
@@ -197,7 +232,8 @@ export default {
       msg.content = {
         body: this.body,
         title: this.title,
-        private: this.is_private
+        private: this.is_private,
+        notebook: this.selected_notebook
       }
 
       this.saving = false
