@@ -113,6 +113,10 @@ import NoteListItem from './NoteListItem'
 
 export default {
   name: 'notes-list',
+  model: {
+    prop: 'value',
+    event: 'change'
+  },
   props: {
     'notes': Array,
     'notebooks': Object,
@@ -124,7 +128,8 @@ export default {
     'activeItem': Object,
     'showSearch': Boolean,
     'asList': Boolean,
-    'showSelector': Boolean
+    'showSelector': Boolean,
+    'value': Object
   },
   computed: {
     displayed_notes() {
@@ -181,6 +186,9 @@ export default {
   methods: {
     setNotebook(key) {
       this.notebook = key
+      this.$emit('change', {
+        notebook: this.notebook
+      })
     }
   },
   watch: {
