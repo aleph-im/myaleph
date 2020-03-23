@@ -275,6 +275,12 @@ export default {
     // },
     async hash() {
       await this.refresh()
+    },
+    async notebook() {
+      if (this.notebook)
+        this.selected_notebook = this.notebook
+      else
+        this.selected_notebook = null
     }
   },
   async created() {
