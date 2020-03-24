@@ -43,18 +43,31 @@
             <q-item-section side>{{count_per_notebook[key]}}</q-item-section>
           </q-item>
 
-          <q-separator v-if="not_empty_notebooks.length" spaced />
+          <q-expansion-item
+            expand-separator
+            caption="Empty notebooks"
+             v-if="not_empty_notebooks.length"
+          >
+            <q-item clickable v-close-popup v-for="key of empty_notebooks" @click="setNotebook(key)" :key="key">
+              <q-item-section avatar>
+                <q-icon name="fas fa-book" color="grey" />
+              </q-item-section>
+              <q-item-section>{{notebooks[key].name}}</q-item-section>
+            </q-item>
+          </q-expansion-item>
 
-          <q-item-label header v-if="empty_notebooks.length">Empty notebooks</q-item-label>
+          <!-- <q-separator v-if="not_empty_notebooks.length" spaced /> -->
+
+          <!-- <q-item-label header v-if="empty_notebooks.length">Empty notebooks</q-item-label>
 
           <q-item clickable v-close-popup v-for="key of empty_notebooks" @click="setNotebook(key)" :key="key">
             <q-item-section avatar>
               <q-icon name="fas fa-book" color="grey" />
             </q-item-section>
             <q-item-section>{{notebooks[key].name}}</q-item-section>
-          </q-item>
+          </q-item> -->
 
-          <q-separator v-if="empty_notebooks.length" spaced />
+          <q-separator v-if="Object.keys(notebooks).length" />
 
           <q-item clickable v-close-popup @click="$emit('createnotebook')">
             <q-item-section avatar>
