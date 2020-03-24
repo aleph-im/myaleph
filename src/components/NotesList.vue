@@ -6,19 +6,19 @@
       <span v-if="(search_text === '') && (!showSelector)" class="col-2">{{title}}</span>
       <!-- <q-select v-if="(search_text === '') && showSelector" standout="bg-teal text-white" label="Notes" v-model="selected_view" :options="options" /> -->
       <q-btn-dropdown v-if="(search_text === '') && showSelector"
-        no-caps flat
+        no-caps flat class="ellipsis col-8" align="left"
       >
         <template v-slot:label>
-          <div class="row justify-content no-wrap flex-grow" v-if="!notebook">
+          <div class="row justify-content no-wrap flex-grow ellipsis" v-if="!notebook">
             <q-icon left name="all_inbox" />
             <div class="text-center">
               All notes
             </div>
           </div>
-          <div class="row justify-content no-wrap flex-grow" v-else>
+          <div class="row justify-content no-wrap flex-grow ellipsis" v-else>
             <q-icon left name="all_inbox" />
-            <div class="text-center">
-              Notes in {{notebooks[notebook].name}}
+            <div class="text-left">
+              {{notebooks[notebook].name}}
             </div>
           </div>
         </template>
@@ -88,6 +88,7 @@
         </q-input>
         <!-- <q-btn flat round color="grey" icon="search" size="md" @click.end="searching=true" /> -->
       </span>
+      <notebook-menu v-if="notebook&&(!search_text)" :notebookKey="notebook" :notebook="notebooks[notebook]" :count="count_per_notebook[notebook]" />
     </q-item-label>
     <!-- <template v-if="asList | (search_text!=='')"> -->
       <template v-for="item in displayed_notes">
@@ -123,6 +124,7 @@ import Fuse from 'fuse.js'
 import collection from 'lodash/collection'
 
 import NoteListItem from './NoteListItem'
+import NotebookMenu from './NotebookMenu'
 
 export default {
   name: 'notes-list',
@@ -217,6 +219,9 @@ export default {
     //     this.displayed_notes = this.fuse.search(this.search_text)
     // }
   },
-  components: { NoteListItem }
+  components: {
+    NoteListItem,
+    NotebookMenu
+  }
 }
 </script>
