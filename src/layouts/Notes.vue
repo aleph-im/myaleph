@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       posts: [],
-      splitter: 20,
+      splitter: 25,
       listmodel: {
         notebook: null
       }
