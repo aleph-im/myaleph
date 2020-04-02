@@ -29,7 +29,7 @@
       </q-select>
       <span class="q-ma-sm" v-if="$q.screen.gt.xs">
         <template>
-          {{is_private?'encrypted':'public'}}
+          {{is_private?'encrypt':'public'}}
         </template>
         <q-toggle
           v-model="is_private"
@@ -42,12 +42,12 @@
       </span>
     </div>
     <div class="col-grow">
-      <editor v-model="body" height="calc(100vh - 12rem)"
+      <editor v-model="body" height="calc(100vh - 13rem)"
        mode="wysiwyg" class="note-editor" :options="{
          placeholder: 'Write your content here!'
        }" />
     </div>
-    <div class="col-auto row justify-between q-ma-sm items-end">
+    <div class="col-auto row justify-between q-ma-sm items-end no-wrap">
       <div>
         <q-toggle
           v-model="is_private"
@@ -56,7 +56,7 @@
           unchecked-icon="lock_open"  v-if="$q.screen.lt.sm"
         />
         <template v-if="$q.screen.lt.sm">
-          {{is_private?'encrypted':'public'}}
+          {{is_private?'encrypt':'public'}}
         </template>
       </div>
       <q-select v-if="$q.screen.lt.sm" v-model="selected_notebook" :options="notebook_options" label="Notebook" sanitize emit-value map-options />
@@ -106,10 +106,11 @@ export default {
       ]
       if (this.notebooks !== undefined)
         for (let [key, notebook] of Object.entries(this.notebooks)) {
-          options.push({
-            label: notebook.name,
-            value: key
-          })
+          if (notebook['status'] == 'visible')
+            options.push({
+              label: notebook.name,
+              value: key
+            })
         }
       return options
     }

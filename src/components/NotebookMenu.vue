@@ -9,7 +9,7 @@
             </q-item-section>
             <q-item-section>Rename</q-item-section>
           </q-item>
-          <q-separator v-if="notebook.private" />
+          <!-- <q-separator v-if="notebook.private" />
           <q-item clickable v-close-popup @click.prevent="make_public"  v-if="notebook.private">
             <q-item-section avatar>
                 <q-icon color="primary" name="public" />
@@ -22,8 +22,8 @@
                 <q-icon color="primary" name="share" />
             </q-item-section>
             <q-item-section>Get public link</q-item-section>
-          </q-item>
-          <q-separator />
+          </q-item> -->
+          <q-separator v-if="count === 0" />
           <q-item clickable v-close-popup @click.prevent="archive" v-if="count === 0">
             <q-item-section avatar>
                 <q-icon color="primary" name="archive" />
@@ -130,6 +130,12 @@ export default {
           key: this.notebookKey,
           notebook: unencrypted_content
         })
+    },
+    async archive() {
+      let new_content = Object.assign({}, this.notebook)
+      new_content['status'] = 'hidden'
+      await this.change(new_content)
+      this.$emit('deselect')
     }
   }
 }

@@ -46,7 +46,7 @@
           <q-expansion-item
             expand-separator
             caption="Empty notebooks"
-             v-if="not_empty_notebooks.length"
+             v-if="empty_notebooks.length"
           >
             <q-item clickable v-close-popup v-for="key of empty_notebooks" @click="setNotebook(key)" :key="key">
               <q-item-section avatar>
@@ -88,7 +88,9 @@
         </q-input>
         <!-- <q-btn flat round color="grey" icon="search" size="md" @click.end="searching=true" /> -->
       </span>
-      <notebook-menu v-if="notebook&&(!search_text)" :notebookKey="notebook" :notebook="notebooks[notebook]" :count="count_per_notebook[notebook]" />
+      <notebook-menu v-if="notebook&&(!search_text)" :notebookKey="notebook"
+                     :notebook="notebooks[notebook]" :count="count_per_notebook[notebook]"
+                     @deselect="notebook = null" />
     </q-item-label>
     <!-- <template v-if="asList | (search_text!=='')"> -->
       <template v-for="item in displayed_notes">
@@ -163,18 +165,24 @@ export default {
         if (litems[key] == undefined)
           litems[key] = []
       }
+      if (litems[null] !== undefined)
+        delete litems[null]
+        
       return litems
     },
     count_per_notebook() {
-      return Object.fromEntries(Object.entries(this.notes_per_category).map(
-        x => [x[0], x[1].length]
-      ));
+      return Object.fromEntries(
+        Object.entries(this.notes_per_category).filter(
+          nb => this.notebooks[nb[0]] && this.notebooks[nb[0]].status==='visible'
+          ).map(
+          x => [x[0], x[1].length]
+        ));
     },
     empty_notebooks() {
-      return Object.entries(this.count_per_notebook).filter(x => (x[1] == 0) && (x[0] !== "null")).map(x => x[0])
+      return Object.entries(this.count_per_notebook).filter(x => x[1] == 0).map(x => x[0])
     },
     not_empty_notebooks() {
-      return Object.entries(this.count_per_notebook).filter(x => (x[1] > 0) && (x[0] !== "null")).map(x => x[0])
+      return Object.entries(this.count_per_notebook).filter(x => x[1] > 0).map(x => x[0])
     }
   },
   data() {
