@@ -73,7 +73,8 @@ export default function (/* { ssrContext } */) {
         }
       },
       update_notebook(state, payload) {
-        Object.assign(state.notebooks[payload.key], payload.notebook)
+        // Object.assign(state.notebooks[payload.key], payload.notebook)
+        Vue.set(state.notebooks, payload.key, payload.notebook)
       },
       add_note(state, new_note) {
         state.notes.unshift(new_note)
