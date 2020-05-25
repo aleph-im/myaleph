@@ -85,6 +85,10 @@ import { format, copyToClipboard } from 'quasar'
 
 import { encrypt, decrypt, PrivateKey } from 'eciesjs'
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export default {
   name: 'EditNote',
   computed: {
@@ -144,7 +148,8 @@ export default {
       })
 
       // let response = await axios.get(`${this.api_server}/api/v0/posts.json?hashes=${this.hash}`)
-      this.post = response.posts[0]
+      if (response.posts.length)
+        this.post = response.posts[0]
     },
     async setState() {
       if (this.hash) {
@@ -176,7 +181,14 @@ export default {
     async refresh() {
       this.loading = true
       if (this.hash) {
-        await this.getPost()
+        while (!this.post) {
+          await this.getPost()
+          if (!this.post) {
+            this.post = null
+            await sleep(500)
+            console.log("can't get content, retrying.")
+          }
+        }
       }
       await this.setState()
       this.loading = false
@@ -224,10 +236,7 @@ export default {
            account: this.account})
 
       this.processing = true
-      function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-      }
-      await sleep(100)
+      await sleep(200)
       this.processing = false
 
       msg.content = {
@@ -275,6 +284,7 @@ export default {
     //   await this.refresh()
     // },
     async hash() {
+      this.post = null
       await this.refresh()
     },
     async notebook() {
