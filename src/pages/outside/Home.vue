@@ -204,14 +204,14 @@
         <div class="row q-gutter-sm">
           <div class="col-sm">
             <p>
-              Trade secrets, your family privacy and all your data should be yours, and your only, no exception. Unless your explicitely want to share it.
+              Trade secrets, your family privacy, and all your data should be yours, and yours alone. Unless of course you explicitly want to share it.
             </p>
             <p>
-              All your data is encrypted using state-of-the-art algorithms and can be accessed only by yourself.
+              All of your data is encrypted using state-of-the-art algorithms. This ensures only you can ever access this data. 
             </p>
             <p>
-              Data is handled by multiple nodes that don't know what is inside your files and content.
-              No single company has control over your data.
+              Multiple nodes handle your data, but no one will ever know the content of your files. 
+              No single company has control over your data ensuring true data decentralization.
             </p>
             <div class="row justify-between">
               <img src="statics/outside/man_laptop.svg" class="gt-xs lt-md"/>
