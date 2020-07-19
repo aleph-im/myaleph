@@ -132,7 +132,16 @@ export default {
         );
         // https://my-beta.aleph.im/#/l/nb/NULSd6HgfMv9LaD48jivoysVDe5xER6q9KaWm/8c8c3258-8545-46f9-882d-59f31c54af22
         // https://my-beta.aleph.im/#/l/nb/NULSd6HgfsBsNaTsH623Kn9UCNFKyVvaMWeid/c26ab63b-c50c-41a9-b944-85e7a5baab7f
-        this.notebooks = notebooks.filter(notebook => !notebook.private); // Only set public ones
+        const public_notebooks = Object.keys(notebooks).filter(notebook => {
+          if (!notebooks[notebook].private) {
+            return true;
+          }
+        });
+        const address_public_notebooks = {};
+        public_notebooks.forEach(notebook => {
+          address_public_notebooks[notebook] = notebooks[notebook];
+        });
+        this.notebooks = address_public_notebooks; // Only set public ones
         this.viewed_notebook = uuid;
         if (uuid) {
           let notebook = notebooks[uuid];
