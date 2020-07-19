@@ -132,10 +132,12 @@ export default {
         );
         // https://my-beta.aleph.im/#/l/nb/NULSd6HgfMv9LaD48jivoysVDe5xER6q9KaWm/8c8c3258-8545-46f9-882d-59f31c54af22
         // https://my-beta.aleph.im/#/l/nb/NULSd6HgfsBsNaTsH623Kn9UCNFKyVvaMWeid/c26ab63b-c50c-41a9-b944-85e7a5baab7f
-        let notebook = notebooks[uuid];
-        this.notebooks = notebooks;
+        this.notebooks = notebooks.filter(({ private }) => !private); // Only set public ones
         this.viewed_notebook = uuid;
-        this.notebook = notebook;
+        if (uuid) {
+          let notebook = notebooks[uuid];
+          this.notebook = notebook;
+        }
         return true;
       } catch (e) {
         console.error(e);
