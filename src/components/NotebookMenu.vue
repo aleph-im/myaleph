@@ -88,7 +88,12 @@ export default {
       );
 
       let link = null;
-      link = `https://my-beta.aleph.im/#/l/nb/${this.account.address}/${this.notebookKey}`;
+      const isLocal = window.location.hostname.includes("localhost");
+      link = `${
+        isLocal
+          ? "http://localhost:8080/#/l/nb/"
+          : "https://my-beta.aleph.im/#/l/nb/"
+      } ${this.account.address}/${this.notebookKey}`;
       // if (filepost.content.engine === "ipfs") {
       //   link = `${this.ipfs_gateway}${filepost.content.hash}`;
       // } else {
