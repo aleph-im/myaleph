@@ -69,7 +69,6 @@ export default {
     async make_public() {
       let new_content = Object.assign({}, this.notebook);
       new_content["private"] = false;
-      debugger;
       await this.change(new_content);
       this.$emit("deselect");
     },
