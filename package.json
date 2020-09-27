@@ -14,7 +14,7 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "@toast-ui/vue-editor": "^1.1.1",
-    "aleph-js": "^0.1.1",
+    "aleph-js": "^0.2.2",
     "axios": "^0.18.1",
     "bip32": "^2.0.4",
     "bip39": "^3.0.2",
