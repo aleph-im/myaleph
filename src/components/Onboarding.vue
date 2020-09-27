@@ -10,43 +10,66 @@
     padding
     class="bg-white shadow-1 rounded-borders onboarding-carousel"
   >
-    <q-carousel-slide name="welcome" class="column no-wrap slide-welcome q-py-md row">
+    <q-carousel-slide
+      name="welcome"
+      class="column no-wrap slide-welcome q-py-md row"
+    >
       <div class="q-my-md col-grow column justify-between no-wrap">
         <p class="logo">
-          <img src="https://aleph.im/assets/img/logo.c052fb15.svg">
-          <span class="q-ml-sm text-mono text-bold text-h5">my aleph.im
-            <q-badge color="primary" transparent align="middle">tech preview</q-badge>
+          <img src="https://aleph.im/assets/img/logo.c052fb15.svg" />
+          <span class="q-ml-sm text-mono text-bold text-h5"
+            >my aleph.im
+            <q-badge color="primary" transparent align="middle"
+              >tech preview</q-badge
+            >
           </span>
         </p>
         <div>
           <p class="text-center lt-sm q-px-md main-image">
-            <img src="statics/ux/mountain-climbing.svg">
+            <img src="statics/ux/mountain-climbing.svg" />
           </p>
+          <p>Welcome to your new digital home.</p>
           <p>
-            Welcome to your new digital home.
-          </p>
-          <p>
-            My Aleph stores your data securely, using state of the art encryption.
-            Our philosophy is "Privacy by design". Nobody but yourself has access to your data.
+            My Aleph stores your data securely, using state of the art
+            encryption. Our philosophy is "Privacy by design". Nobody but
+            yourself has access to your data.
           </p>
         </div>
-        <div  class="q-gutter-sm q-pt-xl q-pt-sm-none">
-          <p>
-            Do you have an account already?
-          </p>
+        <div class="q-gutter-sm q-pt-xl q-pt-sm-none">
+          <p>Do you have an account already?</p>
           <p class="q-gutter-sm">
-            <q-btn push rounded color="primary" label="Yes, log me in" @click="$emit('close')" :to="{'name': 'login'}" />
-            <q-btn push rounded color="secondary" label="No, please sign me up" @click="slide='signup'">
+            <q-btn
+              push
+              rounded
+              color="primary"
+              label="Yes, log me in"
+              @click="$emit('close')"
+              :to="{ name: 'login' }"
+            />
+            <q-btn
+              push
+              rounded
+              color="secondary"
+              label="No, please sign me up"
+              @click="slide = 'signup'"
+            >
               <q-tooltip>Takes a few seconds!</q-tooltip>
             </q-btn>
           </p>
         </div>
       </div>
     </q-carousel-slide>
-    <q-carousel-slide name="signup" class="column no-wrap flex-grow slide-signup">
-      <div class="q-mt-md column  justify-between col-grow no-wrap">
+    <q-carousel-slide
+      name="signup"
+      class="column no-wrap flex-grow slide-signup"
+    >
+      <div class="q-mt-md column justify-between col-grow no-wrap">
         <h5 class="text-mono text-bold">Your new identity</h5>
-        <q-field borderless :label="$t('resource.account_type_unsure')" stack-label>
+        <q-field
+          borderless
+          :label="$t('resource.account_type_unsure')"
+          stack-label
+        >
           <template v-slot:control>
             <q-btn-toggle
               v-model="account_type"
@@ -57,9 +80,17 @@
               text-color="secondary"
               toggle-color="secondary"
               :options="[
-                {value: 'NULS2', label: 'NULS', icon: 'img:statics/ux/nuls.svg'},
-                {value: 'ETH', label: 'Ethereum', icon: 'img:statics/ux/eth.svg'},
-                {value: 'NEO', label: 'NEO', icon: 'img:statics/ux/neo.svg'}
+                {
+                  value: 'NULS2',
+                  label: 'NULS',
+                  icon: 'img:statics/ux/nuls.svg',
+                },
+                {
+                  value: 'ETH',
+                  label: 'Ethereum',
+                  icon: 'img:statics/ux/eth.svg',
+                },
+                { value: 'NEO', label: 'NEO', icon: 'img:statics/ux/neo.svg' },
               ]"
             >
             </q-btn-toggle>
@@ -67,20 +98,32 @@
         </q-field>
         <div>
           <p class="text-center lt-sm q-px-md main-image">
-            <img src="statics/ux/verified-woman.svg">
+            <img src="statics/ux/verified-woman.svg" />
           </p>
           <p>
-            This is your address, a unique identifier to your digital identity and content.
-            <br> You can give it to others so they can find you.
+            This is your address, a unique identifier to your digital identity
+            and content.
+            <br />
+            You can give it to others so they can find you.
           </p>
         </div>
         <q-field borderless :label="$t('resource.address')" stack-label>
           <template v-slot:control>
-            <code class="self-center full-width no-outline text-truncate" tabindex="0">{{new_account.address}}</code>
+            <code
+              class="self-center full-width no-outline text-truncate"
+              tabindex="0"
+              >{{ new_account.address }}</code
+            >
           </template>
         </q-field>
         <p class="q-gutter-sm row justify-end">
-          <q-btn push rounded color="secondary" label="Continue" @click="slide='key'" />
+          <q-btn
+            push
+            rounded
+            color="secondary"
+            label="Continue"
+            @click="slide = 'key'"
+          />
         </p>
       </div>
     </q-carousel-slide>
@@ -89,23 +132,36 @@
         <h5 class="text-mono text-bold">Your keys</h5>
         <div>
           <p class="text-center lt-sm q-px-md main-image">
-            <img src="statics/ux/unlock.svg">
+            <img src="statics/ux/unlock.svg" />
           </p>
           <p>
-            This is called your private key, represented as easy to remember twelve "mnemonic words".
-            <br>
-            Please write those down, without them, there is no way to recover your account.
+            This is called your private key, represented as easy to remember
+            twelve "mnemonic words".
+            <br />
+            Please write those down, without them, there is no way to recover
+            your account.
           </p>
         </div>
         <q-field borderless :label="$t('resource.mnemonics_words')" stack-label>
           <template v-slot:control>
-            <code class="self-center full-width no-outline text-truncate" tabindex="0">{{new_account.mnemonics}}</code>
+            <code
+              class="self-center full-width no-outline text-truncate"
+              tabindex="0"
+              >{{ new_account.mnemonics }}</code
+            >
           </template>
         </q-field>
         <div>
           <p>Saved them? Good, let's start!</p>
           <p class="q-gutter-sm row justify-end">
-            <q-btn push rounded color="secondary" label="Let's start!" @click="add_account" :loading="adding" />
+            <q-btn
+              push
+              rounded
+              color="secondary"
+              label="Let's start!"
+              @click="add_account"
+              :loading="adding"
+            />
           </p>
         </div>
       </div>
@@ -114,61 +170,63 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { nuls2, neo, ethereum } from 'aleph-js'
+import { mapState } from "vuex";
+import { nuls2, neo, ethereum } from "aleph-js";
 export default {
-  name: 'onboarding',
+  name: "onboarding",
   computed: {
-      ... mapState([
-        // map this.count to store.state.count
-        'account',
-        'network_id',
-        'api_server',
-        'channel'
-      ])
+    ...mapState([
+      // map this.count to store.state.count
+      "account",
+      "network_id",
+      "api_server",
+      "channel",
+    ]),
   },
-  data () {
+  data() {
     return {
-      slide: 'welcome',
+      slide: "welcome",
       new_account: null,
       adding: false,
-      account_type: 'NULS2'
-    }
+      account_type: "NULS2",
+    };
   },
   watch: {
     async account_type() {
-      await this.generate()
-    }
+      await this.generate();
+    },
   },
   methods: {
     async add_account() {
-      this.adding = true
-      this.$store.dispatch(
-        'store_account', this.new_account
-      )
-      await this.$fetch_profile(this.new_account.address)
-      this.adding = false
-      this.$router.push('/')
-      this.$emit('close')
+      this.adding = true;
+      this.$store.dispatch("store_account", this.new_account);
+      await this.$fetch_profile(this.new_account.address);
+      // Create folders for new account
+      this.$store.dispatch("create_new_folders", this.new_account);
+
+      this.adding = false;
+      this.$router.push("/");
+      this.$emit("close");
     },
     async generate() {
-      if (this.account_type == 'NULS2') {
-        this.new_account = await nuls2.new_account({chain_id: this.network_id})
-      } else if (this.account_type == 'NEO') {
-        this.new_account = await neo.new_account()
-      } else if (this.account_type == 'ETH') {
-        this.new_account = await ethereum.new_account()
+      if (this.account_type == "NULS2") {
+        this.new_account = await nuls2.new_account({
+          chain_id: this.network_id,
+        });
+      } else if (this.account_type == "NEO") {
+        this.new_account = await neo.new_account();
+      } else if (this.account_type == "ETH") {
+        this.new_account = await ethereum.new_account();
       }
-    }
+    },
   },
   async mounted() {
-    await this.generate()
-  }
-}
+    await this.generate();
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-
 .onboarding-carousel {
   min-width: 1024px;
   min-height: 300px;
@@ -191,11 +249,9 @@ export default {
   }
 
   h5 {
-    margin: .5rem 0;
+    margin: 0.5rem 0;
   }
 }
-
-
 
 .slide-welcome {
   background-color: #3455b7;
@@ -204,7 +260,7 @@ export default {
   p.logo {
     img {
       -webkit-filter: grayscale(100%) brightness(1000%); /* Safari 6.0 - 9.0 */
-      filter: grayscale(100%)  brightness(1000%);
+      filter: grayscale(100%) brightness(1000%);
     }
     .q-badge {
       position: absolute;
@@ -216,26 +272,25 @@ export default {
   }
 
   @media (min-width: $breakpoint-sm-min) {
-    background: url('../statics/ux/mountain-climbing.svg')
-                center left -50px / 50% no-repeat #3455b7;
+    background: url("../statics/ux/mountain-climbing.svg") center left -50px / 50%
+      no-repeat #3455b7;
     p.logo {
       margin-left: -10%;
     }
-    &>div {
+    & > div {
       margin-left: 45%;
       width: 55%;
     }
   }
-
 }
 
 .slide-signup {
   background-color: #ffe2d3;
   color: #000;
   @media (min-width: $breakpoint-sm-min) {
-    background: url('../statics/ux/verified-woman.svg')
-                center right -50px / 50% no-repeat #ffe2d3;
-    &>div {
+    background: url("../statics/ux/verified-woman.svg") center right -50px / 50%
+      no-repeat #ffe2d3;
+    & > div {
       margin-right: 45%;
       width: 55%;
     }
@@ -254,20 +309,20 @@ export default {
     color: #fff !important;
   }
   @media (min-width: $breakpoint-sm-min) {
-    background: url('../statics/ux/unlock.svg')
-                center left -50px / 50% no-repeat #3455b7;
+    background: url("../statics/ux/unlock.svg") center left -50px / 50% no-repeat
+      #3455b7;
 
-    &>div {
+    & > div {
       margin-left: 45%;
       width: 55%;
     }
   }
 
   @media (min-width: $breakpoint-sm-min) and (max-height: 400px) {
-    background: url('../statics/ux/unlock.svg')
-                center left -50px / 30% no-repeat #3455b7;
+    background: url("../statics/ux/unlock.svg") center left -50px / 30% no-repeat
+      #3455b7;
 
-    &>div {
+    & > div {
       margin-left: 25%;
       width: 75%;
     }
