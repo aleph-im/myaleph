@@ -10,8 +10,7 @@
           toggle-color="primary"
           :options="[
             {value: 'NULS2', label: 'NULS', icon: 'img:statics/ux/nuls.svg'},
-            {value: 'ETH', label: 'Ethereum', icon: 'img:statics/ux/eth.svg'},
-            {value: 'NEO', label: 'NEO', icon: 'img:statics/ux/neo.svg'}
+            {value: 'ETH', label: 'Ethereum', icon: 'img:statics/ux/eth.svg'}
           ]"
         >
         </q-btn-toggle>
