@@ -5,6 +5,10 @@ import { posts, aggregates, encryption } from 'aleph-js'
 import {
   get_nuls_balance_info, get_ethereum_balance_info, get_neo_balance_info } from '../services/balances'
 import { encrypt_content, decrypt_content } from '../services/encryption.js'
+import { get_erc20_balance } from '../services/erc20.js'
+
+var providers = require('ethers').providers
+
   
 
 // import example from './module-example'
@@ -19,6 +23,7 @@ Vue.use(Vuex)
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     state: {
+      erc20_address: '0x27702a26126e0B3702af63Ee09aC4d1A084EF628',
       api_server: 'https://api2.aleph.im',
       site_chain: 'NULS',
       site_address: 'TTatYAULiEfV6e7Tqt9z8YCr7dz2KkbJ',
@@ -34,9 +39,13 @@ export default function (/* { ssrContext } */) {
       notes: [],
       notebooks: {},
       files: [],
-      mb_per_aleph: 0.25,
+      mb_per_aleph: 3,
       balance_info: {},
-      channel: "MYALEPH"
+      channel: "MYALEPH",
+      ethereum_network: 'homestead',
+      infura_key: '53a9da10535140fe81b8cbdb0dc05808',
+      ethereum_provider: null,
+      decimals: 18
     },
     mutations: {
       set_account(state, account) {
@@ -103,9 +112,30 @@ export default function (/* { ssrContext } */) {
       },
       set_balance_info(state, balance_info) {
         state.balance_info = balance_info
+      },
+      set_provider (state, ethereum_provider) {
+        state.ethereum_provider = ethereum_provider
       }
     },
     actions: {
+      async connect_provider ({ state, commit }) {
+        // Connect to INFUA
+        var infuraProvider = new providers.InfuraProvider(
+          state.ethereum_network,
+          state.infura_key)
+  
+        // Connect to Etherscan
+        var etherscanProvider = new providers.EtherscanProvider(
+          state.ethereum_network)
+  
+        // Creating a provider to automatically fallback onto Etherscan
+        // if INFURA is down
+        var fallbackProvider = new providers.FallbackProvider([
+          infuraProvider,
+          etherscanProvider
+        ])
+        await commit('set_provider', fallbackProvider)
+      },
       async store_account({ state, commit }, account) {
         try {
           LocalStorage.set('account', account)
@@ -179,13 +209,15 @@ export default function (/* { ssrContext } */) {
               state.account.address, 'https://nuls.world'
             ))
           } else if (state.account.type === 'ETH') {
-            commit('set_balance_info', await get_ethereum_balance_info(
-              state.account.address, 'https://api.ethplorer.io'
-            ))
-          } else if (state.account.type === 'NEO') {
-            commit('set_balance_info', await get_neo_balance_info(
-              state.account.address, 'https://api.neoscan.io'
-            ))
+            let val = await get_erc20_balance(
+              state.ethereum_provider,
+              state.erc20_address,
+              state.account.address
+            )
+            val = val / (10 ** state.decimals)
+            commit('set_balance_info', {
+              ALEPH: val
+            })
           }
         }
       },
@@ -243,7 +275,8 @@ export default function (/* { ssrContext } */) {
 
     // enable strict mode (adds overhead!)
     // for dev mode only
-    strict: process.env.DEV
+    // strict: process.env.DEV
+    strict: false
   })
 
   return Store

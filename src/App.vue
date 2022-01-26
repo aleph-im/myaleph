@@ -26,6 +26,7 @@ export default {
     }
   },
   async mounted() {
+    this.$store.dispatch('connect_provider')
     if (this.account !== null) {
       await this.$store.dispatch('update_balance')
     }
